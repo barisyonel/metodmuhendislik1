@@ -1,36 +1,29 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🏗️ Metod Mühendislik - E-Ticaret Platformu
 
-## Getting Started
+Bu proje, mühendislik firmaları ve endüstriyel sektörler için özelleştirilmiş, modern bir **E-Ticaret ve Kurumsal Tanıtım** çözümüdür. **Next.js** ve **Node.js** teknolojileriyle inşa edilmiş, yüksek performanslı ve ölçeklenebilir bir yapıya sahiptir.
 
-First, run the development server:
+## 🚀 Teknolojik Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Proje geliştirilirken günümüzün en güçlü teknolojileri ve yapay zeka araçları kullanılmıştır:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+* **Frontend:** [Next.js](https://nextjs.org/) (App Router, Server Components)
+* **Backend:** [Node.js](https://nodejs.org/) & Express
+* **Veritabanı:** [MongoDB](https://www.mongodb.com/) / [MySQL](https://www.mysql.com/)
+* **Stil Yönetimi:** Tailwind CSS
+* **AI Desteği:** Cursor, Gemini & Canva (UI/UX Tasarım)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## ✨ Öne Çıkan Özellikler
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- 📱 **Tam Responsive Tasarım:** Tüm cihazlarda (Mobil, Tablet, Masaüstü) kusursuz görünüm.
+- ⚡ **Hızlı Performans:** Next.js sayesinde optimize edilmiş sayfa yükleme hızları.
+- 🛠️ **Mühendislik Odaklı Arayüz:** Sektörel ihtiyaçlara uygun ürün kategorizasyonu ve teknik detay sayfaları.
+- 🔐 **Güvenli Ödeme ve Veri Yönetimi:** Modern güvenlik protokolleri ile entegre yapı.
+- 🤖 **AI Destekli Geliştirme:** Kod yapısı Cursor ve Gemini gibi ileri seviye AI araçlarıyla optimize edilmiştir.
 
-## Learn More
+## 🛠️ Kurulum ve Çalıştırma
 
-To learn more about Next.js, take a look at the following resources:
+Projeyi yerel makinenizde çalıştırmak için:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Depoyu klonlayın:
+   ```bash
+   git clone [https://github.com/barisyonel/metodmuhendislik.git](https://github.com/barisyonel/metodmuhendislik.git)
