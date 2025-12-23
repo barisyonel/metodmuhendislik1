@@ -6,21 +6,39 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "docker:dev": "docker-compose -f docker-compose.dev.yml up -d",
+    "docker:dev:down": "docker-compose -f docker-compose.dev.yml down",
+    "docker:up": "docker-compose up -d --build",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "hash:password": "node scripts/hash-password.js",
+    "db:view": "bash scripts/view-db-files.sh",
+    "db:backup": "bash scripts/backup-db.sh",
+    "db:restore": "bash scripts/restore-db.sh",
+    "db:shell": "docker exec -it metod-muhendislik-mysql-dev mysql -u metodmuhendislik -pmetod2024! metodmuhendislik_db",
+    "db:start": "docker-compose -f docker-compose.dev.yml up -d",
+    "db:stop": "docker-compose -f docker-compose.dev.yml down",
+    "db:status": "docker-compose -f docker-compose.dev.yml ps"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "mysql2": "^3.16.0",
     "next": "16.1.0",
+    "postcss": "^8.5.6",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "swiper": "^12.0.3"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
+    "@tailwindcss/postcss": "^4.1.18",
+    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.1.0",
-    "tailwindcss": "^4",
+    "tailwindcss": "^4.1.18",
     "typescript": "^5"
   }
 }
