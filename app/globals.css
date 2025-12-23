@@ -1,0 +1,66 @@
+/* 1. Tailwind v4 Modern Import */
+@import "tailwindcss";
+
+/* 2. Global Değişkenler ve Tema Ayarları */
+@theme {
+  --color-primary-blue: #0056b3;
+  --color-text-dark: #1a1a1a;
+  --color-bg-light: #f8f9fa;
+}
+
+/* 3. Temel Stil Ayarları */
+@layer base {
+  body {
+    color: var(--color-text-dark);
+    background-color: var(--color-bg-light);
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 16px; /* Erişilebilirlik için minimum 16px */
+    line-height: 1.6;
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* SEO için Başlık Hiyerarşisi Stilleri */
+  h1, h2, h3, h4 {
+    @apply font-bold text-slate-900 leading-tight;
+  }
+
+  /* Erişilebilirlik - Yüksek kontrast */
+  a {
+    @apply transition-colors;
+  }
+
+  /* Mobil uyumluluk için minimum font boyutu */
+  @media (max-width: 768px) {
+    body {
+      font-size: 16px;
+    }
+  }
+}
+
+/* 4. Özel Bileşenler ve SEO Okunabilirlik Ayarları (Typography) */
+@layer components {
+  /* 800-1200 kelimelik makaleleriniz için özel okunabilirlik sınıfı */
+  .seo-article-content {
+    @apply leading-relaxed text-gray-700 max-w-none;
+  }
+
+  .seo-article-content h2 {
+    @apply text-primary-blue text-2xl mt-10 mb-5 font-bold border-l-4 border-primary-blue pl-4;
+  }
+
+  .seo-article-content p {
+    @apply mb-6 text-lg;
+  }
+
+  .seo-article-content ul {
+    @apply list-disc pl-6 mb-6 space-y-2;
+  }
+}
+
+/* 5. Utility (Yardımcı) Sınıflar */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
