@@ -5,10 +5,10 @@ import { query } from "@/lib/db";
 // Tüm ürünleri getir
 export async function GET() {
   try {
-    const products = await query(
+    const products = await query<Array<Record<string, unknown>>>(
       "SELECT * FROM products ORDER BY created_at DESC"
     );
-    return NextResponse.json({ success: true, data: products });
+    return NextResponse.json({ success: true, data: products || [] });
   } catch (error: unknown) {
     console.error("Products GET error:", error);
     return NextResponse.json(
@@ -45,10 +45,11 @@ export async function POST(request: NextRequest) {
       [title, description, image || "", category || "", link || ""]
     );
 
+    const insertResult = result as unknown as { insertId: number };
     return NextResponse.json({
       success: true,
       message: "Ürün başarıyla eklendi",
-      data: { id: (result as { insertId: number }).insertId },
+      data: { id: insertResult?.insertId || 0 },
     });
   } catch (error: unknown) {
     console.error("Products POST error:", error);

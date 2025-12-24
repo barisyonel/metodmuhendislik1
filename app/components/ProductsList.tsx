@@ -20,15 +20,15 @@ async function getProducts(): Promise<Product[]> {
       const products = await query<Product[]>(
         "SELECT * FROM products WHERE is_active = TRUE ORDER BY sort_order ASC, created_at DESC LIMIT 6"
       );
-      return products;
+      return Array.isArray(products) ? products : [];
     } catch (err: unknown) {
       // is_active kolonu yoksa basit sorgu dene
-      const error = err as { code?: string; message?: string };
-      if (error.code === 'ER_BAD_FIELD_ERROR' || error.message?.includes('is_active')) {
+      const error = err as { code?: string; message?: string; sqlMessage?: string };
+      if (error.code === 'ER_BAD_FIELD_ERROR' || error.message?.includes('is_active') || error.sqlMessage?.includes('is_active')) {
         const products = await query<Product[]>(
           "SELECT * FROM products ORDER BY created_at DESC LIMIT 6"
         );
-        return products;
+        return Array.isArray(products) ? products : [];
       }
       throw err;
     }

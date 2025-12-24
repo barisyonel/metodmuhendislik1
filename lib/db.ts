@@ -25,9 +25,22 @@ function getPool() {
 }
 
 export async function query<T = unknown>(sql: string, params?: unknown[]): Promise<T> {
-  const pool = getPool();
-  const [rows] = await pool.execute(sql, params) as [T, unknown];
-  return rows;
+  try {
+    const pool = getPool();
+    const [rows] = await pool.execute(sql, params || []);
+    
+    // mysql2 returns [RowDataPacket[], FieldPacket[]]
+    // We need to cast rows to T
+    return rows as T;
+  } catch (error: unknown) {
+    const err = error as { code?: string; message?: string; sqlMessage?: string };
+    console.error('Database query error:', {
+      code: err.code,
+      message: err.message || err.sqlMessage,
+      sql: sql.substring(0, 100) + '...',
+    });
+    throw error;
+  }
 }
 
 export async function getConnection() {
