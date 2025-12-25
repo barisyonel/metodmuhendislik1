@@ -4,9 +4,21 @@ import { verifyAdmin } from "@/lib/db";
 
 export async function POST(request: NextRequest) {
   try {
-    const { username, password } = await request.json();
+    const body = await request.json();
+    const { username, password } = body;
 
-    // Admin doğrulama (MySQL entegrasyonu sonrası db.ts'den gelecek)
+    // Input validation
+    if (!username || !password || typeof username !== 'string' || typeof password !== 'string') {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Kullanıcı adı ve şifre gereklidir",
+        },
+        { status: 400 }
+      );
+    }
+
+    // Admin doğrulama
     const isValid = await verifyAdmin(username, password);
 
     if (isValid) {
@@ -36,11 +48,13 @@ export async function POST(request: NextRequest) {
       },
       { status: 401 }
     );
-  } catch {
+  } catch (error: unknown) {
+    console.error("Auth error:", error);
+    const err = error as { message?: string };
     return NextResponse.json(
       {
         success: false,
-        message: "Bir hata oluştu",
+        message: err.message || "Bir hata oluştu",
       },
       { status: 500 }
     );

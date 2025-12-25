@@ -184,6 +184,20 @@ export default function Footer() {
               </a>
             </li>
             <li className="flex items-center gap-2">
+              <span className="text-green-400" aria-hidden="true">
+                💬
+              </span>
+              <a
+                href="https://wa.me/905425786060?text=Merhaba,%20teklif%20almak%20istiyorum."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-white transition-colors text-base font-semibold"
+                aria-label="WhatsApp ile iletişime geç: 0 542 578 60 60"
+              >
+                WhatsApp: 0 542 578 60 60
+              </a>
+            </li>
+            <li className="flex items-center gap-2">
               <span className="text-blue-400" aria-hidden="true">
                 ✉️
               </span>

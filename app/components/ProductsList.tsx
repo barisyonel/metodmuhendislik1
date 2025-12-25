@@ -41,7 +41,7 @@ async function getProducts(): Promise<Product[]> {
         title: "Elektrik Pano Sistemleri",
         description:
           "Sıvaüstü, sıvaaltı ve dahili elektrik pano üretimi. Uluslararası standartlara uygun, güvenli ve verimli enerji dağıtım çözümleri.",
-        image: "https://picsum.photos/seed/panel1/600/400",
+        image: "/elektrıkpano.png",
         link: "/urunler/urunler/elektrik-pano-sistemleri",
         category: "Elektrik Panoları",
       },
@@ -59,7 +59,7 @@ async function getProducts(): Promise<Product[]> {
         title: "Bükülmüş Metal Levhalar",
         description:
           "CNC büküm teknolojisi ile şekillendirilmiş metal levhalar. Kompleks geometrili parçalar için profesyonel çözümler.",
-        image: "https://picsum.photos/seed/bend1/600/400",
+        image: "/cncbukum.png",
         link: "/urunler/urunler/bukulmus-metal-levhalar",
         category: "CNC Büküm",
       },
@@ -82,17 +82,18 @@ export default async function ProductsList() {
     <>
       {products.map((product: Product) => (
         <Link
-          href={product.link || "#"}
+          href={`/urunler/urunler/${product.id}`}
           key={product.id}
-          className="group relative overflow-hidden rounded-2xl bg-white border-2 border-slate-200 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
+          className="group relative overflow-hidden rounded-2xl bg-white border-2 border-slate-200 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 flex flex-col h-full"
         >
-          {/* Ürün Görseli */}
-          <div className="relative h-64 overflow-hidden">
+          {/* Ürün Görseli - Sabit Yükseklik */}
+          <div className="relative w-full h-64 bg-gray-50 overflow-hidden flex items-center justify-center">
             <Image
               src={product.image || "https://picsum.photos/600/400"}
               alt={product.title}
-              fill
-              className="object-cover transition-transform duration-700 group-hover:scale-110"
+              width={600}
+              height={400}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
             {/* Overlay */}
@@ -100,22 +101,22 @@ export default async function ProductsList() {
             {/* Kategori Badge */}
             {product.category && (
               <div className="absolute top-4 left-4 z-10">
-                <span className="inline-block px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded-full">
+                <span className="inline-block px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded-full shadow-lg">
                   {product.category}
                 </span>
               </div>
             )}
           </div>
 
-          {/* İçerik */}
-          <div className="p-6">
-            <h3 className="text-xl font-black text-slate-900 mb-3 group-hover:text-blue-600 transition-colors">
+          {/* İçerik - Sabit Yükseklik */}
+          <div className="p-6 flex flex-col flex-grow">
+            <h3 className="text-xl font-black text-slate-900 mb-3 group-hover:text-blue-600 transition-colors line-clamp-2 min-h-[3.5rem]">
               {product.title}
             </h3>
-            <p className="text-slate-600 text-sm leading-relaxed mb-4 line-clamp-3">
+            <p className="text-slate-600 text-sm leading-relaxed mb-4 line-clamp-3 flex-grow">
               {product.description}
             </p>
-            <div className="flex items-center gap-2 text-blue-600 font-semibold text-sm group-hover:gap-3 transition-all">
+            <div className="flex items-center gap-2 text-blue-600 font-semibold text-sm group-hover:gap-3 transition-all mt-auto">
               <span>Detayları İncele</span>
               <svg
                 className="w-4 h-4 transform group-hover:translate-x-1 transition-transform"

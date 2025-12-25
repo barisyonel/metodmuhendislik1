@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isAuthenticated } from "@/lib/auth";
-import { query } from "@/lib/db";
+import { query, getConnection } from "@/lib/db";
+import type { ResultSetHeader } from "mysql2";
 
 // Tüm ürünleri getir
 export async function GET() {
@@ -31,7 +32,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { title, description, image, category, link } = body;
+    const { title, description, image, images, category, link } = body;
 
     if (!title || !description) {
       return NextResponse.json(
@@ -40,16 +41,59 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const result = await query<{ insertId: number }>(
-      "INSERT INTO products (title, description, image, category, link) VALUES (?, ?, ?, ?, ?)",
-      [title, description, image || "", category || "", link || ""]
-    );
+    // images kolonu varsa kullan, yoksa image kullan
+    // images zaten array veya JSON string olarak gelebilir
+    let imagesJson: string;
+    if (images) {
+      // Eğer images zaten string ise (JSON), direkt kullan
+      if (typeof images === 'string') {
+        imagesJson = images;
+      } else if (Array.isArray(images)) {
+        // Eğer array ise, JSON'a çevir
+        imagesJson = JSON.stringify(images);
+      } else {
+        imagesJson = "";
+      }
+    } else if (image) {
+      // Sadece image varsa, array olarak kaydet
+      imagesJson = JSON.stringify([image]);
+    } else {
+      imagesJson = "";
+    }
+    
+    const finalImage = image || "";
 
-    const insertResult = result as unknown as { insertId: number };
+    // images kolonunu kontrol et ve ekle (eğer yoksa)
+    let insertId: number = 0;
+    const connection = await getConnection();
+    try {
+      try {
+        const [result] = await connection.execute(
+          "INSERT INTO products (title, description, image, images, category, link) VALUES (?, ?, ?, ?, ?, ?)",
+          [title, description, finalImage, imagesJson, category || "", link || ""]
+        ) as [ResultSetHeader, unknown];
+        insertId = result.insertId;
+      } catch (error: unknown) {
+        // images kolonu yoksa sadece image kullan
+        const err = error as { code?: string; sqlMessage?: string };
+        if (err.code === 'ER_BAD_FIELD_ERROR' || err.sqlMessage?.includes('images')) {
+          const [result] = await connection.execute(
+            "INSERT INTO products (title, description, image, category, link) VALUES (?, ?, ?, ?, ?)",
+            [title, description, finalImage, category || "", link || ""]
+          ) as [ResultSetHeader, unknown];
+          insertId = result.insertId;
+        } else {
+          throw error;
+        }
+      }
+    } finally {
+      connection.release();
+    }
+
     return NextResponse.json({
       success: true,
       message: "Ürün başarıyla eklendi",
-      data: { id: insertResult?.insertId || 0 },
+      data: { id: insertId },
     });
   } catch (error: unknown) {
     console.error("Products POST error:", error);
@@ -73,7 +117,7 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { id, title, description, image, category, link } = body;
+    const { id, title, description, image, images, category, link } = body;
 
     if (!id || !title || !description) {
       return NextResponse.json(
@@ -82,10 +126,46 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    await query(
-      "UPDATE products SET title = ?, description = ?, image = ?, category = ?, link = ? WHERE id = ?",
-      [title, description, image || "", category || "", link || "", id]
-    );
+    // images kolonu varsa kullan, yoksa image kullan
+    // images zaten array veya JSON string olarak gelebilir
+    let imagesJson: string;
+    if (images) {
+      // Eğer images zaten string ise (JSON), direkt kullan
+      if (typeof images === 'string') {
+        imagesJson = images;
+      } else if (Array.isArray(images)) {
+        // Eğer array ise, JSON'a çevir
+        imagesJson = JSON.stringify(images);
+      } else {
+        imagesJson = "";
+      }
+    } else if (image) {
+      // Sadece image varsa, array olarak kaydet
+      imagesJson = JSON.stringify([image]);
+    } else {
+      imagesJson = "";
+    }
+    
+    const finalImage = image || "";
+
+    // images kolonunu kontrol et ve güncelle (eğer yoksa)
+    try {
+      await query(
+        "UPDATE products SET title = ?, description = ?, image = ?, images = ?, category = ?, link = ? WHERE id = ?",
+        [title, description, finalImage, imagesJson, category || "", link || "", id]
+      );
+    } catch (error: unknown) {
+      // images kolonu yoksa sadece image kullan
+      const err = error as { code?: string; sqlMessage?: string };
+      if (err.code === 'ER_BAD_FIELD_ERROR' || err.sqlMessage?.includes('images')) {
+        await query(
+          "UPDATE products SET title = ?, description = ?, image = ?, category = ?, link = ? WHERE id = ?",
+          [title, description, finalImage, category || "", link || "", id]
+        );
+      } else {
+        throw error;
+      }
+    }
 
     return NextResponse.json({
       success: true,
