@@ -13,6 +13,11 @@ import {
 } from "@/lib/blog-data";
 
 export async function generateStaticParams() {
+  // Blog sayfaları şimdilik devre dışı - build hatası nedeniyle
+  // TODO: Blog sayfaları düzeltildikten sonra tekrar aktif edilecek
+  return [];
+  
+  /* 
   const params: { slug: string }[] = [];
 
   // İstanbul ilçeleri
@@ -34,6 +39,7 @@ export async function generateStaticParams() {
   });
 
   return params;
+  */
 }
 
 export async function generateMetadata({
@@ -66,7 +72,7 @@ function parseSlug(slug: string): {
   const serviceType = parts[parts.length - 1] as "elektrik-pano" | "kaynak";
   const location = parts.slice(0, -1).join("-");
 
-  let locationName = "";
+  let locationName = location; // Default olarak location'ı kullan
 
   // İstanbul ilçeleri kontrolü
   if (istanbulDistricts.includes(location)) {
@@ -79,7 +85,10 @@ function parseSlug(slug: string): {
   // Diğer Marmara illeri kontrolü
   else if (otherMarmaraCities.includes(location)) {
     locationName = otherMarmaraCityNames[location] || location;
-  } else {
+  }
+
+  // Eğer locationName hala boşsa, location'ı kullan
+  if (!locationName || locationName.trim() === "") {
     locationName = location;
   }
 

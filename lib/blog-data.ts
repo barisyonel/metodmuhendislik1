@@ -157,11 +157,14 @@ export function generateBlogContent(
   locationName: string,
   serviceType: "elektrik-pano" | "kaynak" | "genel"
 ): BlogPost {
+  // locationName'in undefined olmamasını garanti et
+  const safeLocationName = locationName || location || "Marmara Bölgesi";
+  
   const baseKeywords = [
-    `${locationName} elektrik pano`,
-    `${locationName} kaynak hizmetleri`,
-    `${locationName} endüstriyel üretim`,
-    `Marmara bölgesi ${locationName}`,
+    `${safeLocationName} elektrik pano`,
+    `${safeLocationName} kaynak hizmetleri`,
+    `${safeLocationName} endüstriyel üretim`,
+    `Marmara bölgesi ${safeLocationName}`,
   ];
 
   let title = "";
@@ -169,28 +172,32 @@ export function generateBlogContent(
   let content = "";
 
   if (serviceType === "elektrik-pano") {
-    title = `${locationName}'de Elektrik Pano Üretimi ve Montaj Hizmetleri`;
-    description = `${locationName} bölgesinde elektrik pano üretimi, montaj, bakım ve onarım hizmetleri. Sıvaüstü, sıvaaltı, dahili ve marin pano çözümleri.`;
-    content = generateElectricPanelContent(locationName);
+    title = `${safeLocationName}'de Elektrik Pano Üretimi ve Montaj Hizmetleri`;
+    description = `${safeLocationName} bölgesinde elektrik pano üretimi, montaj, bakım ve onarım hizmetleri. Sıvaüstü, sıvaaltı, dahili ve marin pano çözümleri.`;
+    content = generateElectricPanelContent(safeLocationName);
   } else if (serviceType === "kaynak") {
-    title = `${locationName}'de Profesyonel Kaynak Hizmetleri ve Metal İmalat`;
-    description = `${locationName} bölgesinde metal kaynak, TIG kaynak, MIG/MAG kaynak ve endüstriyel imalat hizmetleri. Uzman ekibimizle profesyonel çözümler.`;
-    content = generateWeldingContent(locationName);
+    title = `${safeLocationName}'de Profesyonel Kaynak Hizmetleri ve Metal İmalat`;
+    description = `${safeLocationName} bölgesinde metal kaynak, TIG kaynak, MIG/MAG kaynak ve endüstriyel imalat hizmetleri. Uzman ekibimizle profesyonel çözümler.`;
+    content = generateWeldingContent(safeLocationName);
   } else {
-    title = `${locationName}'de Elektrik Pano ve Kaynak Hizmetleri`;
-    description = `${locationName} bölgesinde elektrik pano üretimi, kaynak hizmetleri ve endüstriyel üretim çözümleri. Kaliteli ve güvenilir hizmet.`;
-    content = generateGeneralContent(locationName);
+    title = `${safeLocationName}'de Elektrik Pano ve Kaynak Hizmetleri`;
+    description = `${safeLocationName} bölgesinde elektrik pano üretimi, kaynak hizmetleri ve endüstriyel üretim çözümleri. Kaliteli ve güvenilir hizmet.`;
+    content = generateGeneralContent(safeLocationName);
   }
-
+  
+  // Tarih formatını güvenli şekilde oluştur
+  const today = new Date();
+  const dateString = today.toISOString ? today.toISOString().split("T")[0] : today.toISOString().substring(0, 10);
+  
   return {
     slug: `${location}-${serviceType}`,
-    title,
-    description,
-    content,
-    category: locationName.includes("İstanbul") ? "İstanbul" : locationName.includes("Gebze") ? "Gebze & Kocaeli" : "Marmara",
-    location: locationName,
+    title: title || `${safeLocationName}'de Endüstriyel Üretim Hizmetleri`,
+    description: description || `${safeLocationName} bölgesinde profesyonel hizmetler.`,
+    content: content || generateGeneralContent(safeLocationName),
+    category: safeLocationName.includes("İstanbul") ? "İstanbul" : safeLocationName.includes("Gebze") ? "Gebze & Kocaeli" : "Marmara",
+    location: safeLocationName,
     keywords: baseKeywords,
-    date: new Date().toISOString().split("T")[0],
+    date: dateString,
   };
 }
 
