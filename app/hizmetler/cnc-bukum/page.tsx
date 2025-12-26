@@ -46,6 +46,19 @@ export default function CNCBukumPage() {
         <section className="py-20 md:py-32 bg-white">
           <div className="container mx-auto px-6">
             <div className="max-w-4xl mx-auto">
+              {/* Görsel */}
+              <div className="mb-12 rounded-2xl overflow-hidden shadow-2xl">
+                <div className="relative h-96 w-full">
+                  <Image
+                    src="/cncbukum.png"
+                    alt="CNC Büküm - Metod Mühendislik"
+                    fill
+                    className="object-cover"
+                    quality={90}
+                  />
+                </div>
+              </div>
+              
               <div className="mb-12">
                 <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-6">
                   CNC Büküm ve Şekillendirme Çözümleri

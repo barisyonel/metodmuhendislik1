@@ -24,11 +24,11 @@ export default function ElektrikPanoUretimiPage() {
               src="/elektrıkpano.png"
               alt="Elektrik Pano Üretimi - Metod Mühendislik"
               fill
-              className="object-cover opacity-30"
+              className="object-cover opacity-20"
               priority
               quality={90}
             />
-            <div className="absolute inset-0 bg-gradient-to-br from-slate-900/85 via-blue-900/75 to-slate-900/85"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-slate-900/90 via-blue-900/80 to-slate-900/90"></div>
           </div>
           <div className="container mx-auto px-6 relative z-10">
             <div className="max-w-4xl">
@@ -46,20 +46,19 @@ export default function ElektrikPanoUretimiPage() {
         <section className="py-20 md:py-32 bg-white">
           <div className="container mx-auto px-6">
             <div className="max-w-4xl mx-auto">
-              {/* Büyük Görsel */}
+              {/* Görsel */}
               <div className="mb-12 rounded-2xl overflow-hidden shadow-2xl">
-                <div className="relative w-full h-[400px] md:h-[500px]">
+                <div className="relative h-96 w-full">
                   <Image
                     src="/elektrıkpano.png"
-                    alt="Elektrik Pano Üretimi - Metod Mühendislik Fabrika Görseli"
+                    alt="Elektrik Pano Üretimi - Metod Mühendislik"
                     fill
                     className="object-cover"
-                    priority
                     quality={90}
                   />
                 </div>
               </div>
-
+              
               <div className="mb-12">
                 <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-6">
                   Elektrik Pano Üretimi ve Enerji Dağıtım Çözümleri

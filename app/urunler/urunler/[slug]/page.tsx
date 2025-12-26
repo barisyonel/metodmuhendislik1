@@ -2,6 +2,8 @@ import { Metadata } from "next";
 import { query } from "@/lib/db";
 import { notFound } from "next/navigation";
 import ProductGallery from "./components/ProductGallery";
+import Header from "@/app/components/Header";
+import Footer from "@/app/components/Footer";
 
 interface Product {
   id: number;
@@ -14,12 +16,84 @@ interface Product {
   is_active?: boolean;
 }
 
+// Varsayılan ürünler (fallback için)
+const defaultProducts: Record<string, Product> = {
+  "elektrik-pano-sistemleri": {
+    id: 1,
+    title: "Elektrik Pano ve Marin Pano Üretimi",
+    description: "IEC standartlarına uygun elektrik pano üretimi. Sıvaüstü, sıvaaltı, dahili ve marin pano sistemleri. 20+ yıllık deneyimle güvenilir enerji dağıtım çözümleri. İstanbul'da profesyonel elektrik pano üretim hizmeti.",
+    image: "/elektrıkpano.png",
+    category: "Elektrik Panoları",
+    link: "/urunler/urunler/elektrik-pano-sistemleri",
+  },
+  "cnc-lazer-kesim": {
+    id: 2,
+    title: "CNC Lazer Kesilmiş Parçalar",
+    description: "Hassas CNC lazer kesim ile üretilmiş metal parçalar. ±0.05 mm hassasiyet ile endüstriyel standartlarda üretim. Kompleks geometrili parçalar için profesyonel çözümler. Siyah sac, paslanmaz çelik ve alüminyum malzemelerde kesim hizmetleri.",
+    image: "/metod.png",
+    category: "CNC Lazer Kesim",
+    link: "/urunler/urunler/cnc-lazer-kesim",
+  },
+  "cnc-bukum": {
+    id: 7,
+    title: "CNC Abkant Büküm ve Metal Şekillendirme",
+    description: "CNC büküm teknolojisi ile hassas metal şekillendirme. Kompleks geometrili parçalar tek seferde üretilir. Kalınlığı 6 mm'ye kadar sac malzemelerde yüksek hassasiyetli büküm hizmetleri. Endüstriyel üretim için ideal çözümler.",
+    image: "/cncbukum.png",
+    category: "CNC Büküm",
+    link: "/urunler/urunler/cnc-bukum",
+  },
+  "kaynak-imalat": {
+    id: 3,
+    title: "Kaynak ve Metal İmalat Hizmetleri",
+    description: "TIG, MIG/MAG ve elektrot kaynak yöntemleri ile profesyonel metal kaynak işlemleri. Çelik, paslanmaz çelik ve alüminyum kaynak hizmetleri. Çelik konstrüksiyon ve makine imalatında uzman ekibimizle kaliteli kaynak işlemleri.",
+    image: "/kaynak.png",
+    category: "Kaynak & İmalat",
+    link: "/urunler/urunler/kaynak-imalat",
+  },
+  "toz-boya": {
+    id: 4,
+    title: "Elektrostatik Toz Boya İşlemleri",
+    description: "Modern toz boya teknolojisi ile uzun ömürlü ve estetik yüzey işlemleri. RAL renk standardına uygun boyama hizmetleri. Çevre dostu ve kalıcı yüzey kaplama çözümleri. Metal ürünlerinizin korunması ve görsel iyileştirmesi için profesyonel hizmet.",
+    image: "/Elektrostatik Toz Boya.png",
+    category: "Yüzey İşlemleri",
+    link: "/urunler/urunler/toz-boya",
+  },
+  "celik-konstruksiyon": {
+    id: 5,
+    title: "Çelik Konstrüksiyon ve Endüstriyel Yapılar",
+    description: "Endüstriyel çelik konstrüksiyon çözümleri. Sağlam ve dayanıklı çelik yapılar. Mühendislik standartlarına uygun projeler. Fabrika binaları, çatı sistemleri ve endüstriyel tesisler için güvenilir çelik konstrüksiyon hizmetleri.",
+    image: "/Çelik Konstrüksiyon.png",
+    category: "Çelik Konstrüksiyon",
+    link: "/urunler/urunler/celik-konstruksiyon",
+  },
+  "magaza-raf-sistemleri": {
+    id: 6,
+    title: "Mağaza Raf Sistemleri ve Özel Ürünler",
+    description: "Mağaza içi raf sistemleri ve özel ürün tasarımları. İhtiyacınıza özel tasarım ve üretim çözümleri. Estetik ve fonksiyonel mağaza düzenlemeleri. Perakende ve endüstriyel depolama çözümleri için profesyonel raf sistemleri.",
+    image: "/Mağaza Raf Sistemleri ve Ürünleri.png",
+    category: "Raf Sistemleri",
+    link: "/urunler/urunler/magaza-raf-sistemleri",
+  },
+};
+
 // Slug veya ID'den ürünü getir
 async function getProductBySlug(slug: string): Promise<Product | null> {
+  // Önce varsayılan ürünlerde ara
+  if (defaultProducts[slug]) {
+    return defaultProducts[slug];
+  }
+
   try {
-    // Önce ID olarak dene
+    // ID olarak dene
     const id = parseInt(slug);
     if (!isNaN(id)) {
+      // ID varsayılan ürünlerde var mı kontrol et
+      const defaultProductById = Object.values(defaultProducts).find(p => p.id === id);
+      if (defaultProductById) {
+        return defaultProductById;
+      }
+
+      // Veritabanından ara
       const productsById = await query<Product[]>(
         "SELECT * FROM products WHERE id = ? AND (is_active = TRUE OR is_active IS NULL) LIMIT 1",
         [id]
@@ -42,17 +116,26 @@ async function getProductBySlug(slug: string): Promise<Product | null> {
     return null;
   } catch (error) {
     console.error("Ürün yüklenirken hata:", error);
-    return null;
+    // Hata durumunda varsayılan ürünleri kontrol et
+    return defaultProducts[slug] || null;
   }
+}
+
+// Statik olarak önceden oluşturulacak slug'lar
+export async function generateStaticParams() {
+  return Object.keys(defaultProducts).map((slug) => ({
+    slug: slug,
+  }));
 }
 
 // Meta etiketlerini otomatik oluştur
 export async function generateMetadata({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }> | { slug: string };
 }): Promise<Metadata> {
-  const product = await getProductBySlug(params.slug);
+  const resolvedParams = params instanceof Promise ? await params : params;
+  const product = await getProductBySlug(resolvedParams.slug);
 
   if (!product) {
     return {
@@ -84,7 +167,7 @@ export async function generateMetadata({
       images: product.image ? [product.image] : [],
     },
     alternates: {
-      canonical: product.link || `/urunler/urunler/${params.slug}`,
+      canonical: product.link || `/urunler/urunler/${resolvedParams.slug}`,
     },
   };
 }
@@ -92,9 +175,10 @@ export async function generateMetadata({
 export default async function ProductDetail({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }> | { slug: string };
 }) {
-  const product = await getProductBySlug(params.slug);
+  const resolvedParams = params instanceof Promise ? await params : params;
+  const product = await getProductBySlug(resolvedParams.slug);
 
   if (!product) {
     notFound();
@@ -120,8 +204,10 @@ export default async function ProductDetail({
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="container mx-auto px-6 py-12">
+    <>
+      <Header />
+      <main className="bg-white min-h-screen pt-24 md:pt-28">
+        <div className="container mx-auto px-6 py-12">
         {/* ÜRÜN GÖRSEL GALERİSİ */}
         {productImages.length > 0 && (
           <div className="mb-12">
@@ -192,6 +278,8 @@ export default async function ProductDetail({
           </div>
         </div>
       </section>
-    </div>
+      </main>
+      <Footer />
+    </>
   );
 }

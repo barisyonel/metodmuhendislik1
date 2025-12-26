@@ -14,7 +14,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://metodmuhendislik.com'),
+  metadataBase: new URL('https://www.metodmuhendislik.com'),
   title: {
     default: "Metod Mühendislik | Endüstriyel Üretim ve Mühendislik Çözümleri",
     template: "%s | Metod Mühendislik"
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "tr_TR",
-    url: "https://metodmuhendislik.com",
+    url: "https://www.metodmuhendislik.com",
     siteName: "Metod Mühendislik",
     title: "Metod Mühendislik | Endüstriyel Üretim ve Mühendislik Çözümleri",
     description: "CNC lazer kesim, CNC büküm, metal kaynak, elektrik pano, marin pano ve mühendislik çözümleri. Endüstriyel üretimde kalite ve güvenin adresi.",

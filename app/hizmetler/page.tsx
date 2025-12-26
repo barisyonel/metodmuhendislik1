@@ -56,7 +56,7 @@ export default function HizmetlerPage() {
         "Yüksek kaliteli metal kaynak ve imalat hizmetleri ile güvenilir çözümler. TIG, MIG/MAG kaynak yöntemleri ile uzman ekibimizle profesyonel hizmet.",
       icon: "🔥",
       color: "from-orange-500 to-orange-600",
-      img: "https://picsum.photos/seed/weld1/600/400",
+      img: "/kaynak.png",
     },
     {
       slug: "elektrostatik-toz-boya",
@@ -65,7 +65,7 @@ export default function HizmetlerPage() {
         "Modern boya teknolojileri ile uzun ömürlü ve estetik yüzey işlemleri. Çevre dostu çözümler. RAL renk standardına uygun boyama hizmetleri.",
       icon: "🎨",
       color: "from-purple-500 to-purple-600",
-      img: "https://picsum.photos/seed/paint1/600/400",
+      img: "/Elektrostatik Toz Boya.png",
     },
     {
       slug: "magaza-raf-ve-urunleri",
@@ -74,7 +74,7 @@ export default function HizmetlerPage() {
         "Mağaza içi raf sistemleri ve özel ürünler. İhtiyacınıza özel tasarım ve üretim çözümleri. Estetik ve fonksiyonel mağaza düzenlemeleri.",
       icon: "📦",
       color: "from-green-500 to-green-600",
-      img: "https://picsum.photos/seed/shelf1/600/400",
+      img: "/Mağaza Raf Sistemleri ve Ürünleri.png",
     },
     {
       slug: "celik-konstruksiyon",
@@ -83,7 +83,7 @@ export default function HizmetlerPage() {
         "Sağlam ve dayanıklı çelik konstrüksiyon çözümleri. Endüstriyel yapılarda güvenilir hizmet. Mühendislik standartlarına uygun projeler.",
       icon: "🏗️",
       color: "from-gray-600 to-gray-700",
-      img: "https://picsum.photos/seed/steel1/600/400",
+      img: "/Çelik Konstruksiyon.png",
     },
   ];
 
