@@ -27,11 +27,12 @@ function getPool() {
 export async function query<T = unknown>(sql: string, params?: unknown[]): Promise<T> {
   try {
     const pool = getPool();
-    const [rows] = await pool.execute(sql, params || []);
+    // mysql2 execute metodu [rows, fields] tuple döner
+    const [rows] = await pool.execute(sql, params || []) as [T, unknown[]];
     
     // mysql2 returns [RowDataPacket[], FieldPacket[]]
     // We need to cast rows to T
-    return rows as T;
+    return rows;
   } catch (error: unknown) {
     // MySQL hatalarını daha iyi yakalama
     let errorDetails: Record<string, unknown> = {};
@@ -39,25 +40,41 @@ export async function query<T = unknown>(sql: string, params?: unknown[]): Promi
     if (error instanceof Error) {
       errorDetails = {
         name: error.name,
-        message: error.message,
+        message: error.message || 'No error message provided',
         stack: error.stack,
       };
       
       // MySQL özel hata özelliklerini kontrol et
-      const mysqlError = error as { code?: string; errno?: number; sqlState?: string; sqlMessage?: string; sql?: string };
+      // mysql2 hataları genellikle Error objesi olarak gelir ama ek özellikler içerir
+      const mysqlError = error as Error & { 
+        code?: string; 
+        errno?: number; 
+        sqlState?: string; 
+        sqlMessage?: string; 
+        sql?: string;
+      };
+      
       if (mysqlError.code) errorDetails.code = mysqlError.code;
-      if (mysqlError.errno) errorDetails.errno = mysqlError.errno;
+      if (mysqlError.errno !== undefined) errorDetails.errno = mysqlError.errno;
       if (mysqlError.sqlState) errorDetails.sqlState = mysqlError.sqlState;
       if (mysqlError.sqlMessage) errorDetails.sqlMessage = mysqlError.sqlMessage;
       if (mysqlError.sql) errorDetails.sql = mysqlError.sql;
+      
+      // Eğer message boşsa, code veya sqlMessage'dan birini kullan
+      if (!errorDetails.message || errorDetails.message === '') {
+        errorDetails.message = mysqlError.sqlMessage || mysqlError.code || 'Database connection error';
+      }
     } else {
       // Error objesi değilse, direkt stringify et
-      errorDetails = { rawError: error };
+      errorDetails = { 
+        rawError: String(error),
+        message: 'Non-Error object thrown',
+      };
     }
     
     // Daha okunabilir hata mesajı
-    const errorMessage = errorDetails.message || errorDetails.sqlMessage || 'Unknown database error';
-    const errorCode = errorDetails.code || 'UNKNOWN';
+    const errorMessage = (errorDetails.message as string) || (errorDetails.sqlMessage as string) || 'Unknown database error';
+    const errorCode = (errorDetails.code as string) || 'UNKNOWN';
     
     console.error('Database query error:', {
       code: errorCode,
@@ -66,7 +83,6 @@ export async function query<T = unknown>(sql: string, params?: unknown[]): Promi
       sqlState: errorDetails.sqlState,
       query: sql.substring(0, 200),
       params: params ? (Array.isArray(params) ? params.join(', ') : JSON.stringify(params)) : 'none',
-      fullError: errorDetails,
     });
     
     throw error;
