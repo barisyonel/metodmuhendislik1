@@ -158,7 +158,9 @@ export default function Header() {
             {/* LOGO */}
             <Link
               href="/"
-              className="group flex items-center relative z-10 flex-shrink-0"
+              className={`group flex items-center relative z-10 flex-shrink-0 transition-opacity duration-300 ${
+                isMobileMenuOpen ? "lg:opacity-100 opacity-0 pointer-events-none" : "opacity-100"
+              }`}
               aria-label="Ana Sayfa"
             >
               <div className="relative h-12 w-auto md:h-14 flex-shrink-0 transition-transform duration-300 group-hover:scale-105">
@@ -458,7 +460,7 @@ export default function Header() {
 
       {/* MOBİL MENÜ - Modern Slide-in */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 z-[99] lg:hidden">
+        <div className="fixed inset-0 z-[105] lg:hidden">
           <div
             className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300"
             onClick={() => setIsMobileMenuOpen(false)}
