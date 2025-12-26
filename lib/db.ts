@@ -66,17 +66,28 @@ export async function query<T = unknown>(sql: string, params?: unknown[]): Promi
       errorMessage = String(error) || 'Non-Error object thrown';
     }
     
-    // Daha okunabilir ve detaylı hata loglama
-    console.error('Database query error:');
-    console.error('  Code:', errorCode);
-    console.error('  Message:', errorMessage);
-    if (errno !== undefined) console.error('  Errno:', errno);
-    if (sqlState) console.error('  SQL State:', sqlState);
-    if (sqlMessage) console.error('  SQL Message:', sqlMessage);
-    console.error('  Query:', sql.substring(0, 200));
-    console.error('  Params:', params ? (Array.isArray(params) ? params.join(', ') : JSON.stringify(params)) : 'none');
-    if (error instanceof Error && error.stack) {
-      console.error('  Stack:', error.stack);
+    // Production ortamında ve bağlantı hatalarında daha az detaylı log
+    const isConnectionError = errorCode === 'ECONNREFUSED' || errorCode === 'ETIMEDOUT' || 
+                              errorCode === 'ENOTFOUND' || errno === -111 || errno === -61;
+    const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
+    
+    if (isConnectionError && isProduction) {
+      // Production'da bağlantı hatalarını sadece warning olarak logla
+      // Detaylı stack trace'i loglama
+      console.warn('Database connection unavailable in production. Using fallback data.');
+    } else {
+      // Development veya diğer hatalar için detaylı loglama
+      console.error('Database query error:');
+      console.error('  Code:', errorCode);
+      console.error('  Message:', errorMessage);
+      if (errno !== undefined) console.error('  Errno:', errno);
+      if (sqlState) console.error('  SQL State:', sqlState);
+      if (sqlMessage) console.error('  SQL Message:', sqlMessage);
+      console.error('  Query:', sql.substring(0, 200));
+      console.error('  Params:', params ? (Array.isArray(params) ? params.join(', ') : JSON.stringify(params)) : 'none');
+      if (!isProduction && error instanceof Error && error.stack) {
+        console.error('  Stack:', error.stack);
+      }
     }
     
     throw error;

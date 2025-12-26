@@ -115,7 +115,15 @@ async function getProductBySlug(slug: string): Promise<Product | null> {
 
     return null;
   } catch (error) {
-    console.error("Ürün yüklenirken hata:", error);
+    // Production'da bağlantı hatalarını sessizce handle et
+    const err = error as { code?: string; errno?: number };
+    const isConnectionError = err.code === 'ECONNREFUSED' || err.code === 'ETIMEDOUT' || 
+                              err.code === 'ENOTFOUND' || err.errno === -111 || err.errno === -61;
+    const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
+    
+    if (!isConnectionError || !isProduction) {
+      console.error("Ürün yüklenirken hata:", error);
+    }
     // Hata durumunda varsayılan ürünleri kontrol et
     return defaultProducts[slug] || null;
   }

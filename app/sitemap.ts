@@ -175,7 +175,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       });
     }
   } catch (error) {
-    console.error('Sitemap ürün yükleme hatası:', error);
+    // Production'da bağlantı hatalarını sessizce handle et
+    const err = error as { code?: string; errno?: number };
+    const isConnectionError = err.code === 'ECONNREFUSED' || err.code === 'ETIMEDOUT' || 
+                              err.code === 'ENOTFOUND' || err.errno === -111 || err.errno === -61;
+    const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
+    
+    if (!isConnectionError || !isProduction) {
+      console.error('Sitemap ürün yükleme hatası:', error);
+    }
     // Hata durumunda devam et, ürün sayfaları olmadan sitemap oluştur
   }
 
