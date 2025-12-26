@@ -9,13 +9,13 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Metod Mühendislik | Elektrik Pano Üretimi - Marin Pano, Sıvaüstü, Sıvaaltı Pano",
   description:
-    "Elektrik pano ve marin pano üretiminde 20+ yıllık deneyim. Sıvaüstü, sıvaaltı, dahili ve marin pano üretimi. CNC lazer kesim, büküm, kaynak ve çelik konstrüksiyon hizmetleri. İstanbul'da kaliteli ve güvenilir elektrik pano çözümleri.",
+    "Elektrik pano ve marin pano üretiminde 20+ yıllık deneyim. Sıvaüstü, sıvaaltı, dahili ve marin pano üretimi. CNC lazer kesim, büküm, kaynak ve çelik konstrüksiyon hizmetleri. İstanbul&apos;da kaliteli ve güvenilir elektrik pano çözümleri.",
   keywords:
     "elektrik pano, marin pano, elektrik pano üretimi, sıvaüstü pano, sıvaaltı pano, dahili pano, enerji dağıtım panosu, CNC lazer kesim, CNC büküm, kaynak, metal kaynak, elektrostatik toz boya, mağaza raf, çelik konstrüksiyon, endüstriyel üretim, mühendislik çözümleri, İstanbul, Tuzla",
   openGraph: {
     title: "Metod Mühendislik | Elektrik Pano ve Marin Pano Üretimi - İstanbul",
     description:
-      "Elektrik pano ve marin pano üretiminde uzman. Sıvaüstü, sıvaaltı, dahili ve marin pano üretimi. CNC lazer kesim, büküm, kaynak hizmetleri. İstanbul'da kaliteli ve güvenilir çözümler.",
+      "Elektrik pano ve marin pano üretiminde uzman. Sıvaüstü, sıvaaltı, dahili ve marin pano üretimi. CNC lazer kesim, büküm, kaynak hizmetleri. İstanbul&apos;da kaliteli ve güvenilir çözümler.",
     type: "website",
     locale: "tr_TR",
   },
@@ -32,8 +32,8 @@ export default function HomePage() {
     name: "Metod Mühendislik",
     description:
       "Elektrik pano ve marin pano üretiminde 20+ yıllık deneyim. Sıvaüstü, sıvaaltı, dahili ve marin pano üretimi. Ayrıca CNC lazer kesim, CNC büküm, kaynak, elektrostatik toz boya, mağaza rafları ve çelik konstrüksiyon hizmetleri sunan endüstriyel üretim firması",
-    url: "https://metodmuhendislik.com",
-    logo: "https://metodmuhendislik.com/logo.png",
+    url: "https://www.metodmuhendislik.com",
+    logo: "https://www.metodmuhendislik.com/logo.png",
     address: {
       "@type": "PostalAddress",
       streetAddress: "İTOSB SANAYİ BÖLGESİ 3. YOL NO:21",
@@ -86,7 +86,7 @@ export default function HomePage() {
                   icon: "🌍",
                 },
                 {
-                  number: "6000m²",
+                  number: "2000m²",
                   label: "Üretim Alanı",
                   icon: "🏭",
                 },
@@ -128,9 +128,15 @@ export default function HomePage() {
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 mb-4">
                 Örnek Ürünlerimiz
               </h2>
-              <p className="text-slate-600 max-w-2xl mx-auto text-lg">
+              <p className="text-slate-600 max-w-2xl mx-auto text-lg mb-6">
                 Endüstriyel üretim çözümlerimizden örnekler. Kaliteli ve güvenilir ürünlerimizi keşfedin.
               </p>
+              {/* SEO İyileştirici Metin */}
+              <div className="max-w-4xl mx-auto mt-8">
+                <p className="text-slate-700 text-base leading-relaxed">
+                  <strong>Metod Mühendislik</strong> olarak, <strong>elektrik pano üretimi</strong>, <strong>marin pano</strong>, <strong>sıvaüstü pano</strong> ve <strong>sıvaaltı pano</strong> başta olmak üzere endüstriyel üretim çözümleri sunuyoruz. <strong>CNC lazer kesim</strong>, <strong>CNC büküm</strong>, <strong>metal kaynak</strong>, <strong>elektrostatik toz boya</strong> ve <strong>çelik konstrüksiyon</strong> hizmetlerimizle üretilen ürünlerimiz, ISO 9001 kalite standartlarına uygun olarak İstanbul&apos;daki modern tesisimizde üretilmektedir. 20+ yıllık deneyimimiz ve uzman ekibimizle, endüstriyel projeleriniz için güvenilir ve kaliteli ürünler üretiyoruz.
+                </p>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -158,149 +164,6 @@ export default function HomePage() {
                   />
                 </svg>
               </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* MODERN HİZMETLER BÖLÜMÜ - Birleştirilmiş ve Modernize Edilmiş */}
-        <section
-          className="py-20 md:py-32 bg-gradient-to-b from-white to-slate-50"
-          aria-label="Hizmetlerimiz"
-        >
-          <div className="container mx-auto px-6">
-            <div className="text-center mb-16">
-              <span className="inline-block text-blue-600 font-black text-xs tracking-[0.4em] uppercase mb-4 px-4 py-1.5 bg-blue-50 rounded-full">
-                Hizmetlerimiz
-              </span>
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 tracking-tighter leading-tight mb-6">
-                ENDÜSTRİYEL ÜRETİM{" "}
-                <span className="text-blue-600">ÇÖZÜMLERİ</span>
-              </h2>
-              <p className="text-slate-600 max-w-3xl mx-auto text-lg leading-relaxed">
-                <strong className="text-blue-600">Elektrik pano ve marin pano üretimi</strong> ana faaliyet alanımızdır. 20+ yıllık deneyimimizle sıvaüstü, sıvaaltı, dahili ve marin pano üretiminde sektörün öncü firmasıyız. Ayrıca CNC lazer kesim, büküm, metal kaynak, elektrostatik toz boya, mağaza raf sistemleri ve çelik konstrüksiyon hizmetlerimizle yanınızdayız.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {[
-                {
-                  title: "Elektrik Pano Üretimi",
-                  desc: "20+ yıllık deneyimimizle elektrik pano ve marin pano üretimi. Sıvaüstü, sıvaaltı, dahili ve marin pano çözümleri. Güvenli ve verimli enerji dağıtım sistemleri.",
-                  img: "/elektrıkpano.png",
-                  link: "/hizmetler/elektrik-pano-uretime",
-                  icon: "⚡",
-                  color: "from-yellow-500 to-yellow-600",
-                  featured: true,
-                },
-                {
-                  title: "CNC Lazer Kesim",
-                  desc: "Hassas ve hızlı lazer kesim hizmetleri ile endüstriyel üretimde öncü. Yüksek kaliteli malzemelerde kesim çözümleri. ±0.05 mm hassasiyet ile profesyonel hizmet.",
-                  img: "https://picsum.photos/seed/laser1/600/400",
-                  link: "/hizmetler/cnc-lazer-kesim",
-                  icon: "⚡",
-                  color: "from-blue-500 to-blue-600",
-                },
-                {
-                  title: "CNC Büküm",
-                  desc: "Profesyonel CNC büküm hizmetleri ile şekillendirme çözümleri. Hassas açı kontrolü ve kaliteli işçilik. Kompleks geometrili parçalar için ideal çözüm.",
-                  img: "/cncbukum.png",
-                  link: "/hizmetler/cnc-bukum",
-                  icon: "🔧",
-                  color: "from-slate-600 to-slate-700",
-                },
-                {
-                  title: "Kaynak & İmalat",
-                  desc: "Yüksek kaliteli metal kaynak ve imalat hizmetleri ile güvenilir çözümler. TIG, MIG/MAG kaynak yöntemleri ile uzman ekibimizle profesyonel hizmet.",
-                  img: "https://picsum.photos/seed/weld1/600/400",
-                  link: "/hizmetler/kaynak",
-                  icon: "🔥",
-                  color: "from-orange-500 to-orange-600",
-                },
-                {
-                  title: "Elektrostatik Toz Boya",
-                  desc: "Modern boya teknolojileri ile uzun ömürlü ve estetik yüzey işlemleri. Çevre dostu çözümler. RAL renk standardına uygun boyama hizmetleri.",
-                  img: "https://picsum.photos/seed/paint1/600/400",
-                  link: "/hizmetler/elektrostatik-toz-boya",
-                  icon: "🎨",
-                  color: "from-purple-500 to-purple-600",
-                },
-                {
-                  title: "Mağaza Raf Ve Ürünleri",
-                  desc: "Mağaza içi raf sistemleri ve özel ürünler. İhtiyacınıza özel tasarım ve üretim çözümleri. Estetik ve fonksiyonel mağaza düzenlemeleri.",
-                  img: "https://picsum.photos/seed/shelf1/600/400",
-                  link: "/hizmetler/magaza-raf-ve-urunleri",
-                  icon: "📦",
-                  color: "from-green-500 to-green-600",
-                },
-                {
-                  title: "Çelik Konstrüksiyon",
-                  desc: "Sağlam ve dayanıklı çelik konstrüksiyon çözümleri. Endüstriyel yapılarda güvenilir hizmet. Mühendislik standartlarına uygun projeler.",
-                  img: "https://picsum.photos/seed/steel1/600/400",
-                  link: "/hizmetler/celik-konstruksiyon",
-                  icon: "🏗️",
-                  color: "from-gray-600 to-gray-700",
-                },
-              ].map((item, i) => (
-                <Link
-                  href={item.link}
-                  key={i}
-                  className={`group relative overflow-hidden rounded-2xl bg-white border-2 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 ${
-                    item.featured 
-                      ? "border-yellow-500 border-4 shadow-xl shadow-yellow-500/30 hover:border-yellow-600" 
-                      : "border-slate-200 hover:border-blue-600"
-                  }`}
-                >
-                  {/* Görsel */}
-                  <div className="relative h-48 overflow-hidden">
-                    <Image
-                      src={item.img}
-                      alt={item.title}
-                      fill
-                      className="object-cover transition-transform duration-700 group-hover:scale-110"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    />
-                    <div
-                      className={`absolute inset-0 bg-gradient-to-br ${item.color} opacity-0 group-hover:opacity-90 transition-opacity duration-500`}
-                    />
-                    <div className="absolute top-4 right-4 text-4xl opacity-80 group-hover:opacity-100 transition-opacity z-10">
-                      {item.icon}
-                    </div>
-                    {item.featured && (
-                      <div className="absolute top-4 left-4 z-10">
-                        <span className="inline-block px-3 py-1 bg-yellow-500 text-white text-xs font-bold rounded-full shadow-lg">
-                          Ana Hizmetimiz
-                        </span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* İçerik */}
-                  <div className="p-6">
-                    <h3 className="text-xl font-black text-slate-900 mb-3 group-hover:text-blue-600 transition-colors">
-                      {item.title}
-                    </h3>
-                    <p className="text-slate-600 text-sm leading-relaxed mb-4 line-clamp-3">
-                      {item.desc}
-                    </p>
-                    <div className="flex items-center gap-2 text-blue-600 font-semibold text-sm group-hover:gap-3 transition-all">
-                      <span>Detayları İncele</span>
-                      <svg
-                        className="w-4 h-4 transform group-hover:translate-x-1 transition-transform"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M9 5l7 7-7 7"
-                        />
-                      </svg>
-                    </div>
-                  </div>
-                </Link>
-              ))}
             </div>
           </div>
         </section>
@@ -352,7 +215,7 @@ export default function HomePage() {
                     },
                     {
                       icon: "✓",
-                      title: "6000m² Üretim Alanı",
+                      title: "2000m² Üretim Alanı",
                       desc: "Modern teknoloji ile donatılmış geniş üretim tesisi",
                     },
                     {
@@ -450,7 +313,7 @@ export default function HomePage() {
               </h3>
 
               <p className="text-slate-700 text-lg leading-relaxed mb-6">
-                <strong>CNC lazer kesim</strong> teknolojimiz ile kalınlığı 25 mm'ye kadar olan siyah sac ve 15 mm'ye kadar olan paslanmaz çelik malzemelerde kesim işlemleri gerçekleştirebilmekteyiz. Kesim hassasiyetimiz ±0.05 mm seviyesindedir. <strong>CNC büküm</strong> hizmetlerimiz ile kompleks geometrili parçalar tek seferde ve yüksek hassasiyetle üretilebilmektedir.
+                <strong>CNC lazer kesim</strong> teknolojimiz ile kalınlığı 25 mm&apos;ye kadar olan siyah sac ve 15 mm&apos;ye kadar olan paslanmaz çelik malzemelerde kesim işlemleri gerçekleştirebilmekteyiz. Kesim hassasiyetimiz ±0.05 mm seviyesindedir. <strong>CNC büküm</strong> hizmetlerimiz ile kompleks geometrili parçalar tek seferde ve yüksek hassasiyetle üretilebilmektedir.
               </p>
 
               <h3 className="text-2xl md:text-3xl font-black text-slate-900 mt-8 mb-4">

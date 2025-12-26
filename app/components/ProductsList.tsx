@@ -46,7 +46,7 @@ async function getProducts(): Promise<Product[]> {
         id: 1,
         title: "Elektrik Pano Sistemleri",
         description:
-          "Sıvaüstü, sıvaaltı ve dahili elektrik pano üretimi. Uluslararası standartlara uygun, güvenli ve verimli enerji dağıtım çözümleri.",
+          "Sıvaüstü, sıvaaltı ve dahili elektrik pano üretimi. Uluslararası standartlara uygun, güvenli ve verimli enerji dağıtım çözümleri. IEC standartlarına uygun profesyonel üretim.",
         image: "/elektrıkpano.png",
         link: "/urunler/urunler/elektrik-pano-sistemleri",
         category: "Elektrik Panoları",
@@ -55,19 +55,46 @@ async function getProducts(): Promise<Product[]> {
         id: 2,
         title: "CNC Lazer Kesilmiş Parçalar",
         description:
-          "Hassas CNC lazer kesim ile üretilmiş metal parçalar. ±0.05 mm hassasiyet ile endüstriyel standartlarda üretim.",
-        image: "https://picsum.photos/seed/cnc1/600/400",
-        link: "/urunler/urunler/cnc-lazer-kesilmis-parcalar",
-        category: "CNC İmalat",
+          "Hassas CNC lazer kesim ile üretilmiş metal parçalar. ±0.05 mm hassasiyet ile endüstriyel standartlarda üretim. Kompleks geometrili parçalar için profesyonel çözümler.",
+        image: "/metod.png",
+        link: "/urunler/urunler/cnc-lazer-kesim",
+        category: "CNC Lazer Kesim",
       },
       {
         id: 3,
         title: "Bükülmüş Metal Levhalar",
         description:
-          "CNC büküm teknolojisi ile şekillendirilmiş metal levhalar. Kompleks geometrili parçalar için profesyonel çözümler.",
-        image: "/cncbukum.png",
-        link: "/urunler/urunler/bukulmus-metal-levhalar",
+          "CNC büküm teknolojisi ile şekillendirilmiş metal levhalar. Kompleks geometrili parçalar için profesyonel çözümler. Kalınlığı 6 mm&apos;ye kadar sac malzemelerde yüksek hassasiyetli büküm hizmetleri.",
+        image: "/kaynak.png",
+        link: "/urunler/urunler/kaynak-imalat",
         category: "CNC Büküm",
+      },
+      {
+        id: 4,
+        title: "Toz Boyalı Ürünler",
+        description:
+          "Elektrostatik toz boya ile kaplanmış ürünler. RAL renk standardına uygun, uzun ömürlü ve estetik yüzey işlemleri. Çevre dostu ve kalıcı yüzey kaplama çözümleri.",
+        image: "/Elektrostatik Toz Boya.png",
+        link: "/urunler/urunler/toz-boya",
+        category: "Yüzey İşleme",
+      },
+      {
+        id: 5,
+        title: "Çelik Konstrüksiyon Elemanları",
+        description:
+          "Endüstriyel yapılar için çelik konstrüksiyon elemanları. Mühendislik standartlarına uygun, dayanıklı ve güvenilir. Fabrika binaları, çatı sistemleri ve endüstriyel tesisler için profesyonel çözümler.",
+        image: "/Çelik Konstrüksiyon.png",
+        link: "/urunler/urunler/celik-konstruksiyon",
+        category: "Konstrüksiyon",
+      },
+      {
+        id: 6,
+        title: "Mağaza Raf Sistemleri",
+        description:
+          "Özel tasarım mağaza raf sistemleri. Estetik ve fonksiyonel çözümler ile mağaza içi düzenlemeleriniz için ideal. İhtiyacınıza özel tasarım ve üretim çözümleri.",
+        image: "/Mağaza Raf Sistemleri ve Ürünleri.png",
+        link: "/urunler/urunler/magaza-raf-sistemleri",
+        category: "Mağaza Ürünleri",
       },
     ];
   }
@@ -86,22 +113,34 @@ export default async function ProductsList() {
 
   return (
     <>
-      {products.map((product: Product) => (
+      {products.map((product: Product) => {
+        // Link varsa onu kullan, yoksa ID ile oluştur
+        const productUrl = product.link 
+          ? (product.link.startsWith('/') ? product.link : `/${product.link}`)
+          : `/urunler/urunler/${product.id}`;
+        
+        return (
         <Link
-          href={`/urunler/urunler/${product.id}`}
+          href={productUrl}
           key={product.id}
           className="group relative overflow-hidden rounded-2xl bg-white border-2 border-slate-200 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 flex flex-col h-full"
         >
           {/* Ürün Görseli - Sabit Yükseklik */}
           <div className="relative w-full h-64 bg-gray-50 overflow-hidden flex items-center justify-center">
-            <Image
-              src={product.image || "https://picsum.photos/600/400"}
-              alt={product.title}
-              width={600}
-              height={400}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            />
+            {product.image ? (
+              <Image
+                src={product.image}
+                alt={product.title}
+                width={600}
+                height={400}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              />
+            ) : (
+              <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
+                <span className="text-gray-400 text-sm">Görsel yükleniyor...</span>
+              </div>
+            )}
             {/* Overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             {/* Kategori Badge */}
@@ -140,7 +179,8 @@ export default async function ProductsList() {
             </div>
           </div>
         </Link>
-      ))}
+        );
+      })}
     </>
   );
 }

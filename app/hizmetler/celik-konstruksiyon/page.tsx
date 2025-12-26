@@ -1,6 +1,7 @@
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -16,8 +17,20 @@ export default function CelikKonstruksiyonPage() {
     <>
       <Header />
       <main className="bg-white min-h-screen pt-24 md:pt-28">
-        <section className="relative bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white py-20 md:py-32">
-          <div className="container mx-auto px-6">
+        <section className="relative bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white py-20 md:py-32 overflow-hidden">
+          {/* Arka Plan Görseli */}
+          <div className="absolute inset-0 z-0">
+            <Image
+              src="/Çelik Konstruksiyon.png"
+              alt="Çelik Konstrüksiyon - Metod Mühendislik"
+              fill
+              className="object-cover opacity-20"
+              priority
+              quality={90}
+            />
+            <div className="absolute inset-0 bg-gradient-to-br from-slate-900/90 via-blue-900/80 to-slate-900/90"></div>
+          </div>
+          <div className="container mx-auto px-6 relative z-10">
             <div className="max-w-4xl">
               <div className="text-6xl mb-6">🏗️</div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-black mb-6 leading-tight">
@@ -33,6 +46,19 @@ export default function CelikKonstruksiyonPage() {
         <section className="py-20 md:py-32 bg-white">
           <div className="container mx-auto px-6">
             <div className="max-w-4xl mx-auto">
+              {/* Görsel */}
+              <div className="mb-12 rounded-2xl overflow-hidden shadow-2xl">
+                <div className="relative h-96 w-full">
+                  <Image
+                    src="/Çelik Konstruksiyon.png"
+                    alt="Çelik Konstrüksiyon - Metod Mühendislik"
+                    fill
+                    className="object-cover"
+                    quality={90}
+                  />
+                </div>
+              </div>
+              
               <div className="mb-12">
                 <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-6">
                   Çelik Konstrüksiyon ve Mühendislik Çözümleri

@@ -110,7 +110,7 @@ export default function Header() {
           isScrolled
             ? "opacity-0 -translate-y-full pointer-events-none"
             : "opacity-100 translate-y-0"
-        }`}
+        } ${isMobileMenuOpen ? "lg:opacity-100 lg:translate-y-0" : ""}`}
       >
         <div className="container mx-auto px-6 flex justify-between items-center">
           <div className="flex items-center gap-6">
@@ -150,7 +150,7 @@ export default function Header() {
           isScrolled
             ? "bg-white/95 backdrop-blur-xl shadow-xl py-3 border-b border-slate-200/50"
             : "bg-white/80 backdrop-blur-lg shadow-md py-4 border-b border-slate-100/50"
-        }`}
+        } ${isMobileMenuOpen ? "lg:opacity-100 lg:pointer-events-auto opacity-0 pointer-events-none" : ""}`}
         style={{ top: isScrolled ? "0" : "40px" }}
       >
         <div className="container mx-auto px-4 md:px-6">
@@ -158,9 +158,7 @@ export default function Header() {
             {/* LOGO */}
             <Link
               href="/"
-              className={`group flex items-center relative z-10 flex-shrink-0 transition-opacity duration-300 ${
-                isMobileMenuOpen ? "lg:opacity-100 opacity-0 pointer-events-none" : "opacity-100"
-              }`}
+              className="group flex items-center relative z-10 flex-shrink-0"
               aria-label="Ana Sayfa"
             >
               <div className="relative h-12 w-auto md:h-14 flex-shrink-0 transition-transform duration-300 group-hover:scale-105">
@@ -427,7 +425,7 @@ export default function Header() {
 
             {/* MOBİL MENÜ BUTONU */}
             <button
-              className={`lg:hidden p-2.5 rounded-xl transition-all duration-300 relative z-[101] ${
+              className={`lg:hidden p-2.5 rounded-xl transition-all duration-300 relative z-[103] ${
                 isScrolled
                   ? "hover:bg-slate-100 text-slate-900"
                   : "hover:bg-slate-100 text-slate-900"
@@ -460,7 +458,7 @@ export default function Header() {
 
       {/* MOBİL MENÜ - Modern Slide-in */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 z-[105] lg:hidden">
+        <div className="fixed inset-0 z-[102] lg:hidden">
           <div
             className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300"
             onClick={() => setIsMobileMenuOpen(false)}
@@ -693,6 +691,39 @@ export default function Header() {
                   </svg>
                   <span>info@metodmuhendislik.com</span>
                 </a>
+              </div>
+
+              {/* MOBİL MEDIA BACKLINK */}
+              <div className="pt-6 mt-6 border-t border-slate-200">
+                <div className="flex justify-center px-4 py-3">
+                  <a
+                    href="https://bariscanyonel.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-center gap-2 text-sm font-medium text-orange-500 hover:text-orange-400 transition-all duration-300 hover:gap-2.5"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <span className="text-orange-400 group-hover:text-orange-300 transition-colors uppercase tracking-wider">
+                      media:
+                    </span>
+                    <span className="text-orange-500 group-hover:text-orange-400 font-bold uppercase tracking-wide">
+                      BARİŞ CAN YÖNEL
+                    </span>
+                    <svg
+                      className="w-3.5 h-3.5 text-orange-500 group-hover:text-orange-400 group-hover:translate-x-0.5 transition-all duration-300 opacity-80 group-hover:opacity-100"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                      />
+                    </svg>
+                  </a>
+                </div>
               </div>
             </div>
           </div>

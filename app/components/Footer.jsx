@@ -259,11 +259,47 @@ export default function Footer() {
               KVKK
             </Link>
             <Link
+              href="/kurumsal/gizlilik-sozlesmesi"
+              className="hover:text-white transition-colors"
+            >
+              Gizlilik Sözleşmesi
+            </Link>
+            <Link
               href="/kurumsal/kalite-politikamiz"
               className="hover:text-white transition-colors"
             >
               Kalite Politikamız
             </Link>
+          </div>
+        </div>
+        <div className="relative z-10 container mx-auto px-6 mt-6 pt-6 border-t border-white/20">
+          <div className="flex justify-center items-center">
+            <a
+              href="https://bariscanyonel.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex items-center gap-2 text-sm font-medium text-orange-500 hover:text-orange-400 transition-all duration-300 hover:gap-3"
+            >
+              <span className="text-orange-400 group-hover:text-orange-300 transition-colors uppercase tracking-wider">
+                media:
+              </span>
+              <span className="text-orange-500 group-hover:text-orange-400 font-bold uppercase tracking-wide">
+                BARİŞ CAN YÖNEL
+              </span>
+              <svg
+                className="w-3.5 h-3.5 text-orange-500 group-hover:text-orange-400 group-hover:translate-x-0.5 transition-all duration-300 opacity-80 group-hover:opacity-100"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                />
+              </svg>
+            </a>
           </div>
         </div>
       </div>
