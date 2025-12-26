@@ -1,0 +1,12 @@
+# RHDA ignore file
+# Ignore Next.js build output directory
+.next/
+.next/**
+
+# Ignore node_modules
+node_modules/
+
+# Ignore other build outputs
+out/
+build/
+
