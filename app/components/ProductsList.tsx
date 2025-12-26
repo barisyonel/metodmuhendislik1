@@ -33,7 +33,13 @@ async function getProducts(): Promise<Product[]> {
       throw err;
     }
   } catch (error: unknown) {
-    console.error("Ürünler yüklenirken hata:", error);
+    const err = error as { code?: string; message?: string };
+    // Veritabanı bağlantı hatası için özel mesaj
+    if (err.code === 'ECONNREFUSED') {
+      console.warn("Veritabanı bağlantısı reddedildi. Varsayılan ürünler gösteriliyor.");
+    } else {
+      console.error("Ürünler yüklenirken hata:", error);
+    }
     // Hata durumunda varsayılan ürünler
     return [
       {

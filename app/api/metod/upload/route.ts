@@ -72,7 +72,6 @@ export async function POST(request: NextRequest) {
   } catch (error: unknown) {
     console.error("Upload error:", error);
     const err = error as { message?: string; http_code?: number };
-    
     // Cloudinary hatalarını daha iyi handle et
     if (err.http_code) {
       return NextResponse.json(

@@ -33,12 +33,42 @@ export async function query<T = unknown>(sql: string, params?: unknown[]): Promi
     // We need to cast rows to T
     return rows as T;
   } catch (error: unknown) {
-    const err = error as { code?: string; message?: string; sqlMessage?: string };
+    // MySQL hatalarını daha iyi yakalama
+    let errorDetails: Record<string, unknown> = {};
+    
+    if (error instanceof Error) {
+      errorDetails = {
+        name: error.name,
+        message: error.message,
+        stack: error.stack,
+      };
+      
+      // MySQL özel hata özelliklerini kontrol et
+      const mysqlError = error as { code?: string; errno?: number; sqlState?: string; sqlMessage?: string; sql?: string };
+      if (mysqlError.code) errorDetails.code = mysqlError.code;
+      if (mysqlError.errno) errorDetails.errno = mysqlError.errno;
+      if (mysqlError.sqlState) errorDetails.sqlState = mysqlError.sqlState;
+      if (mysqlError.sqlMessage) errorDetails.sqlMessage = mysqlError.sqlMessage;
+      if (mysqlError.sql) errorDetails.sql = mysqlError.sql;
+    } else {
+      // Error objesi değilse, direkt stringify et
+      errorDetails = { rawError: error };
+    }
+    
+    // Daha okunabilir hata mesajı
+    const errorMessage = errorDetails.message || errorDetails.sqlMessage || 'Unknown database error';
+    const errorCode = errorDetails.code || 'UNKNOWN';
+    
     console.error('Database query error:', {
-      code: err.code,
-      message: err.message || err.sqlMessage,
-      sql: sql.substring(0, 100) + '...',
+      code: errorCode,
+      message: errorMessage,
+      errno: errorDetails.errno,
+      sqlState: errorDetails.sqlState,
+      query: sql.substring(0, 200),
+      params: params ? (Array.isArray(params) ? params.join(', ') : JSON.stringify(params)) : 'none',
+      fullError: errorDetails,
     });
+    
     throw error;
   }
 }
