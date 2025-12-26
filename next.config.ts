@@ -74,7 +74,7 @@ const nextConfig: NextConfig = {
           source: '/:path*',
           has: [
             {
-              type: 'host',
+              type: 'host' as const,
               value: 'metodmuhendislik.com',
             },
           ],
@@ -88,7 +88,7 @@ const nextConfig: NextConfig = {
           source: '/:path*',
           has: [
             {
-              type: 'header',
+              type: 'header' as const,
               key: 'x-forwarded-proto',
               value: 'http',
             },
