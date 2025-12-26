@@ -34,18 +34,17 @@ export async function query<T = unknown>(sql: string, params?: unknown[]): Promi
     // We need to cast rows to T
     return rows;
   } catch (error: unknown) {
-    // MySQL hatalarını daha iyi yakalama
-    let errorDetails: Record<string, unknown> = {};
+    // MySQL hatalarını daha iyi yakalama ve loglama
+    let errorCode = 'UNKNOWN';
+    let errorMessage = 'Unknown database error';
+    let errno: number | undefined;
+    let sqlState: string | undefined;
+    let sqlMessage: string | undefined;
     
     if (error instanceof Error) {
-      errorDetails = {
-        name: error.name,
-        message: error.message || 'No error message provided',
-        stack: error.stack,
-      };
+      errorMessage = error.message || 'No error message provided';
       
       // MySQL özel hata özelliklerini kontrol et
-      // mysql2 hataları genellikle Error objesi olarak gelir ama ek özellikler içerir
       const mysqlError = error as Error & { 
         code?: string; 
         errno?: number; 
@@ -54,36 +53,31 @@ export async function query<T = unknown>(sql: string, params?: unknown[]): Promi
         sql?: string;
       };
       
-      if (mysqlError.code) errorDetails.code = mysqlError.code;
-      if (mysqlError.errno !== undefined) errorDetails.errno = mysqlError.errno;
-      if (mysqlError.sqlState) errorDetails.sqlState = mysqlError.sqlState;
-      if (mysqlError.sqlMessage) errorDetails.sqlMessage = mysqlError.sqlMessage;
-      if (mysqlError.sql) errorDetails.sql = mysqlError.sql;
+      if (mysqlError.code) errorCode = mysqlError.code;
+      if (mysqlError.errno !== undefined) errno = mysqlError.errno;
+      if (mysqlError.sqlState) sqlState = mysqlError.sqlState;
+      if (mysqlError.sqlMessage) sqlMessage = mysqlError.sqlMessage;
       
       // Eğer message boşsa, code veya sqlMessage'dan birini kullan
-      if (!errorDetails.message || errorDetails.message === '') {
-        errorDetails.message = mysqlError.sqlMessage || mysqlError.code || 'Database connection error';
+      if (!errorMessage || errorMessage.trim() === '') {
+        errorMessage = sqlMessage || errorCode || 'Database connection error';
       }
     } else {
-      // Error objesi değilse, direkt stringify et
-      errorDetails = { 
-        rawError: String(error),
-        message: 'Non-Error object thrown',
-      };
+      errorMessage = String(error) || 'Non-Error object thrown';
     }
     
-    // Daha okunabilir hata mesajı
-    const errorMessage = (errorDetails.message as string) || (errorDetails.sqlMessage as string) || 'Unknown database error';
-    const errorCode = (errorDetails.code as string) || 'UNKNOWN';
-    
-    console.error('Database query error:', {
-      code: errorCode,
-      message: errorMessage,
-      errno: errorDetails.errno,
-      sqlState: errorDetails.sqlState,
-      query: sql.substring(0, 200),
-      params: params ? (Array.isArray(params) ? params.join(', ') : JSON.stringify(params)) : 'none',
-    });
+    // Daha okunabilir ve detaylı hata loglama
+    console.error('Database query error:');
+    console.error('  Code:', errorCode);
+    console.error('  Message:', errorMessage);
+    if (errno !== undefined) console.error('  Errno:', errno);
+    if (sqlState) console.error('  SQL State:', sqlState);
+    if (sqlMessage) console.error('  SQL Message:', sqlMessage);
+    console.error('  Query:', sql.substring(0, 200));
+    console.error('  Params:', params ? (Array.isArray(params) ? params.join(', ') : JSON.stringify(params)) : 'none');
+    if (error instanceof Error && error.stack) {
+      console.error('  Stack:', error.stack);
+    }
     
     throw error;
   }
