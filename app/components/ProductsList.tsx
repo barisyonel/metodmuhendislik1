@@ -154,11 +154,11 @@ export default async function ProductsList() {
           </div>
 
           {/* İçerik - Sabit Yükseklik */}
-          <div className="p-6 flex flex-col flex-grow">
-            <h3 className="text-xl font-black text-slate-900 mb-3 group-hover:text-blue-600 transition-colors line-clamp-2 min-h-[3.5rem]">
+          <div className="p-6 flex flex-col grow">
+            <h3 className="text-xl font-black text-slate-900 mb-3 group-hover:text-blue-600 transition-colors line-clamp-2 min-h-14">
               {product.title}
             </h3>
-            <p className="text-slate-600 text-sm leading-relaxed mb-4 line-clamp-3 flex-grow">
+            <p className="text-slate-600 text-sm leading-relaxed mb-4 line-clamp-3 grow">
               {product.description}
             </p>
             <div className="flex items-center gap-2 text-blue-600 font-semibold text-sm group-hover:gap-3 transition-all mt-auto">
