@@ -83,6 +83,14 @@ export default function Footer() {
             </li>
             <li>
               <Link
+                href="/katalog"
+                className="hover:text-white transition-colors"
+              >
+                Katalog
+              </Link>
+            </li>
+            <li>
+              <Link
                 href="/iletisim"
                 className="hover:text-white transition-colors"
               >

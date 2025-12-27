@@ -24,7 +24,7 @@ export default function HeroSlider() {
     },
     {
       id: 2,
-      img: "https://picsum.photos/seed/industrial1/2000/1200",
+      img: "/metod.png",
       title: "CNC Lazer Kesim",
       subtitle: "Hassas ve Hızlı Üretim",
       description:
@@ -44,7 +44,7 @@ export default function HeroSlider() {
     },
     {
       id: 4,
-      img: "https://picsum.photos/seed/industrial4/2000/1200",
+      img: "/kaynak.png",
       title: "Metal Kaynak & İmalat",
       subtitle: "Profesyonel Kaynak Hizmetleri",
       description:

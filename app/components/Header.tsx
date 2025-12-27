@@ -320,6 +320,17 @@ export default function Header() {
               </Link>
 
               <Link
+                href="/katalog"
+                className={`relative px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 ${
+                  isActive("/katalog") || pathname?.startsWith("/katalog")
+                    ? "text-blue-600 bg-blue-50"
+                    : "text-slate-700 hover:text-blue-600 hover:bg-slate-50"
+                }`}
+              >
+                Katalog
+              </Link>
+
+              <Link
                 href="/iletisim"
                 className={`relative px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 ${
                   isActive("/iletisim") || pathname?.startsWith("/iletisim")
@@ -587,6 +598,18 @@ export default function Header() {
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Blog
+              </Link>
+
+              <Link
+                href="/katalog"
+                className={`block px-4 py-3.5 rounded-xl font-semibold transition-all ${
+                  isActive("/katalog") || pathname?.startsWith("/katalog")
+                    ? "bg-blue-600 text-white"
+                    : "text-slate-700 hover:bg-slate-100"
+                }`}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Katalog
               </Link>
 
               <Link

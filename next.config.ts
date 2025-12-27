@@ -38,6 +38,23 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
+        source: '/dokumanlar/:path*',
+        headers: [
+          {
+            key: 'Content-Type',
+            value: 'application/pdf'
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff'
+          },
+          {
+            key: 'Content-Disposition',
+            value: 'inline' // PDF'i inline olarak göster, iframe'de açılabilir
+          },
+        ],
+      },
+      {
         source: '/:path*',
         headers: [
           {

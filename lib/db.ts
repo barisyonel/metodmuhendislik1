@@ -71,22 +71,33 @@ export async function query<T = unknown>(sql: string, params?: unknown[]): Promi
                               errorCode === 'ENOTFOUND' || errno === -111 || errno === -61;
     const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
     
-    if (isConnectionError && isProduction) {
-      // Production'da bağlantı hatalarını sadece warning olarak logla
-      // Detaylı stack trace'i loglama
-      console.warn('Database connection unavailable in production. Using fallback data.');
+    // Bağlantı hataları (hem production hem development için sessiz)
+    if (isConnectionError) {
+      // Bağlantı hatalarını sessizce handle et - fallback mekanizmaları kullanılacak
+      // Sadece debug modunda logla
+      if (process.env.DEBUG === 'true' || process.env.DB_DEBUG === 'true') {
+        console.warn('Database connection unavailable. Using fallback data.');
+        console.warn('  Code:', errorCode);
+        console.warn('  Message:', errorMessage);
+      }
     } else {
-      // Development veya diğer hatalar için detaylı loglama
-      console.error('Database query error:');
-      console.error('  Code:', errorCode);
-      console.error('  Message:', errorMessage);
-      if (errno !== undefined) console.error('  Errno:', errno);
-      if (sqlState) console.error('  SQL State:', sqlState);
-      if (sqlMessage) console.error('  SQL Message:', sqlMessage);
-      console.error('  Query:', sql.substring(0, 200));
-      console.error('  Params:', params ? (Array.isArray(params) ? params.join(', ') : JSON.stringify(params)) : 'none');
-      if (!isProduction && error instanceof Error && error.stack) {
-        console.error('  Stack:', error.stack);
+      // Gerçek hatalar için (bağlantı dışı) detaylı loglama
+      const isDevelopment = process.env.NODE_ENV === 'development';
+      if (isDevelopment || !isProduction) {
+        console.error('Database query error:');
+        console.error('  Code:', errorCode);
+        console.error('  Message:', errorMessage);
+        if (errno !== undefined) console.error('  Errno:', errno);
+        if (sqlState) console.error('  SQL State:', sqlState);
+        if (sqlMessage) console.error('  SQL Message:', sqlMessage);
+        console.error('  Query:', sql.substring(0, 200));
+        console.error('  Params:', params ? (Array.isArray(params) ? params.join(', ') : JSON.stringify(params)) : 'none');
+        if (error instanceof Error && error.stack) {
+          console.error('  Stack:', error.stack);
+        }
+      } else {
+        // Production'da gerçek hatalar için sadece özet log
+        console.error('Database query error:', errorCode, errorMessage);
       }
     }
     
