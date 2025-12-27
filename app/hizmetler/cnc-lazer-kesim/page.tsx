@@ -65,7 +65,7 @@ export default function CNCLazerKesimPage() {
                   Kesim Kapasitelerimiz ve Teknik Özellikler
                 </h2>
                 <p className="text-slate-700 text-lg leading-relaxed mb-6">
-                  Bu makinelerimiz sayesinde, kalınlığı 25 mm'ye kadar olan siyah sac ve 15 mm'ye kadar olan paslanmaz çelik malzemelerde kesim işlemleri gerçekleştirebilmekteyiz. Kesim hassasiyetimiz ±0.05 mm seviyesindedir, bu da endüstriyel standartların çok üzerinde bir kalite sunmaktadır.
+                  Bu makinelerimiz sayesinde, kalınlığı 25 mm&apos;ye kadar olan siyah sac ve 15 mm&apos;ye kadar olan paslanmaz çelik malzemelerde kesim işlemleri gerçekleştirebilmekteyiz. Kesim hassasiyetimiz ±0.05 mm seviyesindedir, bu da endüstriyel standartların çok üzerinde bir kalite sunmaktadır.
                 </p>
                 <p className="text-slate-700 text-lg leading-relaxed mb-6">
                   CNC lazer kesim hizmetlerimiz, otomotiv, makine imalatı, mimari uygulamalar ve genel endüstriyel üretim sektörlerinde yaygın olarak kullanılmaktadır. Kesim alanımız 2000 x 4000 mm boyutlarındadır.

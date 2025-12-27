@@ -9,6 +9,3 @@ node_modules/
 # Ignore other build outputs
 out/
 build/
-
-
-
