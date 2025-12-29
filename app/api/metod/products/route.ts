@@ -3,6 +3,9 @@ import { isAuthenticated } from "@/lib/auth";
 import { query, getConnection } from "@/lib/db";
 import type { ResultSetHeader } from "mysql2";
 
+// Force dynamic rendering because we use cookies for authentication
+export const dynamic = 'force-dynamic';
+
 // Tüm ürünleri getir
 export async function GET() {
   try {
@@ -11,9 +14,34 @@ export async function GET() {
     );
     return NextResponse.json({ success: true, data: products || [] });
   } catch (error: unknown) {
-    console.error("Products GET error:", error);
+    const err = error as { code?: string; message?: string; errno?: number; sqlMessage?: string };
+    console.error("❌ Products GET error:", {
+      code: err.code,
+      message: err.message,
+      errno: err.errno,
+      sqlMessage: err.sqlMessage,
+      fullError: String(error),
+    });
+
+    let errorMessage = "Ürünler yüklenirken hata oluştu";
+    if (err.code === 'ECONNREFUSED' || err.code === 'ETIMEDOUT' || err.code === 'ENOTFOUND') {
+      errorMessage = "Veritabanı bağlantısı kurulamadı. Lütfen veritabanı sunucusunun çalıştığından emin olun.";
+    } else if (err.code === 'ER_NO_SUCH_TABLE') {
+      errorMessage = "Products tablosu bulunamadı. Lütfen migration script'ini çalıştırın.";
+    }
+
     return NextResponse.json(
-      { success: false, message: "Ürünler yüklenirken hata oluştu" },
+      {
+        success: false,
+        message: errorMessage,
+        errorCode: err.code,
+        errorDetails: process.env.NODE_ENV === 'development' ? {
+          code: err.code,
+          message: err.message,
+          errno: err.errno,
+          sqlMessage: err.sqlMessage,
+        } : undefined,
+      },
       { status: 500 }
     );
   }

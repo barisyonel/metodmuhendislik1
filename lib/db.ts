@@ -48,6 +48,12 @@ export async function query<T = unknown>(sql: string, params?: unknown[]): Promi
     // We need to cast rows to T
     return rows;
   } catch (error: unknown) {
+    // Tüm hataları logla - production'da bile
+    console.error("❌ Database query error:", {
+      sql: sql.substring(0, 200),
+      params: params || [],
+      error: error instanceof Error ? error.message : String(error),
+    });
     // MySQL hatalarını daha iyi yakalama ve loglama
     let errorCode = 'UNKNOWN';
     let errorMessage = 'Unknown database error';

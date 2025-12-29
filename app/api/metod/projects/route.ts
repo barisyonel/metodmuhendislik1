@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { isAuthenticated } from "@/lib/auth";
 import { query } from "@/lib/db";
 
+// Force dynamic rendering because we use cookies for authentication
+export const dynamic = 'force-dynamic';
+
 interface Project {
   id: number;
   title: string;
@@ -28,12 +31,29 @@ export async function GET() {
       success: true,
       data: Array.isArray(projects) ? projects : [],
     });
-  } catch (error) {
-    console.error("Projeler yükleme hatası:", error);
-    // Hata durumunda boş array döndür
+  } catch (error: unknown) {
+    const err = error as { code?: string; message?: string; errno?: number; sqlMessage?: string };
+    console.error("❌ Projeler yükleme hatası:", {
+      code: err.code,
+      message: err.message,
+      errno: err.errno,
+      sqlMessage: err.sqlMessage,
+      fullError: String(error),
+    });
+    
+    // Hata durumunda boş array döndür ama hata bilgisini de ekle
     return NextResponse.json({
-      success: true,
+      success: false,
       data: [],
+      error: process.env.NODE_ENV === 'development' ? {
+        code: err.code,
+        message: err.message,
+        errno: err.errno,
+        sqlMessage: err.sqlMessage,
+      } : undefined,
+      errorMessage: err.code === 'ECONNREFUSED' || err.code === 'ETIMEDOUT' 
+        ? "Veritabanı bağlantısı kurulamadı" 
+        : "Projeler yüklenirken hata oluştu",
     });
   }
 }
