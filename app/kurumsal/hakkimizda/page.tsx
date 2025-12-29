@@ -71,12 +71,12 @@ export default function Hakkimizda() {
           <div className="container mx-auto px-6">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-8 text-center">
-                2. Tarihçe ve Kuruluş Hikayemiz
+                Tarihçe ve Kuruluş Hikayemiz
               </h2>
               <div className="space-y-6">
                 <div className="bg-white rounded-2xl p-8 shadow-lg border-l-4 border-blue-600">
                   <p className="text-slate-700 text-lg leading-relaxed mb-4">
-                    20+ yıllık deneyimimiz, elektrik pano üretimi konusunda hizmet vermek ve sektöre mühendislik tabanlı, kalite odaklı bir yaklaşım getirmek amacıyla kurulan şirketimizin, geçen süre zarfında istikrarlı bir büyüme grafiği çizdiğinin en somut kanıtıdır.
+                    10+ yıllık deneyimimiz, elektrik pano üretimi konusunda hizmet vermek ve sektöre mühendislik tabanlı, kalite odaklı bir yaklaşım getirmek amacıyla kurulan şirketimizin, geçen süre zarfında istikrarlı bir büyüme grafiği çizdiğinin en somut kanıtıdır.
                   </p>
                   <p className="text-slate-700 text-lg leading-relaxed mb-4">
                     Kuruluşumuzun ilk yıllarında yerel projelere odaklanarak kazandığımız saha tecrübesi, sonraki yıllarda bizi uluslararası arenaya taşıyan en büyük gücümüz olmuştur. &quot;20+ yıllık tecrübe&quot; söylemimiz, sadece geçen zamanı değil, bu zaman dilimine sığdırılan yüzlerce başarılı projeyi, çözülen binlerce teknik sorunu ve kazanılan sayısız müşteri memnuniyetini ifade eder.
@@ -95,7 +95,7 @@ export default function Hakkimizda() {
           <div className="container mx-auto px-6">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-8 text-center">
-                3. Üretim Felsefemiz ve Teknik Yetkinliklerimiz
+              Üretim Felsefemiz ve Teknik Yetkinliklerimiz
               </h2>
               <div className="space-y-6">
                 <p className="text-slate-700 text-lg leading-relaxed">
@@ -161,7 +161,7 @@ export default function Hakkimizda() {
           <div className="container mx-auto px-6">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-8 text-center">
-                4. Kalite Yönetimi ve Standartlar
+                 Kalite Yönetimi ve Standartlar
               </h2>
               <div className="bg-white rounded-2xl p-8 shadow-lg border-2 border-blue-200">
                 <p className="text-slate-700 text-lg leading-relaxed mb-6">
@@ -198,7 +198,7 @@ export default function Hakkimizda() {
           <div className="container mx-auto px-6">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-8 text-center">
-                5. Global Güç: İhracat ve Uluslararası Başarılar
+               Global Güç: İhracat ve Uluslararası Başarılar
               </h2>
               <div className="space-y-6">
                 <p className="text-slate-700 text-lg leading-relaxed">
@@ -239,7 +239,7 @@ export default function Hakkimizda() {
           <div className="container mx-auto px-6">
             <div className="max-w-6xl mx-auto">
               <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-12 text-center">
-                6. Projeler ve İstatistiklerle Metod Mühendislik
+                 Projeler ve İstatistiklerle Metod Mühendislik
               </h2>
               <p className="text-center text-slate-700 text-lg mb-8 max-w-3xl mx-auto">
                 Rakamlar yalan söylemez. <strong>Metod Mühendislik</strong>&apos;in başarısı, tamamladığı projelerin niceliği ve niteliği ile ölçülebilir durumdadır.
@@ -300,7 +300,7 @@ export default function Hakkimizda() {
           <div className="container mx-auto px-6">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-8 text-center">
-                7. İnsan Kaynakları ve Uzman Kadro
+              İnsan Kaynakları ve Uzman Kadrosu
               </h2>
               <div className="space-y-6">
                 <p className="text-slate-700 text-lg leading-relaxed">
@@ -345,7 +345,7 @@ export default function Hakkimizda() {
           <div className="container mx-auto px-6">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-8 text-center">
-                8. Satış Sonrası Destek ve Müşteri Memnuniyeti
+                 Satış Sonrası Destek ve Müşteri Memnuniyeti
               </h2>
               <div className="bg-white rounded-2xl p-8 shadow-lg border-2 border-blue-200">
                 <p className="text-slate-700 text-lg leading-relaxed mb-4">
@@ -364,7 +364,7 @@ export default function Hakkimizda() {
           <div className="container mx-auto px-6">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-8 text-center">
-                9. Vizyon ve Gelecek Hedefleri
+                 Vizyon ve Gelecek Hedefleri
               </h2>
               <div className="space-y-6">
                 <p className="text-slate-700 text-lg leading-relaxed">
@@ -414,7 +414,7 @@ export default function Hakkimizda() {
           <div className="container mx-auto px-6">
             <div className="max-w-4xl mx-auto text-center">
               <h2 className="text-3xl md:text-4xl font-black mb-6">
-                10. Sonuç
+                 Sonuç
               </h2>
               <p className="text-xl text-blue-100 leading-relaxed mb-6">
                 <strong>Metod Mühendislik</strong>; 20+ yıllık deneyimi, uluslararası sertifikaları, güçlü mühendislik altyapısı ve %100 müşteri memnuniyeti odaklı çalışma prensibiyle, enerjinizin en güvenilir bekçisidir.

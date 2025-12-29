@@ -68,6 +68,27 @@ export default async function AdminDashboardPage() {
               color: "from-orange-500 to-orange-600",
             },
             {
+              title: "Slider Yönetimi",
+              description: "Anasayfa slider'ını yönet",
+              icon: "🖼️",
+              link: "/metod/slider",
+              color: "from-indigo-500 to-indigo-600",
+            },
+            {
+              title: "Slider Video Yönetimi",
+              description: "Slider'lara video ekle veya çıkar",
+              icon: "🎥",
+              link: "/metod/slider-video",
+              color: "from-pink-500 to-pink-600",
+            },
+            {
+              title: "Proje Yönetimi",
+              description: "Projeler sayfasını yönet",
+              icon: "🏗️",
+              link: "/metod/projeler",
+              color: "from-teal-500 to-teal-600",
+            },
+            {
               title: "Yedekleme",
               description: "Veritabanı yedekleme",
               icon: "💾",
@@ -108,46 +129,6 @@ export default async function AdminDashboardPage() {
               </div>
             </Link>
           ))}
-        </div>
-
-        {/* Son Aktiviteler */}
-        <div className="bg-white rounded-xl p-6 shadow-lg border border-slate-200">
-          <h2 className="text-2xl font-black text-slate-900 mb-4">
-            Son Aktiviteler
-          </h2>
-          <div className="space-y-4">
-            {[
-              {
-                action: "Yeni ürün eklendi",
-                item: "Elektrik Pano Sistemleri",
-                time: "2 saat önce",
-              },
-              {
-                action: "Hizmet güncellendi",
-                item: "CNC Lazer Kesim",
-                time: "1 gün önce",
-              },
-              {
-                action: "Ürün güncellendi",
-                item: "Bükülmüş Metal Levhalar",
-                time: "2 gün önce",
-              },
-            ].map((activity, i) => (
-              <div
-                key={i}
-                className="flex items-center gap-4 p-4 bg-slate-50 rounded-lg"
-              >
-                <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">
-                  {i + 1}
-                </div>
-                <div className="flex-1">
-                  <p className="font-semibold text-slate-900">{activity.action}</p>
-                  <p className="text-sm text-slate-600">{activity.item}</p>
-                </div>
-                <span className="text-xs text-slate-500">{activity.time}</span>
-              </div>
-            ))}
-          </div>
         </div>
       </main>
     </div>

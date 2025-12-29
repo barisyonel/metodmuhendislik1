@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import EKatalogButton from "./EKatalogButton";
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -298,9 +299,9 @@ export default function Header() {
               </div>
 
               <Link
-                href="/urunler"
+                href="/projeler"
                 className={`relative px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 ${
-                  isActive("/urunler") || pathname?.startsWith("/urunler")
+                  isActive("/projeler") || pathname?.startsWith("/projeler")
                     ? "text-blue-600 bg-blue-50"
                     : "text-slate-700 hover:text-blue-600 hover:bg-slate-50"
                 }`}
@@ -319,16 +320,6 @@ export default function Header() {
                 Blog
               </Link>
 
-              <Link
-                href="/katalog"
-                className={`relative px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 ${
-                  isActive("/katalog") || pathname?.startsWith("/katalog")
-                    ? "text-blue-600 bg-blue-50"
-                    : "text-slate-700 hover:text-blue-600 hover:bg-slate-50"
-                }`}
-              >
-                Katalog
-              </Link>
 
               <Link
                 href="/iletisim"
@@ -420,19 +411,24 @@ export default function Header() {
 
             </nav>
 
-            {/* CTA BUTONU - WhatsApp - SAĞDA */}
-            <a
-              href="https://wa.me/905425786060?text=Merhaba,%20teklif%20almak%20istiyorum."
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden lg:flex bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 hover:from-green-700 hover:to-green-800 hover:scale-105 shadow-lg shadow-green-600/30 items-center gap-2 group flex-shrink-0"
-              aria-label="WhatsApp ile Teklif Al"
-            >
-              <svg className="w-5 h-5 group-hover:rotate-12 transition-transform duration-300" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-              </svg>
-              Teklif Al
-            </a>
+            {/* CTA BUTONLARI - E-Katalog ve WhatsApp - SAĞDA */}
+            <div className="hidden lg:flex items-center gap-3 flex-shrink-0">
+              <div className="hidden xl:block">
+                <EKatalogButton className="px-5 py-2.5 text-sm" />
+              </div>
+              <a
+                href="https://wa.me/905425786060?text=Merhaba,%20teklif%20almak%20istiyorum."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 hover:from-green-700 hover:to-green-800 hover:scale-105 shadow-lg shadow-green-600/30 items-center gap-2 group flex"
+                aria-label="WhatsApp ile Teklif Al"
+              >
+                <svg className="w-5 h-5 group-hover:rotate-12 transition-transform duration-300" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                </svg>
+                Teklif Al
+              </a>
+            </div>
 
             {/* MOBİL MENÜ BUTONU */}
             <button
@@ -577,9 +573,9 @@ export default function Header() {
               </div>
 
               <Link
-                href="/urunler"
+                href="/projeler"
                 className={`block px-4 py-3.5 rounded-xl font-semibold transition-all ${
-                  isActive("/urunler") || pathname?.startsWith("/urunler")
+                  isActive("/projeler") || pathname?.startsWith("/projeler")
                     ? "bg-blue-600 text-white"
                     : "text-slate-700 hover:bg-slate-100"
                 }`}
@@ -600,17 +596,6 @@ export default function Header() {
                 Blog
               </Link>
 
-              <Link
-                href="/katalog"
-                className={`block px-4 py-3.5 rounded-xl font-semibold transition-all ${
-                  isActive("/katalog") || pathname?.startsWith("/katalog")
-                    ? "bg-blue-600 text-white"
-                    : "text-slate-700 hover:bg-slate-100"
-                }`}
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Katalog
-              </Link>
 
               <Link
                 href="/iletisim"
@@ -668,18 +653,22 @@ export default function Header() {
                 )}
               </div>
 
-              <a
-                href="https://wa.me/905425786060?text=Merhaba,%20teklif%20almak%20istiyorum."
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block px-4 py-3.5 rounded-xl bg-gradient-to-r from-green-600 to-green-700 text-white font-bold text-center mt-4 hover:from-green-700 hover:to-green-800 transition-all flex items-center justify-center gap-2 shadow-lg"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-                </svg>
-                WhatsApp ile Teklif Al
-              </a>
+              {/* MOBİL CTA BUTONLARI */}
+              <div className="space-y-3 mt-4">
+                <EKatalogButton className="w-full px-4 py-3.5 text-base" />
+                <a
+                  href="https://wa.me/905425786060?text=Merhaba,%20teklif%20almak%20istiyorum."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block px-4 py-3.5 rounded-xl bg-gradient-to-r from-green-600 to-green-700 text-white font-bold text-center hover:from-green-700 hover:to-green-800 transition-all flex items-center justify-center gap-2 shadow-lg"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                  </svg>
+                  WhatsApp ile Teklif Al
+                </a>
+              </div>
 
               {/* MOBİL İLETİŞİM BİLGİLERİ */}
               <div className="pt-6 mt-6 border-t border-slate-200 space-y-3">

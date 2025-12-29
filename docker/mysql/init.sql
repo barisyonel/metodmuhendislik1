@@ -58,3 +58,43 @@ CREATE TABLE IF NOT EXISTS `messages` (
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Hero Slider tablosu
+CREATE TABLE IF NOT EXISTS `hero_sliders` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `title` VARCHAR(255) NOT NULL,
+  `subtitle` VARCHAR(255),
+  `description` TEXT,
+  `image_url` VARCHAR(500) NOT NULL,
+  `video_url` VARCHAR(500) NULL,
+  `link` VARCHAR(500),
+  `color` VARCHAR(100) DEFAULT 'from-blue-600/50 via-blue-700/50 to-slate-900/60',
+  `sort_order` INT DEFAULT 0,
+  `is_active` BOOLEAN DEFAULT TRUE,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Varsayılan slider'ları ekle
+INSERT INTO `hero_sliders` (`title`, `subtitle`, `description`, `image_url`, `link`, `color`, `sort_order`, `is_active`) VALUES
+('Elektrik Pano & Marin Pano Üretimi', 'Güvenli Enerji Dağıtım Çözümleri', '20+ yıllık deneyimimizle elektrik pano ve marin pano üretiminde sektörün öncü firması. Sıvaüstü, sıvaaltı, dahili ve marin pano üretimi ile güvenilir enerji dağıtım çözümleri sunuyoruz.', '/elektrıkpano.png', '/hizmetler/elektrik-pano-uretime', 'from-blue-600/50 via-blue-700/50 to-slate-900/60', 1, TRUE),
+('CNC Lazer Kesim', 'Hassas ve Hızlı Üretim', 'Yüksek teknoloji lazer kesim makinelerimiz ile hassas ve hızlı üretim çözümleri', '/metod.png', '/hizmetler/cnc-lazer-kesim', 'from-blue-500/40 via-blue-700/50 to-slate-900/60', 2, TRUE),
+('CNC Büküm', 'Profesyonel İmalat Çözümleri', 'CNC büküm teknolojimiz ile şekillendirme işlemlerinde mükemmellik', '/cncbukum.png', '/hizmetler/cnc-bukum', 'from-slate-600/40 via-slate-700/50 to-blue-800/60', 3, TRUE),
+('Metal Kaynak & İmalat', 'Profesyonel Kaynak Hizmetleri', 'Metal kaynak ve imalat hizmetlerimizle endüstriyel üretimde güvenilir çözümler', '/kaynak.png', '/hizmetler/kaynak', 'from-orange-500/40 via-orange-600/50 to-slate-900/60', 4, TRUE)
+ON DUPLICATE KEY UPDATE title=title;
+
+-- Projeler tablosu
+CREATE TABLE IF NOT EXISTS `projects` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `title` VARCHAR(255) NOT NULL,
+  `description` TEXT,
+  `image_url` VARCHAR(500) NOT NULL,
+  `category` VARCHAR(100) DEFAULT 'Genel',
+  `client_name` VARCHAR(255),
+  `location` VARCHAR(255),
+  `project_date` DATE,
+  `sort_order` INT DEFAULT 0,
+  `is_active` BOOLEAN DEFAULT TRUE,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+

@@ -2,22 +2,25 @@ import Header from "./components/Header";
 import HeroSlider from "./components/HeroSlider";
 import Footer from "./components/Footer";
 import ProductsList from "./components/ProductsList";
+import EKatalogButton from "./components/EKatalogButton";
 import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Metod Mühendislik | Elektrik Pano Üretimi - Marin Pano, Sıvaüstü, Sıvaaltı Pano",
+  title: "Metod Mühendislik | Enerjinin Güvenli Yönetimi - Elektrik Pano, Marin Pano, Endüstriyel Çözümler",
   description:
-    "Elektrik pano ve marin pano üretiminde 20+ yıllık deneyim. Sıvaüstü, sıvaaltı, dahili ve marin pano üretimi. CNC lazer kesim, büküm, kaynak ve çelik konstrüksiyon hizmetleri. İstanbul&apos;da kaliteli ve güvenilir elektrik pano çözümleri.",
+    "Modern dünyanın en temel ihtiyacı olan enerjinin güvenli, verimli ve sürdürülebilir yönetimi. 20+ yıllık deneyimle elektrik pano, marin pano, CNC lazer kesim, büküm, kaynak ve çelik konstrüksiyon hizmetleri. IEC standartları, ISO 9001 sertifikalı, 12 ülkeye ihracat. İstanbul Tuzla.",
   keywords:
-    "elektrik pano, marin pano, elektrik pano üretimi, sıvaüstü pano, sıvaaltı pano, dahili pano, enerji dağıtım panosu, CNC lazer kesim, CNC büküm, kaynak, metal kaynak, elektrostatik toz boya, mağaza raf, çelik konstrüksiyon, endüstriyel üretim, mühendislik çözümleri, İstanbul, Tuzla",
+    "elektrik pano, marin pano, enerji yönetimi, güvenli enerji dağıtımı, elektrik pano üretimi, sıvaüstü pano, sıvaaltı pano, dahili pano, ADP pano, MCC pano, kompanzasyon pano, otomasyon pano, DDC pano, UPS pano, CNC lazer kesim, CNC büküm, kaynak, metal kaynak, elektrostatik toz boya, çelik konstrüksiyon, endüstriyel üretim, IEC 61439, ISO 9001, İstanbul, Tuzla, İTOSB",
   openGraph: {
-    title: "Metod Mühendislik | Elektrik Pano ve Marin Pano Üretimi - İstanbul",
+    title: "Metod Mühendislik | Enerjinin Güvenli Yönetimi - Elektrik Pano ve Endüstriyel Çözümler",
     description:
-      "Elektrik pano ve marin pano üretiminde uzman. Sıvaüstü, sıvaaltı, dahili ve marin pano üretimi. CNC lazer kesim, büküm, kaynak hizmetleri. İstanbul&apos;da kaliteli ve güvenilir çözümler.",
+      "Enerjinin olduğu her yerde güveni ve kaliteyi inşa ediyoruz. 20+ yıllık deneyim, IEC standartları, ISO 9001 sertifikalı, 12 ülkeye ihracat. Elektrik pano, marin pano, CNC lazer kesim ve endüstriyel üretim çözümleri.",
     type: "website",
     locale: "tr_TR",
+    url: "https://www.metodmuhendislik.com",
+    siteName: "Metod Mühendislik",
   },
   robots: {
     index: true,
@@ -31,7 +34,7 @@ export default function HomePage() {
     "@type": "Organization",
     name: "Metod Mühendislik",
     description:
-      "Elektrik pano ve marin pano üretiminde 20+ yıllık deneyim. Sıvaüstü, sıvaaltı, dahili ve marin pano üretimi. Ayrıca CNC lazer kesim, CNC büküm, kaynak, elektrostatik toz boya, mağaza rafları ve çelik konstrüksiyon hizmetleri sunan endüstriyel üretim firması",
+      "Modern dünyanın en temel ihtiyacı olan enerjinin güvenli, verimli ve sürdürülebilir yönetimi. 20+ yıllık deneyimle elektrik pano, marin pano, CNC lazer kesim ve endüstriyel üretim çözümleri sunan ISO 9001 sertifikalı endüstriyel üretim firması",
     url: "https://www.metodmuhendislik.com",
     logo: "https://www.metodmuhendislik.com/logo.png",
     address: {
@@ -112,58 +115,58 @@ export default function HomePage() {
       number: "20+",
       label: "Yıllık Deneyim",
       icon: "⭐",
-      description: "Sektörde lider konum",
+      description: "Sıfır hata prensibi ile kalite",
     },
     {
       number: "2000m²",
       label: "Üretim Alanı",
       icon: "🏭",
-      description: "Modern tesisler",
+      description: "Endüstri 4.0 standartları",
     },
     {
       number: "12",
       label: "Ülkeye İhracat",
       icon: "🌍",
-      description: "Uluslararası standart",
+      description: "Global çözüm ortağı",
     },
     {
       number: "ISO",
       label: "9001 Sertifikalı",
       icon: "✓",
-      description: "Kalite garantisi",
+      description: "IEC standartları uyumlu",
     },
   ];
 
   const whyChooseUs = [
     {
       icon: "🎯",
-      title: "Uzman Ekip",
-      description: "Alanında uzman mühendisler ve teknisyenler ile profesyonel hizmet",
+      title: "Akademik Seviye Uzman Kadro",
+      description: "Akademik seviyedeki uzman teknik kadromuz ve deneyimli satış ekibimiz",
     },
     {
       icon: "⚡",
-      title: "Hızlı Teslimat",
-      description: "Zamanında ve kaliteli teslimat garantisi ile projelerinizi güvende",
+      title: "Sıfır Hata Prensibi",
+      description: "Tam güvenlik ve sıfır hata ilkeleriyle üretilen kaliteli çözümler",
     },
     {
       icon: "🔧",
-      title: "Modern Teknoloji",
-      description: "Son teknoloji makine parkı ile yüksek kaliteli üretim",
+      title: "Endüstri 4.0 Standartları",
+      description: "Endüstri 4.0 standartlarına uyumlu güçlü altyapı ve modern teknoloji",
     },
     {
       icon: "📊",
-      title: "Kalite Odaklı",
-      description: "ISO 9001 sertifikalı kalite yönetim sistemi ile standartların üzerinde",
+      title: "IEC ve ISO Standartları",
+      description: "IEC 61439-1/2 ve ISO 9001:2015 sertifikalı kalite yönetim sistemi",
     },
     {
       icon: "💼",
-      title: "Çözüm Ortağı",
-      description: "Sadece üretici değil, projelerinizde güvenilir çözüm ortağı",
+      title: "Anahtar Teslim Çözümler",
+      description: "Dizayn, projelendirme, montaj ve satış sonrası destek ile turn-key hizmet",
     },
     {
       icon: "🌐",
-      title: "Global Deneyim",
-      description: "12 ülkeye ihracat deneyimi ile uluslararası standartlarda hizmet",
+      title: "12 Ülkeye İhracat",
+      description: "Global pazar deneyimi ile uluslararası standartlarda profesyonel hizmet",
     },
   ];
 
@@ -192,29 +195,33 @@ export default function HomePage() {
             <div className="max-w-7xl mx-auto">
               <div className="text-center mb-12">
                 <span className="inline-block text-blue-600 font-black text-xs tracking-[0.4em] uppercase mb-4 px-4 py-1.5 bg-blue-100 rounded-full">
-                  Güvenilir Çözüm Ortağınız
+                  Enerjinin Güvenli Yönetimi
                 </span>
                 <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 mb-4">
-                  Sektörde <span className="text-blue-600">Öncü</span> Konumdayız
+                  Güvenli, Verimli ve <span className="text-blue-600">Sürdürülebilir</span>
                 </h2>
+                <p className="text-slate-600 text-lg max-w-2xl mx-auto">
+                  Modern dünyanın en temel ihtiyacı olan enerjinin güvenli yönetimi için 20+ yıllık deneyimimizle yanınızdayız.
+                </p>
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
                 {stats.map((stat, i) => (
                   <div
                     key={i}
-                    className="group relative bg-white rounded-2xl p-6 md:p-8 border-2 border-slate-100 hover:border-blue-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                    className="group relative bg-white rounded-xl p-6 md:p-8 border border-slate-200/60 hover:border-blue-300 hover:shadow-modern-lg transition-all duration-500 hover:-translate-y-2 animate-fade-in"
+                    style={{ animationDelay: `${i * 100}ms` }}
                   >
-                    <div className="absolute top-4 right-4 text-4xl opacity-10 group-hover:opacity-20 transition-opacity">
+                    <div className="absolute top-3 right-3 text-3xl md:text-4xl opacity-5 group-hover:opacity-10 transition-opacity duration-500">
                       {stat.icon}
                     </div>
                     <div className="relative z-10">
-                      <div className="text-5xl md:text-6xl font-black text-blue-600 mb-2">
+                      <div className="text-4xl md:text-5xl lg:text-6xl font-black bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform duration-300">
                         {stat.number}
                       </div>
-                      <h3 className="text-sm md:text-base font-bold text-slate-900 mb-1">
+                      <h3 className="text-xs md:text-sm font-bold text-slate-900 mb-1.5 uppercase tracking-wide">
                         {stat.label}
                       </h3>
-                      <p className="text-xs text-slate-600">{stat.description}</p>
+                      <p className="text-xs text-slate-500 leading-relaxed">{stat.description}</p>
                     </div>
                   </div>
                 ))}
@@ -235,45 +242,47 @@ export default function HomePage() {
                   Hizmetlerimiz
                 </span>
                 <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 mb-6">
-                  Endüstriyel <span className="text-blue-600">Üretim</span> Çözümleri
+                  Geniş <span className="text-blue-600">Hizmet</span> Yelpazesi
                 </h2>
                 <p className="text-lg md:text-xl text-slate-600 max-w-3xl mx-auto">
-                  20+ yıllık deneyimimizle, elektrik pano üretiminden CNC lazer kesime kadar
-                  geniş hizmet yelpazemiz ile yanınızdayız.
+                  Alçak gerilim panolarından otomasyon sistemlerine kadar uzanan geniş ürün gamımızla,
+                  elektriğin güvenle dağıtılmasını, kontrol edilmesini ve yönetilmesini sağlıyoruz.
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                 {services.map((service, i) => (
                   <Link
                     key={i}
                     href={service.link}
-                    className="group relative overflow-hidden rounded-2xl bg-white border-2 border-slate-200 hover:border-blue-300 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
+                    className="group relative overflow-hidden rounded-xl bg-white border border-slate-200/80 hover:border-blue-400/60 shadow-modern hover:shadow-modern-lg transition-all duration-500 hover:-translate-y-2 animate-slide-up"
+                    style={{ animationDelay: `${i * 100}ms` }}
                   >
-                    <div className="relative h-64 overflow-hidden">
+                    <div className="relative h-56 md:h-64 overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100">
                       <Image
                         src={service.image}
                         alt={service.title}
                         fill
-                        className="object-cover group-hover:scale-110 transition-transform duration-500"
+                        className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       />
-                      <div className={`absolute inset-0 bg-gradient-to-t ${service.color} opacity-80 group-hover:opacity-90 transition-opacity`} />
-                      <div className="absolute top-4 left-4 text-5xl drop-shadow-lg">
+                      <div className={`absolute inset-0 bg-gradient-to-t ${service.color} opacity-75 group-hover:opacity-85 transition-opacity duration-500`} />
+                      <div className="absolute top-4 left-4 text-4xl md:text-5xl drop-shadow-lg filter brightness-110">
                         {service.icon}
                       </div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     </div>
-                    <div className="p-6">
-                      <h3 className="text-xl font-black text-slate-900 mb-2 group-hover:text-blue-600 transition-colors">
+                    <div className="p-5 md:p-6 bg-white">
+                      <h3 className="text-lg md:text-xl font-black text-slate-900 mb-2 group-hover:text-blue-600 transition-colors duration-300">
                         {service.title}
                       </h3>
-                      <p className="text-slate-600 text-sm leading-relaxed">
+                      <p className="text-slate-600 text-sm leading-relaxed mb-4 line-clamp-2">
                         {service.description}
                       </p>
-                      <div className="mt-4 flex items-center text-blue-600 font-semibold text-sm group-hover:gap-2 transition-all">
-                        <span>Detaylı Bilgi</span>
+                      <div className="flex items-center text-blue-600 font-semibold text-sm group-hover:text-blue-700">
+                        <span className="mr-2">Detaylı Bilgi</span>
                         <svg
-                          className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform"
+                          className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -315,16 +324,18 @@ export default function HomePage() {
 
               {/* SEO İyileştirici Metin */}
               <div className="max-w-4xl mx-auto mb-12">
-                <p className="text-slate-700 text-base leading-relaxed text-center">
-                  <strong>Metod Mühendislik</strong> olarak, <strong>elektrik pano üretimi</strong>,{" "}
-                  <strong>marin pano</strong>, <strong>sıvaüstü pano</strong> ve{" "}
-                  <strong>sıvaaltı pano</strong> başta olmak üzere endüstriyel üretim çözümleri
-                  sunuyoruz. <strong>CNC lazer kesim</strong>, <strong>CNC büküm</strong>,{" "}
-                  <strong>metal kaynak</strong>, <strong>elektrostatik toz boya</strong> ve{" "}
-                  <strong>çelik konstrüksiyon</strong> hizmetlerimizle üretilen ürünlerimiz, ISO
-                  9001 kalite standartlarına uygun olarak İstanbul&apos;daki modern tesisimizde
-                  üretilmektedir.
-                </p>
+                <div className="bg-gradient-to-br from-blue-50 to-slate-50 rounded-2xl p-8 border-2 border-blue-100">
+                  <p className="text-slate-800 text-base leading-relaxed text-center mb-4">
+                    <strong>Metod Mühendislik</strong> olarak, <strong>enerjinin olduğu her yerde güveni ve kaliteyi inşa etmek</strong> amacıyla faaliyet gösteriyoruz.
+                    <strong>Elektrik pano üretimi</strong> (<strong>ADP</strong>, <strong>MCC</strong>, <strong>kompanzasyon</strong>, <strong>otomasyon</strong>, <strong>DDC</strong>, <strong>UPS</strong> ve <strong>marin panoları</strong>),
+                    <strong>CNC lazer kesim</strong>, <strong>CNC büküm</strong>, <strong>metal kaynak</strong>,
+                    <strong>elektrostatik toz boya</strong> ve <strong>çelik konstrüksiyon</strong> hizmetlerimizle endüstriyel üretim çözümleri sunuyoruz.
+                  </p>
+                  <p className="text-slate-700 text-sm leading-relaxed text-center">
+                    <strong>IEC 61439-1/2</strong> uluslararası standartlarına tam uyumlu, <strong>ISO 9001:2015</strong> sertifikalı ürünlerimiz,
+                    <strong>12 ülkeye ihracat</strong> yapılan, <strong>2000m²</strong> üretim alanına sahip İstanbul Tuzla İTOSB&apos;deki modern tesisimizde üretilmektedir.
+                  </p>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
@@ -375,22 +386,28 @@ export default function HomePage() {
                   Neden Metod Mühendislik?
                 </span>
                 <h2 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter leading-tight mb-6">
-                  Sektörde <span className="text-blue-400">Güvenilir</span> Çözüm Ortağınız
+                  Sıfır Hata, <span className="text-blue-400">Tam Güvenlik</span>
                 </h2>
                 <p className="text-slate-300 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
-                  20+ yıllık deneyimimiz ve uzman ekibimizle endüstriyel üretimde kalite ve
-                  müşteri memnuniyetini ön planda tutuyoruz.
+                  &quot;Kalite, kontrol edilmez; üretilir.&quot; felsefesiyle hareket ediyoruz.
+                  20+ yıllık deneyimimiz, akademik seviyedeki uzman teknik kadromuz ve
+                  endüstri 4.0 standartlarına uyumlu güçlü altyapımız ile sektörümüzde lider konumdayız.
                 </p>
               </div>
 
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6 mb-12">
                 {whyChooseUs.map((item, i) => (
                   <div
                     key={i}
-                    className="group bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 hover:bg-white/20 hover:border-blue-400/50 transition-all duration-300 hover:-translate-y-1"
+                    className="group glass-effect rounded-xl p-6 border border-white/20 hover:border-blue-400/60 hover:bg-white/15 transition-all duration-500 hover:-translate-y-2 hover:shadow-modern-lg animate-fade-in"
+                    style={{ animationDelay: `${i * 80}ms` }}
                   >
-                    <div className="text-4xl mb-4">{item.icon}</div>
-                    <h3 className="text-xl font-black text-white mb-2">{item.title}</h3>
+                    <div className="text-3xl md:text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                      {item.icon}
+                    </div>
+                    <h3 className="text-lg md:text-xl font-black text-white mb-2.5 group-hover:text-blue-300 transition-colors">
+                      {item.title}
+                    </h3>
                     <p className="text-slate-300 text-sm leading-relaxed">{item.description}</p>
                   </div>
                 ))}
@@ -408,6 +425,7 @@ export default function HomePage() {
                   </svg>
                   WhatsApp ile Teklif Al
                 </a>
+                <EKatalogButton variant="secondary" />
                 <Link
                   href="/kurumsal/hakkimizda"
                   className="inline-flex items-center justify-center gap-3 bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white px-8 py-4 rounded-xl font-bold hover:bg-white/20 transition-all"
@@ -444,11 +462,12 @@ export default function HomePage() {
                   Sertifikalarımız ve Standartlar
                 </h2>
                 <p className="text-slate-600">
-                  Uluslararası kalite standartlarına uygun üretim
+                  IEC ve ISO standartlarına tam uyumlu, sertifikalı üretim
                 </p>
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
                 {[
+                  { name: "IEC 61439", desc: "Pano Standardı" },
                   { name: "ISO 9001", desc: "Kalite Yönetimi" },
                   { name: "ISO 14001", desc: "Çevre Yönetimi" },
                   { name: "ISO 45001", desc: "İş Güvenliği" },
@@ -493,12 +512,13 @@ export default function HomePage() {
                 Hemen Başlayalım
               </span>
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-black mb-6 tracking-tight">
-                Projeniz İçin <br className="md:hidden" />
+                Enerjinize Güç Katmak İçin <br className="md:hidden" />
                 <span className="text-blue-300">Hemen Teklif Alın</span>
               </h2>
               <p className="text-blue-100 text-lg md:text-xl mb-10 max-w-2xl mx-auto leading-relaxed">
+                20+ yıllık deneyimimiz, IEC standartları, ISO 9001 sertifikalı kalite yönetim sistemimiz
+                ve 12 ülkeye ihracat deneyimimizle projenizin güvenilir çözüm ortağıyız.
                 Uzman ekibimizle projenizi değerlendirip en uygun çözümü sunuyoruz.
-                Hemen iletişime geçin!
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <a
@@ -512,20 +532,7 @@ export default function HomePage() {
                   </svg>
                   WhatsApp ile Teklif Al
                 </a>
-                <Link
-                  href="/katalog"
-                  className="bg-blue-600/90 backdrop-blur-md border-2 border-blue-500/80 text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-700/90 transition-all shadow-lg hover:scale-105 flex items-center justify-center gap-2"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                    />
-                  </svg>
-                  Kataloğu İncele
-                </Link>
+                <EKatalogButton />
                 <Link
                   href="/iletisim"
                   className="bg-white/10 backdrop-blur-md border-2 border-white/80 text-white px-8 py-4 rounded-xl font-bold hover:bg-white/20 transition-all shadow-lg"

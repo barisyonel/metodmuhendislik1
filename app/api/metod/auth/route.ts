@@ -24,7 +24,6 @@ export async function POST(request: NextRequest) {
     if (isValid) {
       // Session token oluştur (production'da daha güvenli token kullanın)
       const token = Buffer.from(`${username}:${Date.now()}`).toString("base64");
-      
       // Cookie'ye kaydet
       const cookieStore = await cookies();
       cookieStore.set("metod_admin_token", token, {

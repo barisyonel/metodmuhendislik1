@@ -3,6 +3,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, EffectFade, Navigation, Pagination } from "swiper/modules";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 // Swiper stilleri
 import "swiper/css";
@@ -10,52 +11,128 @@ import "swiper/css/effect-fade";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 
+interface SliderData {
+  id: number;
+  title: string;
+  subtitle: string;
+  description: string;
+  image_url: string;
+  video_url?: string | null;
+  link: string;
+  color: string;
+}
+
+// Varsayılan slider'lar (fallback)
+const defaultSlides = [
+  {
+    id: 1,
+    img: "/elektrıkpano.png",
+    title: "Elektrik Pano & Marin Pano Üretimi",
+    subtitle: "Güvenli Enerji Dağıtım Çözümleri",
+    description:
+      "20+ yıllık deneyimimizle elektrik pano ve marin pano üretiminde sektörün öncü firması. Sıvaüstü, sıvaaltı, dahili ve marin pano üretimi ile güvenilir enerji dağıtım çözümleri sunuyoruz.",
+    color: "from-blue-600/50 via-blue-700/50 to-slate-900/60",
+    link: "/hizmetler/elektrik-pano-uretime",
+  },
+  {
+    id: 2,
+    img: "/metod.png",
+    title: "CNC Lazer Kesim",
+    subtitle: "Hassas ve Hızlı Üretim",
+    description:
+      "Yüksek teknoloji lazer kesim makinelerimiz ile hassas ve hızlı üretim çözümleri",
+    color: "from-blue-500/40 via-blue-700/50 to-slate-900/60",
+    link: "/hizmetler/cnc-lazer-kesim",
+  },
+  {
+    id: 3,
+    img: "/cncbukum.png",
+    title: "CNC Büküm",
+    subtitle: "Profesyonel İmalat Çözümleri",
+    description:
+      "CNC büküm teknolojimiz ile şekillendirme işlemlerinde mükemmellik",
+    color: "from-slate-600/40 via-slate-700/50 to-blue-800/60",
+    link: "/hizmetler/cnc-bukum",
+  },
+  {
+    id: 4,
+    img: "/kaynak.png",
+    title: "Metal Kaynak & İmalat",
+    subtitle: "Profesyonel Kaynak Hizmetleri",
+    description:
+      "Metal kaynak ve imalat hizmetlerimizle endüstriyel üretimde güvenilir çözümler",
+    color: "from-orange-500/40 via-orange-600/50 to-slate-900/60",
+    link: "/hizmetler/kaynak",
+  },
+];
+
 export default function HeroSlider() {
-  const slides = [
-    {
-      id: 1,
-      img: "/elektrıkpano.png",
-      title: "Elektrik Pano & Marin Pano Üretimi",
-      subtitle: "Güvenli Enerji Dağıtım Çözümleri",
-      description:
-        "20+ yıllık deneyimimizle elektrik pano ve marin pano üretiminde sektörün öncü firması. Sıvaüstü, sıvaaltı, dahili ve marin pano üretimi ile güvenilir enerji dağıtım çözümleri sunuyoruz.",
-      color: "from-blue-600/50 via-blue-700/50 to-slate-900/60",
-      link: "/hizmetler/elektrik-pano-uretime",
-    },
-    {
-      id: 2,
-      img: "/metod.png",
-      title: "CNC Lazer Kesim",
-      subtitle: "Hassas ve Hızlı Üretim",
-      description:
-        "Yüksek teknoloji lazer kesim makinelerimiz ile hassas ve hızlı üretim çözümleri",
-      color: "from-blue-500/40 via-blue-700/50 to-slate-900/60",
-      link: "/hizmetler/cnc-lazer-kesim",
-    },
-    {
-      id: 3,
-      img: "/cncbukum.png",
-      title: "CNC Büküm",
-      subtitle: "Profesyonel İmalat Çözümleri",
-      description:
-        "CNC büküm teknolojimiz ile şekillendirme işlemlerinde mükemmellik",
-      color: "from-slate-600/40 via-slate-700/50 to-blue-800/60",
-      link: "/hizmetler/cnc-bukum",
-    },
-    {
-      id: 4,
-      img: "/kaynak.png",
-      title: "Metal Kaynak & İmalat",
-      subtitle: "Profesyonel Kaynak Hizmetleri",
-      description:
-        "Metal kaynak ve imalat hizmetlerimizle endüstriyel üretimde güvenilir çözümler",
-      color: "from-orange-500/40 via-orange-600/50 to-slate-900/60",
-      link: "/hizmetler/kaynak",
-    },
-  ];
+  const [slides, setSlides] = useState(defaultSlides);
+  const [globalVideoUrl, setGlobalVideoUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Slider verilerini API'den yükle
+    const loadSliders = async () => {
+      try {
+        const response = await fetch("/api/metod/sliders");
+        const data = await response.json();
+        if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+          // Sadece aktif slider'ları al ve sıralama yap
+          const activeSliders = data.data
+            .filter((s: SliderData & { is_active: boolean }) => s.is_active)
+            .sort(
+              (a: SliderData & { sort_order: number }, b: SliderData & { sort_order: number }) =>
+                (a.sort_order || 0) - (b.sort_order || 0)
+            )
+            .map((s: SliderData) => ({
+              id: s.id,
+              img: s.image_url,
+              title: s.title,
+              subtitle: s.subtitle || "",
+              description: s.description || "",
+              color: s.color || "from-blue-600/50 via-blue-700/50 to-slate-900/60",
+              link: s.link || "#",
+            }));
+
+          if (activeSliders.length > 0) {
+            setSlides(activeSliders);
+          }
+
+          // İlk aktif slider'dan video URL'ini al (global video)
+          const activeSliderWithVideo = data.data.find(
+            (s: SliderData & { is_active: boolean }) => s.is_active && s.video_url
+          );
+          if (activeSliderWithVideo) {
+            setGlobalVideoUrl(activeSliderWithVideo.video_url);
+          }
+        }
+      } catch (error) {
+        console.error("Slider yükleme hatası:", error);
+        // Hata durumunda varsayılan slider'ları kullan
+      }
+    };
+
+    loadSliders();
+  }, []);
 
   return (
     <div className="h-full w-full relative">
+      {/* Video - Slider'ın sağ alt köşesinde sabit (absolute pozisyon) */}
+      {globalVideoUrl && (
+        <div className="absolute bottom-6 right-6 z-50 w-64 md:w-80 lg:w-96 rounded-lg overflow-hidden shadow-2xl border-2 border-white/20 backdrop-blur-sm">
+          <video
+            src={globalVideoUrl}
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full h-auto"
+          >
+            Tarayıcınız video oynatmayı desteklemiyor.
+          </video>
+        </div>
+      )}
+
       <Swiper
         modules={[Autoplay, EffectFade, Navigation, Pagination]}
         effect={"fade"}
@@ -86,6 +163,7 @@ export default function HeroSlider() {
                 className="object-cover"
                 sizes="100vw"
                 quality={90}
+                unoptimized={slide.img.startsWith("http")}
               />
 
               {/* Hafif Siyah Overlay - Görseli biraz koyulaştırmak için */}
@@ -104,20 +182,19 @@ export default function HeroSlider() {
                       Endüstriyel Üretim Çözümleri
                     </span>
                   </div>
-                  
-                  {/* Ne Sunuyorsunuz? */}
-                  <h1 className="text-4xl md:text-6xl lg:text-7xl font-black uppercase tracking-tighter leading-none mb-4">
-                    {slide.title}
-                  </h1>
-                  
+
                   {/* Kullanıcıya Ne Fayda Sağlıyorsunuz? */}
-                  <p className="text-xl md:text-2xl lg:text-3xl font-bold text-blue-300 mb-3">
-                    {slide.subtitle}
-                  </p>
-                  <p className="text-base md:text-lg text-slate-200 max-w-3xl mx-auto mb-6 leading-relaxed">
-                    {slide.description}
-                  </p>
-                  
+                  {slide.subtitle && (
+                    <p className="text-xl md:text-2xl lg:text-3xl font-bold text-blue-300 mb-3">
+                      {slide.subtitle}
+                    </p>
+                  )}
+                  {slide.description && (
+                    <p className="text-base md:text-lg text-slate-200 max-w-3xl mx-auto mb-6 leading-relaxed">
+                      {slide.description}
+                    </p>
+                  )}
+
                   {/* Kullanıcı Ne Yapmalı? - CTA Butonları */}
                   <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                     <a
@@ -151,7 +228,7 @@ export default function HeroSlider() {
                       </svg>
                     </Link>
                   </div>
-                  
+
                   {/* Hızlı İletişim */}
                   <div className="mt-6 flex items-center justify-center gap-4 text-sm">
                     <a
