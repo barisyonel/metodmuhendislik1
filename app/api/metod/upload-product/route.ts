@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    console.log("Cloudinary'ye proje görseli yükleme başlıyor...");
+    console.log("Cloudinary'ye ürün görseli yükleme başlıyor...");
     console.log("Dosya bilgileri:", {
       name: file.name,
       size: file.size,
@@ -62,12 +62,12 @@ export async function POST(request: NextRequest) {
       has_api_key: !!process.env.CLOUDINARY_API_KEY,
       has_api_secret: !!process.env.CLOUDINARY_API_SECRET,
     });
-
+    
     // Stream upload kullan (büyük dosyalar için daha iyi)
     const result = await new Promise((resolve, reject) => {
       cloudinary.uploader.upload_stream(
         {
-          folder: "metod-muhendislik/projects",
+          folder: "metod-muhendislik/products",
           resource_type: "image",
           transformation: [
             { width: 1200, height: 800, crop: "limit", quality: "auto" },
@@ -97,25 +97,29 @@ export async function POST(request: NextRequest) {
   } catch (error: unknown) {
     console.error("Upload error:", error);
     const err = error as { message?: string; http_code?: number };
-    // Cloudinary hatalarını daha iyi handle et
+    
+    let errorMessage = "Görsel yüklenirken hata oluştu";
+    let statusCode = 500;
+    
     if (err.http_code) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: err.message || "Cloudinary'ye yükleme başarısız oldu",
-        },
-        { status: err.http_code >= 400 && err.http_code < 500 ? err.http_code : 500 }
-      );
+      errorMessage = err.message || "Cloudinary'ye yükleme başarısız oldu";
+      statusCode = err.http_code >= 400 && err.http_code < 500 ? err.http_code : 500;
+    } else if (err.message) {
+      errorMessage = err.message;
+    }
+    
+    if (errorMessage.includes("Invalid API Key") || errorMessage.includes("401") || errorMessage.includes("Unauthorized")) {
+      errorMessage = "Cloudinary API anahtarı geçersiz. Lütfen .env dosyasını kontrol edin.";
     }
     
     return NextResponse.json(
       {
         success: false,
-        message: err.message || "Görsel yüklenirken hata oluştu",
+        message: errorMessage,
+        error: process.env.NODE_ENV === "development" ? String(error) : undefined,
       },
-      { status: 500 }
+      { status: statusCode }
     );
   }
 }
-
 

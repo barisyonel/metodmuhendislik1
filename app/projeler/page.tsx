@@ -85,9 +85,10 @@ export default async function ProjelerPage() {
                 <>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
                     {projects.map((project) => (
-                      <div
+                      <a
                         key={project.id}
-                        className="group relative bg-white rounded-xl border-2 border-slate-200 overflow-hidden shadow-modern hover:shadow-modern-lg transition-all duration-500 hover:-translate-y-2"
+                        href={`/projeler/${project.id}`}
+                        className="group relative bg-white rounded-xl border-2 border-slate-200 overflow-hidden shadow-modern hover:shadow-modern-lg transition-all duration-500 hover:-translate-y-2 block"
                       >
                         {/* Görsel */}
                         <div className="relative w-full h-64 bg-slate-100 overflow-hidden">
@@ -197,7 +198,7 @@ export default async function ProjelerPage() {
                             )}
                           </div>
                         </div>
-                      </div>
+                      </a>
                     ))}
                   </div>
                 </>

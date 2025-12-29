@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
 import { isAuthenticated } from "@/lib/auth";
-import VideoManager from "./components/VideoManager";
+import ProductManager from "./components/ProductManager";
 
-export default async function AdminSliderVideoPage() {
+export default async function AdminProductsPage() {
   const authenticated = await isAuthenticated();
 
   if (!authenticated) {
@@ -11,7 +11,6 @@ export default async function AdminSliderVideoPage() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* Header */}
       <header className="bg-white border-b border-slate-200 shadow-sm">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
@@ -22,10 +21,10 @@ export default async function AdminSliderVideoPage() {
               <div className="h-6 w-px bg-slate-300"></div>
               <div>
                 <h1 className="text-2xl font-black text-slate-900">
-                  🎥 Slider Video Yönetimi
+                  Ürün Yönetimi
                 </h1>
                 <p className="text-sm text-slate-600">
-                  Slider&apos;lara video ekleyin veya çıkarın (Sağ Alt Köşe)
+                  Anasayfadaki ürünleri yönetin
                 </p>
               </div>
             </div>
@@ -33,9 +32,8 @@ export default async function AdminSliderVideoPage() {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="container mx-auto px-6 py-8">
-        <VideoManager />
+        <ProductManager />
       </main>
     </div>
   );

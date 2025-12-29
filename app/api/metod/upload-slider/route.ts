@@ -51,18 +51,37 @@ export async function POST(request: NextRequest) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Base64'e dönüştür
-    const base64 = buffer.toString("base64");
-    const dataURI = `data:${file.type};base64,${base64}`;
-
     // Cloudinary'ye yükle - slider için özel klasör
-    const result = await cloudinary.uploader.upload(dataURI, {
+    console.log("Cloudinary'ye yükleme başlıyor...");
+    console.log("Dosya bilgileri:", {
+      name: file.name,
+      size: file.size,
+      type: file.type,
+    });
+    console.log("Cloudinary config:", {
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME || "dkkd4jvyk",
+      has_api_key: !!process.env.CLOUDINARY_API_KEY,
+      has_api_secret: !!process.env.CLOUDINARY_API_SECRET,
+    });
+    
+    // Stream upload kullan (büyük dosyalar için daha iyi)
+    const uploadOptions = {
       folder: "metod-muhendislik/sliders",
-      resource_type: "image",
+      resource_type: "image" as const,
       transformation: [
         { width: 1920, height: 1080, crop: "limit", quality: "auto" },
       ],
-    });
+      timeout: 60000, // 60 saniye timeout
+      chunk_size: 6000000, // 6MB chunk size
+    };
+
+    // Base64 veya buffer olarak yükle
+    const result = await cloudinary.uploader.upload(
+      `data:${file.type};base64,${buffer.toString("base64")}`,
+      uploadOptions
+    );
+
+    console.log("Cloudinary yükleme başarılı:", result.secure_url);
 
     return NextResponse.json({
       success: true,
@@ -71,24 +90,43 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: unknown) {
     console.error("Upload error:", error);
-    const err = error as { message?: string; http_code?: number };
+    console.error("Error details:", JSON.stringify(error, null, 2));
+    
+    const err = error as { 
+      message?: string; 
+      http_code?: number;
+      error?: { message?: string; http_code?: number };
+      response?: { error?: { message?: string } };
+    };
+    
     // Cloudinary hatalarını daha iyi handle et
+    let errorMessage = "Görsel yüklenirken hata oluştu";
+    let statusCode = 500;
+    
     if (err.http_code) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: err.message || "Cloudinary'ye yükleme başarısız oldu",
-        },
-        { status: err.http_code >= 400 && err.http_code < 500 ? err.http_code : 500 }
-      );
+      errorMessage = err.message || "Cloudinary'ye yükleme başarısız oldu";
+      statusCode = err.http_code >= 400 && err.http_code < 500 ? err.http_code : 500;
+    } else if (err.error?.http_code) {
+      errorMessage = err.error.message || "Cloudinary'ye yükleme başarısız oldu";
+      statusCode = err.error.http_code >= 400 && err.error.http_code < 500 ? err.error.http_code : 500;
+    } else if (err.message) {
+      errorMessage = err.message;
+    } else if (err.response?.error?.message) {
+      errorMessage = err.response.error.message;
+    }
+    
+    // Cloudinary kimlik doğrulama hatası kontrolü
+    if (errorMessage.includes("Invalid API Key") || errorMessage.includes("401") || errorMessage.includes("Unauthorized")) {
+      errorMessage = "Cloudinary API anahtarı geçersiz. Lütfen .env dosyasını kontrol edin.";
     }
     
     return NextResponse.json(
       {
         success: false,
-        message: err.message || "Görsel yüklenirken hata oluştu",
+        message: errorMessage,
+        error: process.env.NODE_ENV === "development" ? String(error) : undefined,
       },
-      { status: 500 }
+      { status: statusCode }
     );
   }
 }

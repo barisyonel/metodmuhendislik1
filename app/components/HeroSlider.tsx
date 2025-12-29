@@ -22,64 +22,59 @@ interface SliderData {
   color: string;
 }
 
-// Varsayılan slider'lar (fallback)
-const defaultSlides = [
-  {
-    id: 1,
-    img: "/elektrıkpano.png",
-    title: "Elektrik Pano & Marin Pano Üretimi",
-    subtitle: "Güvenli Enerji Dağıtım Çözümleri",
-    description:
-      "20+ yıllık deneyimimizle elektrik pano ve marin pano üretiminde sektörün öncü firması. Sıvaüstü, sıvaaltı, dahili ve marin pano üretimi ile güvenilir enerji dağıtım çözümleri sunuyoruz.",
-    color: "from-blue-600/50 via-blue-700/50 to-slate-900/60",
-    link: "/hizmetler/elektrik-pano-uretime",
-  },
-  {
-    id: 2,
-    img: "/metod.png",
-    title: "CNC Lazer Kesim",
-    subtitle: "Hassas ve Hızlı Üretim",
-    description:
-      "Yüksek teknoloji lazer kesim makinelerimiz ile hassas ve hızlı üretim çözümleri",
-    color: "from-blue-500/40 via-blue-700/50 to-slate-900/60",
-    link: "/hizmetler/cnc-lazer-kesim",
-  },
-  {
-    id: 3,
-    img: "/cncbukum.png",
-    title: "CNC Büküm",
-    subtitle: "Profesyonel İmalat Çözümleri",
-    description:
-      "CNC büküm teknolojimiz ile şekillendirme işlemlerinde mükemmellik",
-    color: "from-slate-600/40 via-slate-700/50 to-blue-800/60",
-    link: "/hizmetler/cnc-bukum",
-  },
-  {
-    id: 4,
-    img: "/kaynak.png",
-    title: "Metal Kaynak & İmalat",
-    subtitle: "Profesyonel Kaynak Hizmetleri",
-    description:
-      "Metal kaynak ve imalat hizmetlerimizle endüstriyel üretimde güvenilir çözümler",
-    color: "from-orange-500/40 via-orange-600/50 to-slate-900/60",
-    link: "/hizmetler/kaynak",
-  },
-];
+// Varsayılan slider'lar kaldırıldı - Admin panelinden eklenebilir
+const defaultSlides: Array<{
+  id: number;
+  img: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  color: string;
+  link: string;
+}> = [];
 
 export default function HeroSlider() {
-  const [slides, setSlides] = useState(defaultSlides);
+  const [slides, setSlides] = useState<Array<{
+    id: number;
+    img: string;
+    title: string;
+    subtitle: string;
+    description: string;
+    color: string;
+    link: string;
+  }>>([]);
   const [globalVideoUrl, setGlobalVideoUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Slider verilerini API'den yükle
     const loadSliders = async () => {
       try {
-        const response = await fetch("/api/metod/sliders");
+        setLoading(true);
+        // Cache bypass için timestamp ekle ve no-cache header'ları ekle
+        const response = await fetch(`/api/metod/sliders?t=${Date.now()}`, {
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+          },
+        });
         const data = await response.json();
+        console.log("🔍 API'den gelen slider verisi:", {
+          success: data.success,
+          count: Array.isArray(data.data) ? data.data.length : 0,
+          allSliders: data.data,
+        });
+        
         if (data.success && Array.isArray(data.data) && data.data.length > 0) {
           // Sadece aktif slider'ları al ve sıralama yap
+          // MySQL'den gelen is_active değeri 0 veya 1 olabilir, boolean kontrolü yap
           const activeSliders = data.data
-            .filter((s: SliderData & { is_active: boolean }) => s.is_active)
+            .filter((s: SliderData & { is_active: boolean | number }) => {
+              const isActive = s.is_active === true || s.is_active === 1;
+              console.log(`  Slider ${s.id}: is_active=${s.is_active} (${typeof s.is_active}) -> ${isActive ? '✅ Aktif' : '❌ Pasif'}`);
+              return isActive;
+            })
             .sort(
               (a: SliderData & { sort_order: number }, b: SliderData & { sort_order: number }) =>
                 (a.sort_order || 0) - (b.sort_order || 0)
@@ -94,29 +89,89 @@ export default function HeroSlider() {
               link: s.link || "#",
             }));
 
+          console.log(`📊 Toplam ${data.data.length} slider'dan ${activeSliders.length} aktif slider bulundu`);
+          
           if (activeSliders.length > 0) {
+            console.log("✅ Aktif slider'lar yüklendi:", activeSliders.length);
             setSlides(activeSliders);
+          } else {
+            console.warn("⚠️ Aktif slider bulunamadı! Tüm slider'lar pasif olabilir.");
+            setSlides([]);
           }
 
           // İlk aktif slider'dan video URL'ini al (global video)
           const activeSliderWithVideo = data.data.find(
-            (s: SliderData & { is_active: boolean }) => s.is_active && s.video_url
+            (s: SliderData & { is_active: boolean | number }) => 
+              (s.is_active === true || s.is_active === 1) && s.video_url
           );
           if (activeSliderWithVideo) {
             setGlobalVideoUrl(activeSliderWithVideo.video_url);
+          } else {
+            setGlobalVideoUrl(null);
           }
+        } else {
+          // Slider yoksa boş array
+          console.warn("⚠️ API'den slider verisi gelmedi veya boş");
+          setSlides([]);
+          setGlobalVideoUrl(null);
         }
       } catch (error) {
         console.error("Slider yükleme hatası:", error);
-        // Hata durumunda varsayılan slider'ları kullan
+        setSlides([]);
+      } finally {
+        setLoading(false);
       }
     };
 
     loadSliders();
+    
+    // Her 5 saniyede bir slider'ları yeniden yükle (güncellemeler için - daha hızlı senkronizasyon)
+    const interval = setInterval(loadSliders, 5000);
+    
+    // Admin panelinden güncelleme event'ini dinle
+    const handleSliderUpdate = () => {
+      console.log("🔄 Slider güncelleme event'i alındı, slider'lar yeniden yükleniyor...");
+      loadSliders();
+    };
+    
+    if (typeof window !== 'undefined') {
+      window.addEventListener('slider-updated', handleSliderUpdate);
+    }
+    
+    return () => {
+      clearInterval(interval);
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('slider-updated', handleSliderUpdate);
+      }
+    };
   }, []);
 
+  // Slider yoksa boş alan göster
+  if (loading) {
+    return (
+      <div className="h-full w-full relative bg-slate-900 flex items-center justify-center">
+        <div className="text-center text-white">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-white mb-4"></div>
+          <p>Slider yükleniyor...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (slides.length === 0) {
+    return (
+      <div className="h-full w-full relative bg-slate-900 flex items-center justify-center">
+        <div className="text-center text-white">
+          <div className="text-6xl mb-4">🖼️</div>
+          <p className="text-xl font-bold mb-2">Slider bulunamadı</p>
+          <p className="text-slate-400">Admin panelinden slider ekleyin</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="h-full w-full relative">
+    <div className="h-screen w-full relative">
       {/* Video - Slider'ın sağ alt köşesinde sabit (absolute pozisyon) */}
       {globalVideoUrl && (
         <div className="absolute bottom-6 right-6 z-50 w-64 md:w-80 lg:w-96 rounded-lg overflow-hidden shadow-2xl border-2 border-white/20 backdrop-blur-sm">
@@ -148,13 +203,13 @@ export default function HeroSlider() {
         }}
         loop={true}
         speed={1000}
-        className="h-full w-full"
+        className="h-screen w-full"
         aria-label="Ana Slider"
       >
         {slides.map((slide, index) => (
           <SwiperSlide key={slide.id}>
-            <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
-              {/* Görsel */}
+            <div className="relative w-full h-screen flex items-center justify-center overflow-hidden bg-slate-900">
+              {/* Görsel - Tam ekranı doldur, yanlarda boşluk kalmasın */}
               <Image
                 src={slide.img}
                 alt={`${slide.title} - ${slide.subtitle}`}
@@ -162,8 +217,12 @@ export default function HeroSlider() {
                 priority={index === 0}
                 className="object-cover"
                 sizes="100vw"
-                quality={90}
+                quality={95}
                 unoptimized={slide.img.startsWith("http")}
+                style={{
+                  objectFit: 'cover',
+                  objectPosition: 'center',
+                }}
               />
 
               {/* Hafif Siyah Overlay - Görseli biraz koyulaştırmak için */}
@@ -174,81 +233,6 @@ export default function HeroSlider() {
                 className={`absolute inset-0 bg-gradient-to-r ${slide.color} z-10`}
               />
 
-              {/* İçerik - 3 Soruya Cevap */}
-              <div className="relative z-20 text-white px-6 md:px-16 lg:px-24 max-w-6xl mx-auto text-center">
-                <div className="space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-1000">
-                  <div className="inline-block px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full border border-white/30 mb-4">
-                    <span className="text-sm font-bold uppercase tracking-wider">
-                      Endüstriyel Üretim Çözümleri
-                    </span>
-                  </div>
-
-                  {/* Kullanıcıya Ne Fayda Sağlıyorsunuz? */}
-                  {slide.subtitle && (
-                    <p className="text-xl md:text-2xl lg:text-3xl font-bold text-blue-300 mb-3">
-                      {slide.subtitle}
-                    </p>
-                  )}
-                  {slide.description && (
-                    <p className="text-base md:text-lg text-slate-200 max-w-3xl mx-auto mb-6 leading-relaxed">
-                      {slide.description}
-                    </p>
-                  )}
-
-                  {/* Kullanıcı Ne Yapmalı? - CTA Butonları */}
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                    <a
-                      href="https://wa.me/905425786060?text=Merhaba,%20teklif%20almak%20istiyorum."
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center gap-3 bg-green-600 text-white px-8 py-4 rounded-xl font-bold text-base md:text-lg shadow-xl shadow-green-600/30 hover:bg-green-700 hover:scale-105 transition-all min-w-[200px]"
-                    >
-                      <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-                      </svg>
-                      Teklif Al
-                    </a>
-                    <Link
-                      href={slide.link}
-                      className="inline-flex items-center justify-center gap-3 bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white px-8 py-4 rounded-xl font-bold text-base md:text-lg hover:bg-white/20 transition-all min-w-[200px]"
-                    >
-                      Hizmetleri İncele
-                      <svg
-                        className="w-5 h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M9 5l7 7-7 7"
-                        />
-                      </svg>
-                    </Link>
-                  </div>
-
-                  {/* Hızlı İletişim */}
-                  <div className="mt-6 flex items-center justify-center gap-4 text-sm">
-                    <a
-                      href="tel:+902167595675"
-                      className="flex items-center gap-2 text-white/90 hover:text-white transition-colors"
-                    >
-                      <span>📞</span>
-                      <span>0 216 759 56 75</span>
-                    </a>
-                    <span className="text-white/30">|</span>
-                    <a
-                      href="mailto:info@metodmuhendislik.com"
-                      className="flex items-center gap-2 text-white/90 hover:text-white transition-colors"
-                    >
-                      <span>✉️</span>
-                      <span>info@metodmuhendislik.com</span>
-                    </a>
-                  </div>
-                </div>
-              </div>
 
               {/* Scroll Indicator */}
               <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 animate-bounce">

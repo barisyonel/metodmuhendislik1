@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
 import { isAuthenticated } from "@/lib/auth";
-import ProjectsManager from "./components/ProjectsManager";
+import ServiceManager from "./components/ServiceManager";
 
-export default async function AdminProjectsPage() {
+export default async function AdminServicesPage() {
   const authenticated = await isAuthenticated();
 
   if (!authenticated) {
@@ -11,7 +11,6 @@ export default async function AdminProjectsPage() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* Header */}
       <header className="bg-white border-b border-slate-200 shadow-sm">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
@@ -22,10 +21,10 @@ export default async function AdminProjectsPage() {
               <div className="h-6 w-px bg-slate-300"></div>
               <div>
                 <h1 className="text-2xl font-black text-slate-900">
-                  Proje Yönetimi
+                  Hizmet Yönetimi
                 </h1>
                 <p className="text-sm text-slate-600">
-                  Projeler sayfasındaki projeleri yönetin
+                  Navbar&apos;daki hizmetler menüsünü yönetin
                 </p>
               </div>
             </div>
@@ -33,12 +32,10 @@ export default async function AdminProjectsPage() {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="container mx-auto px-6 py-8">
-        <ProjectsManager />
+        <ServiceManager />
       </main>
     </div>
   );
 }
-
 

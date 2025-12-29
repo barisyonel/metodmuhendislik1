@@ -15,20 +15,35 @@ interface Product {
 
 async function getProducts(): Promise<Product[]> {
   try {
-    // Önce basit sorgu dene (is_active olmadan)
+    // Önce is_active ve sort_order ile sorgu dene
     try {
       const products = await query<Product[]>(
-        "SELECT * FROM products WHERE is_active = TRUE ORDER BY sort_order ASC, created_at DESC LIMIT 6"
+        "SELECT * FROM products WHERE is_active = TRUE OR is_active = 1 ORDER BY sort_order ASC, created_at DESC LIMIT 6"
       );
-      return Array.isArray(products) ? products : [];
+      const productsData = Array.isArray(products) ? products : [];
+      console.log(`✅ ${productsData.length} aktif ürün yüklendi`);
+      return productsData;
     } catch (err: unknown) {
       // is_active kolonu yoksa basit sorgu dene
       const error = err as { code?: string; message?: string; sqlMessage?: string };
       if (error.code === 'ER_BAD_FIELD_ERROR' || error.message?.includes('is_active') || error.sqlMessage?.includes('is_active')) {
-        const products = await query<Product[]>(
-          "SELECT * FROM products ORDER BY created_at DESC LIMIT 6"
-        );
-        return Array.isArray(products) ? products : [];
+        try {
+          // sort_order ile dene
+          const products = await query<Product[]>(
+            "SELECT * FROM products ORDER BY sort_order ASC, created_at DESC LIMIT 6"
+          );
+          return Array.isArray(products) ? products : [];
+        } catch (err2: unknown) {
+          // sort_order da yoksa en basit sorgu
+          const error2 = err2 as { code?: string; message?: string; sqlMessage?: string };
+          if (error2.code === 'ER_BAD_FIELD_ERROR' || error2.message?.includes('sort_order') || error2.sqlMessage?.includes('sort_order')) {
+            const products = await query<Product[]>(
+              "SELECT * FROM products ORDER BY created_at DESC LIMIT 6"
+            );
+            return Array.isArray(products) ? products : [];
+          }
+          throw err2;
+        }
       }
       throw err;
     }

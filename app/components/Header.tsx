@@ -11,6 +11,12 @@ export default function Header() {
   const [clickedMenu, setClickedMenu] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mobileSubmenu, setMobileSubmenu] = useState<string | null>(null);
+  const [hizmetler, setHizmetler] = useState<Array<{
+    name: string;
+    href: string;
+    icon: string;
+    description: string;
+  }>>([]);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -30,16 +36,67 @@ export default function Header() {
     };
   }, [isMobileMenuOpen]);
 
+  // Hizmetleri API'den yükle
+  useEffect(() => {
+    const loadServices = async () => {
+      try {
+        const response = await fetch("/api/metod/services?t=" + Date.now(), {
+          cache: 'no-store',
+          headers: {
+            'Accept': 'application/json; charset=utf-8',
+            'Content-Type': 'application/json; charset=utf-8',
+          },
+        });
+        // Response'u doğrudan JSON olarak al
+        const data = await response.json();
+        if (data.success && Array.isArray(data.data)) {
+          setHizmetler(
+            data.data.map((s: { name: string; href: string; icon: string; description?: string }) => ({
+              name: s.name || "",
+              href: s.href || "",
+              icon: s.icon || "⚡",
+              description: s.description || "",
+            }))
+          );
+        } else {
+          // Fallback: Varsayılan hizmetler
+          setHizmetler([
+            { name: "Elektrik Pano Üretimi", href: "/hizmetler/elektrik-pano-uretime", icon: "⚡", description: "Sıvaüstü, sıvaaltı ve marin pano üretimi" },
+            { name: "CNC Lazer Kesim", href: "/hizmetler/cnc-lazer-kesim", icon: "⚡", description: "Hassas lazer kesim çözümleri" },
+            { name: "CNC Büküm", href: "/hizmetler/cnc-bukum", icon: "🔧", description: "Profesyonel büküm hizmetleri" },
+            { name: "Kaynak", href: "/hizmetler/kaynak", icon: "🔥", description: "Metal kaynak ve imalat" },
+            { name: "Elektrostatik Toz Boya", href: "/hizmetler/elektrostatik-toz-boya", icon: "🎨", description: "Yüksek kaliteli toz boya" },
+            { name: "Mağaza Raf Ve Ürünleri", href: "/hizmetler/magaza-raf-ve-urunleri", icon: "📦", description: "Mağaza raf sistemleri" },
+            { name: "Çelik Konstrüksiyon", href: "/hizmetler/celik-konstruksiyon", icon: "🏗️", description: "Endüstriyel çelik yapılar" },
+          ]);
+        }
+      } catch (error) {
+        console.error("Hizmetler yüklenirken hata:", error);
+        // Fallback hizmetler
+        setHizmetler([
+          { name: "Elektrik Pano Üretimi", href: "/hizmetler/elektrik-pano-uretime", icon: "⚡", description: "Sıvaüstü, sıvaaltı ve marin pano üretimi" },
+        ]);
+      }
+    };
+    loadServices();
+  }, []);
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
+      // Sadece dropdown dışına tıklandığında kapat
       if (
         activeMenu &&
         !target.closest("[data-dropdown]") &&
         !target.closest("[data-dropdown-button]")
       ) {
-        setActiveMenu(null);
-        setClickedMenu(null);
+        // Eğer clickedMenu varsa, sadece clickedMenu'yu temizle, menüyü açık bırak
+        if (clickedMenu) {
+          setClickedMenu(null);
+        } else {
+          // Tıklanmamışsa menüyü kapat
+          setActiveMenu(null);
+        }
       }
     };
 
@@ -48,52 +105,7 @@ export default function Header() {
       return () =>
         document.removeEventListener("mousedown", handleClickOutside);
     }
-  }, [activeMenu]);
-
-  const hizmetler = [
-    { 
-      name: "Elektrik Pano Üretimi", 
-      href: "/hizmetler/elektrik-pano-uretime", 
-      icon: "⚡",
-      description: "Sıvaüstü, sıvaaltı ve marin pano üretimi"
-    },
-    { 
-      name: "CNC Lazer Kesim", 
-      href: "/hizmetler/cnc-lazer-kesim", 
-      icon: "⚡",
-      description: "Hassas lazer kesim çözümleri"
-    },
-    { 
-      name: "CNC Büküm", 
-      href: "/hizmetler/cnc-bukum", 
-      icon: "🔧",
-      description: "Profesyonel büküm hizmetleri"
-    },
-    { 
-      name: "Kaynak", 
-      href: "/hizmetler/kaynak", 
-      icon: "🔥",
-      description: "Metal kaynak ve imalat"
-    },
-    {
-      name: "Elektrostatik Toz Boya",
-      href: "/hizmetler/elektrostatik-toz-boya",
-      icon: "🎨",
-      description: "Yüksek kaliteli toz boya"
-    },
-    {
-      name: "Mağaza Raf Ve Ürünleri",
-      href: "/hizmetler/magaza-raf-ve-urunleri",
-      icon: "📦",
-      description: "Mağaza raf sistemleri"
-    },
-    {
-      name: "Çelik Konstrüksiyon",
-      href: "/hizmetler/celik-konstruksiyon",
-      icon: "🏗️",
-      description: "Endüstriyel çelik yapılar"
-    },
-  ];
+  }, [activeMenu, clickedMenu]);
 
   const kurumsalItems = [
     { name: "Hakkımızda", href: "/kurumsal/hakkimizda" },
@@ -105,9 +117,9 @@ export default function Header() {
 
   return (
     <>
-      {/* ÜST BANT - İLETİŞİM BİLGİLERİ */}
+      {/* ÜST BANT - İLETİŞİM BİLGİLERİ - Modern Gradient */}
       <div
-        className={`hidden lg:block fixed top-0 left-0 right-0 z-[110] bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white text-xs py-2.5 border-b border-slate-700/50 transition-all duration-500 ${
+        className={`hidden lg:block fixed top-0 left-0 right-0 z-[110] bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 text-white text-xs py-2.5 border-b border-blue-500/30 shadow-lg transition-all duration-500 ${
           isScrolled
             ? "opacity-0 -translate-y-full pointer-events-none"
             : "opacity-100 translate-y-0"
@@ -145,12 +157,12 @@ export default function Header() {
         </div>
       </div>
 
-      {/* ANA NAVBAR - Modern Glassmorphism */}
+      {/* ANA NAVBAR - Modern Gradient Glassmorphism */}
       <header
         className={`fixed w-full z-[100] transition-all duration-500 ease-out ${
           isScrolled
-            ? "bg-white/95 backdrop-blur-xl shadow-xl py-3 border-b border-slate-200/50"
-            : "bg-white/80 backdrop-blur-lg shadow-md py-4 border-b border-slate-100/50"
+            ? "bg-gradient-to-r from-white via-blue-50/30 to-white backdrop-blur-2xl shadow-2xl shadow-blue-500/10 py-3 border-b border-blue-200/40"
+            : "bg-gradient-to-r from-white/95 via-blue-50/20 to-white/95 backdrop-blur-xl shadow-lg shadow-blue-500/5 py-4 border-b border-blue-100/30"
         } ${isMobileMenuOpen ? "lg:opacity-100 lg:pointer-events-auto opacity-0 pointer-events-none" : ""}`}
         style={{ top: isScrolled ? "0" : "40px" }}
       >
@@ -182,15 +194,15 @@ export default function Header() {
             >
               <Link
                 href="/"
-                className={`relative px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 ${
+                className={`relative px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${
                   isActive("/")
-                    ? "text-blue-600 bg-blue-50"
-                    : "text-slate-700 hover:text-blue-600 hover:bg-slate-50"
+                    ? "text-white bg-gradient-to-r from-blue-600 to-indigo-600 shadow-lg shadow-blue-500/30"
+                    : "text-slate-700 hover:text-white hover:bg-gradient-to-r hover:from-blue-500 hover:to-indigo-500 hover:shadow-md hover:shadow-blue-500/20"
                 }`}
               >
                 Anasayfa
                 {isActive("/") && (
-                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-blue-600 rounded-full"></span>
+                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-full"></span>
                 )}
               </Link>
 
@@ -198,8 +210,15 @@ export default function Header() {
               <div
                 className="relative"
                 data-dropdown
-                onMouseEnter={() => setActiveMenu("h")}
+                onMouseEnter={() => {
+                  setActiveMenu("h");
+                  // Hover ile açıldığında clickedMenu'yu temizle
+                  if (clickedMenu === "h") {
+                    setClickedMenu(null);
+                  }
+                }}
                 onMouseLeave={() => {
+                  // Sadece tıklanmamışsa kapat
                   if (clickedMenu !== "h") {
                     setActiveMenu(null);
                   }
@@ -209,6 +228,7 @@ export default function Header() {
                   data-dropdown-button
                   onClick={(e) => {
                     e.stopPropagation();
+                    // Tıklamada toggle yap
                     if (activeMenu === "h") {
                       setActiveMenu(null);
                       setClickedMenu(null);
@@ -217,15 +237,15 @@ export default function Header() {
                       setClickedMenu("h");
                     }
                   }}
-                  className={`relative px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition-all duration-300 ${
+                  className={`relative px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all duration-300 ${
                     activeMenu === "h" || pathname?.startsWith("/hizmetler")
-                      ? "text-blue-600 bg-blue-50"
-                      : "text-slate-700 hover:text-blue-600 hover:bg-slate-50"
+                      ? "text-white bg-gradient-to-r from-blue-600 to-indigo-600 shadow-lg shadow-blue-500/30"
+                      : "text-slate-700 hover:text-white hover:bg-gradient-to-r hover:from-blue-500 hover:to-indigo-500 hover:shadow-md hover:shadow-blue-500/20"
                   }`}
                   aria-expanded={activeMenu === "h"}
                   aria-haspopup="true"
                 >
-                  Hizmetler
+                  <span className="font-bold">Hizmetler</span>
                   <svg
                     className={`w-4 h-4 transition-transform duration-300 ${activeMenu === "h" ? "rotate-180" : ""}`}
                     fill="none"
@@ -242,102 +262,126 @@ export default function Header() {
                   </svg>
                 </button>
                 {activeMenu === "h" && (
-                  <div className="absolute left-0 mt-3 w-[600px] pt-2 z-50 animate-in fade-in slide-in-from-top-2 duration-300">
-                    <div
-                      data-dropdown
-                      className="bg-white/95 backdrop-blur-xl border border-slate-200/50 shadow-2xl rounded-2xl overflow-hidden"
-                      onMouseEnter={() => setActiveMenu("h")}
-                      onMouseLeave={() => {
-                        if (clickedMenu !== "h") {
-                          setActiveMenu(null);
-                        }
-                      }}
-                    >
-                      <div className="p-4 bg-gradient-to-r from-blue-50 to-slate-50 border-b border-slate-200/50">
-                        <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Tüm Hizmetlerimiz</h3>
-                        <p className="text-xs text-slate-600 mt-1">Endüstriyel üretim çözümleri</p>
+                  <>
+                    {/* Köprü - Button ile dropdown arasındaki boşluğu kapatır */}
+                    <div className="absolute left-0 top-full w-full h-3 z-40"></div>
+                    <div className="absolute left-0 top-full pt-3 w-[650px] z-50 animate-in fade-in slide-in-from-top-2 duration-300">
+                      <div
+                        data-dropdown
+                        className="bg-white/98 backdrop-blur-2xl border-2 border-blue-200/50 shadow-2xl shadow-blue-500/20 rounded-2xl overflow-hidden"
+                      >
+                      <div className="p-5 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 border-b border-blue-400/30 shadow-lg">
+                        <h3 className="text-base font-black text-white mb-1">Tüm Hizmetlerimiz</h3>
+                        <p className="text-xs text-blue-100 font-medium">Endüstriyel üretim çözümleri</p>
                       </div>
-                      <div className="grid grid-cols-2 gap-1 p-2">
-                        {hizmetler.map((h) => (
-                          <Link
-                            key={h.name}
-                            href={h.href}
-                            className="group flex items-start gap-3 px-4 py-3 rounded-xl hover:bg-blue-50 transition-all duration-200 border border-transparent hover:border-blue-100"
-                            onClick={() => {
-                              setActiveMenu(null);
-                              setClickedMenu(null);
-                            }}
-                          >
-                            <span className="text-2xl mt-0.5 group-hover:scale-110 transition-transform duration-200">{h.icon}</span>
-                            <div className="flex-1 min-w-0">
-                              <span className="block text-slate-900 font-semibold text-sm group-hover:text-blue-600 transition-colors">
-                                {h.name}
-                              </span>
-                              <span className="block text-xs text-slate-500 mt-0.5 line-clamp-1">
-                                {h.description}
-                              </span>
-                            </div>
-                            <svg
-                              className="w-4 h-4 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all duration-200 flex-shrink-0 mt-1"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
+                      <div className="grid grid-cols-2 gap-2 p-3">
+                        {hizmetler.length > 0 ? (
+                          hizmetler.map((h) => (
+                            <Link
+                              key={h.name}
+                              href={h.href}
+                              className="group flex items-start gap-3 px-4 py-3.5 rounded-xl hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transition-all duration-300 border border-slate-100 hover:border-blue-200 hover:shadow-md hover:-translate-y-0.5"
+                              onClick={() => {
+                                // Link'e tıklandığında menüyü kapat
+                                setActiveMenu(null);
+                                setClickedMenu(null);
+                              }}
                             >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M9 5l7 7-7 7"
-                              />
-                            </svg>
-                          </Link>
-                        ))}
+                              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center flex-shrink-0 group-hover:from-blue-200 group-hover:to-purple-200 transition-all duration-300 group-hover:scale-110">
+                                <span className="text-xl">{h.icon}</span>
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <span className="block text-slate-900 font-bold text-sm group-hover:text-blue-600 transition-colors leading-tight">
+                                  {h.name}
+                                </span>
+                                {h.description && (
+                                  <span className="block text-xs text-slate-500 mt-1 line-clamp-1 group-hover:text-slate-600">
+                                    {h.description}
+                                  </span>
+                                )}
+                              </div>
+                              <svg
+                                className="w-5 h-5 text-slate-300 group-hover:text-blue-600 group-hover:translate-x-1 transition-all duration-300 flex-shrink-0 mt-1"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="2.5"
+                                  d="M9 5l7 7-7 7"
+                                />
+                              </svg>
+                            </Link>
+                          ))
+                        ) : (
+                          <div className="col-span-2 text-center py-8 text-slate-400 text-sm">
+                            Hizmet yükleniyor...
+                          </div>
+                        )}
                       </div>
                     </div>
-                  </div>
+                    </div>
+                  </>
                 )}
               </div>
 
               <Link
                 href="/projeler"
-                className={`relative px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 ${
+                className={`relative px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${
                   isActive("/projeler") || pathname?.startsWith("/projeler")
-                    ? "text-blue-600 bg-blue-50"
-                    : "text-slate-700 hover:text-blue-600 hover:bg-slate-50"
+                    ? "text-white bg-gradient-to-r from-blue-600 to-indigo-600 shadow-lg shadow-blue-500/30"
+                    : "text-slate-700 hover:text-white hover:bg-gradient-to-r hover:from-blue-500 hover:to-indigo-500 hover:shadow-md hover:shadow-blue-500/20"
                 }`}
               >
                 Projeler
+                {(isActive("/projeler") || pathname?.startsWith("/projeler")) && (
+                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-full"></span>
+                )}
               </Link>
 
               <Link
-                href="/blog"
-                className={`relative px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 ${
-                  isActive("/blog") || pathname?.startsWith("/blog")
-                    ? "text-blue-600 bg-blue-50"
-                    : "text-slate-700 hover:text-blue-600 hover:bg-slate-50"
+                href="/urunler"
+                className={`relative px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${
+                  isActive("/urunler") || pathname?.startsWith("/urunler")
+                    ? "text-white bg-gradient-to-r from-blue-600 to-indigo-600 shadow-lg shadow-blue-500/30"
+                    : "text-slate-700 hover:text-white hover:bg-gradient-to-r hover:from-blue-500 hover:to-indigo-500 hover:shadow-md hover:shadow-blue-500/20"
                 }`}
               >
-                Blog
+                Ürünler
+                {(isActive("/urunler") || pathname?.startsWith("/urunler")) && (
+                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-full"></span>
+                )}
               </Link>
-
 
               <Link
                 href="/iletisim"
-                className={`relative px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 ${
+                className={`relative px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${
                   isActive("/iletisim") || pathname?.startsWith("/iletisim")
-                    ? "text-blue-600 bg-blue-50"
-                    : "text-slate-700 hover:text-blue-600 hover:bg-slate-50"
+                    ? "text-white bg-gradient-to-r from-blue-600 to-indigo-600 shadow-lg shadow-blue-500/30"
+                    : "text-slate-700 hover:text-white hover:bg-gradient-to-r hover:from-blue-500 hover:to-indigo-500 hover:shadow-md hover:shadow-blue-500/20"
                 }`}
               >
                 İletişim
+                {(isActive("/iletisim") || pathname?.startsWith("/iletisim")) && (
+                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-full"></span>
+                )}
               </Link>
 
               {/* KURUMSAL DROPDOWN */}
               <div
                 className="relative"
                 data-dropdown
-                onMouseEnter={() => setActiveMenu("k")}
+                onMouseEnter={() => {
+                  setActiveMenu("k");
+                  // Hover ile açıldığında clickedMenu'yu temizle
+                  if (clickedMenu === "k") {
+                    setClickedMenu(null);
+                  }
+                }}
                 onMouseLeave={() => {
+                  // Sadece tıklanmamışsa kapat
                   if (clickedMenu !== "k") {
                     setActiveMenu(null);
                   }
@@ -355,10 +399,10 @@ export default function Header() {
                       setClickedMenu("k");
                     }
                   }}
-                  className={`relative px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition-all duration-300 ${
+                  className={`relative px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all duration-300 ${
                     activeMenu === "k" || pathname?.startsWith("/kurumsal")
-                      ? "text-blue-600 bg-blue-50"
-                      : "text-slate-700 hover:text-blue-600 hover:bg-slate-50"
+                      ? "text-white bg-gradient-to-r from-blue-600 to-indigo-600 shadow-lg shadow-blue-500/30"
+                      : "text-slate-700 hover:text-white hover:bg-gradient-to-r hover:from-blue-500 hover:to-indigo-500 hover:shadow-md hover:shadow-blue-500/20"
                   }`}
                   aria-expanded={activeMenu === "k"}
                   aria-haspopup="true"
@@ -380,23 +424,21 @@ export default function Header() {
                   </svg>
                 </button>
                 {activeMenu === "k" && (
-                  <div className="absolute left-0 mt-3 w-56 pt-2 z-50 animate-in fade-in slide-in-from-top-2 duration-300">
-                    <div
-                      data-dropdown
-                      className="bg-white/95 backdrop-blur-xl border border-slate-200/50 shadow-2xl rounded-2xl overflow-hidden"
-                      onMouseEnter={() => setActiveMenu("k")}
-                      onMouseLeave={() => {
-                        if (clickedMenu !== "k") {
-                          setActiveMenu(null);
-                        }
-                      }}
-                    >
+                  <>
+                    {/* Köprü - Button ile dropdown arasındaki boşluğu kapatır */}
+                    <div className="absolute left-0 top-full w-full h-3 z-40"></div>
+                    <div className="absolute left-0 top-full pt-3 w-56 z-50 animate-in fade-in slide-in-from-top-2 duration-300">
+                      <div
+                        data-dropdown
+                        className="bg-white/95 backdrop-blur-xl border border-slate-200/50 shadow-2xl rounded-2xl overflow-hidden"
+                      >
                       {kurumsalItems.map((item) => (
                         <Link
                           key={item.name}
                           href={item.href}
                           className="block px-4 py-3 hover:bg-blue-50 text-slate-700 hover:text-blue-600 font-semibold text-sm transition-all duration-200 border-b border-slate-100 last:border-b-0"
                           onClick={() => {
+                            // Link'e tıklandığında menüyü kapat
                             setActiveMenu(null);
                             setClickedMenu(null);
                           }}
@@ -404,8 +446,9 @@ export default function Header() {
                           {item.name}
                         </Link>
                       ))}
+                      </div>
                     </div>
-                  </div>
+                  </>
                 )}
               </div>
 
@@ -534,13 +577,13 @@ export default function Header() {
                       mobileSubmenu === "hizmetler" ? null : "hizmetler",
                     )
                   }
-                  className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl font-semibold transition-all ${
+                  className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl font-black transition-all ${
                     pathname?.startsWith("/hizmetler")
-                      ? "bg-blue-600 text-white"
-                      : "text-slate-700 hover:bg-slate-100"
+                      ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg"
+                      : "text-slate-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50"
                   }`}
                 >
-                  <span>Hizmetlerimiz</span>
+                  <span className="font-bold">Hizmetlerimiz</span>
                   <svg
                     className={`w-5 h-5 transition-transform duration-300 ${mobileSubmenu === "hizmetler" ? "rotate-180" : ""}`}
                     fill="none"
@@ -550,24 +593,39 @@ export default function Header() {
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      strokeWidth="2"
+                      strokeWidth="2.5"
                       d="M19 9l-7 7-7-7"
                     />
                   </svg>
                 </button>
                 {mobileSubmenu === "hizmetler" && (
-                  <div className="pl-4 mt-2 space-y-1">
-                    {hizmetler.map((h) => (
-                      <Link
-                        key={h.name}
-                        href={h.href}
-                        className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-blue-50 text-slate-600 text-sm font-medium transition-colors"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                      >
-                        <span className="text-xl">{h.icon}</span>
-                        <span>{h.name}</span>
-                      </Link>
-                    ))}
+                  <div className="pl-4 mt-2 space-y-2">
+                    {hizmetler.length > 0 ? (
+                      hizmetler.map((h) => (
+                        <Link
+                          key={h.name}
+                          href={h.href}
+                          className="flex items-center gap-3 px-4 py-3.5 rounded-xl hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 text-slate-700 text-sm font-bold transition-all duration-300 border border-transparent hover:border-blue-200 hover:shadow-sm"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center flex-shrink-0">
+                            <span className="text-lg">{h.icon}</span>
+                          </div>
+                          <div className="flex-1">
+                            <span className="block font-bold leading-tight">{h.name}</span>
+                            {h.description && (
+                              <span className="block text-xs text-slate-500 mt-0.5 font-normal">
+                                {h.description}
+                              </span>
+                            )}
+                          </div>
+                        </Link>
+                      ))
+                    ) : (
+                      <div className="px-4 py-3 text-slate-400 text-sm text-center">
+                        Hizmet yükleniyor...
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

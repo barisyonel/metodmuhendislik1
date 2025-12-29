@@ -19,6 +19,15 @@ function getPool() {
       waitForConnections: true,
       connectionLimit: 10,
       queueLimit: 0,
+      charset: 'utf8mb4',
+      connectTimeout: 60000,
+    });
+    
+    // Bağlantı kurulduğunda charset'i ayarla
+    pool.on('connection', (connection: mysql.PoolConnection) => {
+      connection.query("SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci");
+      connection.query("SET CHARACTER SET utf8mb4");
+      connection.query("SET character_set_connection=utf8mb4");
     });
   }
   return pool;
@@ -27,6 +36,11 @@ function getPool() {
 export async function query<T = unknown>(sql: string, params?: unknown[]): Promise<T> {
   try {
     const pool = getPool();
+    // Her sorgudan önce charset'i ayarla - Türkçe karakter desteği için kritik
+    await pool.execute("SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci");
+    await pool.execute("SET CHARACTER SET utf8mb4");
+    await pool.execute("SET character_set_connection=utf8mb4");
+    
     // mysql2 execute metodu [rows, fields] tuple döner
     const [rows] = await pool.execute(sql, params || []) as [T, unknown[]];
     

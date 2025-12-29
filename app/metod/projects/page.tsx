@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
 import { isAuthenticated } from "@/lib/auth";
-import ProductsManager from "./components/ProductsManager";
+import ProjectManager from "./components/ProjectManager";
 
-export default async function AdminProductsPage() {
+export default async function AdminProjectsPage() {
   const authenticated = await isAuthenticated();
 
   if (!authenticated) {
@@ -11,7 +11,6 @@ export default async function AdminProductsPage() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* Header */}
       <header className="bg-white border-b border-slate-200 shadow-sm">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
@@ -22,10 +21,10 @@ export default async function AdminProductsPage() {
               <div className="h-6 w-px bg-slate-300"></div>
               <div>
                 <h1 className="text-2xl font-black text-slate-900">
-                  Ürün Yönetimi
+                  Proje Yönetimi
                 </h1>
                 <p className="text-sm text-slate-600">
-                  Anasayfadaki örnek ürünleri yönetin
+                  Projeleri yönetin - Görsel galeri ekleyin
                 </p>
               </div>
             </div>
@@ -33,9 +32,8 @@ export default async function AdminProductsPage() {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="container mx-auto px-6 py-8">
-        <ProductsManager />
+        <ProjectManager />
       </main>
     </div>
   );

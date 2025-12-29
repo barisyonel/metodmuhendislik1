@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { title, description, image, images, category, link } = body;
+    const { title, description, image, images, category, link, is_active, sort_order } = body;
 
     if (!title || !description) {
       return NextResponse.json(
@@ -68,20 +68,53 @@ export async function POST(request: NextRequest) {
     const connection = await getConnection();
     try {
       try {
+        // is_active ve sort_order desteği ekle
         const [result] = await connection.execute(
-          "INSERT INTO products (title, description, image, images, category, link) VALUES (?, ?, ?, ?, ?, ?)",
-          [title, description, finalImage, imagesJson, category || "", link || ""]
+          "INSERT INTO products (title, description, image, images, category, link, is_active, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+          [
+            title, 
+            description, 
+            finalImage, 
+            imagesJson, 
+            category || "", 
+            link || "",
+            is_active !== undefined ? (is_active ? 1 : 0) : 1,
+            sort_order || 0
+          ]
         ) as [ResultSetHeader, unknown];
         insertId = result.insertId;
       } catch (error: unknown) {
         // images kolonu yoksa sadece image kullan
         const err = error as { code?: string; sqlMessage?: string };
         if (err.code === 'ER_BAD_FIELD_ERROR' || err.sqlMessage?.includes('images')) {
-          const [result] = await connection.execute(
-            "INSERT INTO products (title, description, image, category, link) VALUES (?, ?, ?, ?, ?)",
-            [title, description, finalImage, category || "", link || ""]
-          ) as [ResultSetHeader, unknown];
-          insertId = result.insertId;
+          try {
+            // is_active ve sort_order ile dene
+            const [result] = await connection.execute(
+              "INSERT INTO products (title, description, image, category, link, is_active, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?)",
+              [
+                title, 
+                description, 
+                finalImage, 
+                category || "", 
+                link || "",
+                is_active !== undefined ? (is_active ? 1 : 0) : 1,
+                sort_order || 0
+              ]
+            ) as [ResultSetHeader, unknown];
+            insertId = result.insertId;
+          } catch (err2: unknown) {
+            // is_active ve sort_order yoksa eski formatı kullan
+            const err2Obj = err2 as { code?: string; sqlMessage?: string };
+            if (err2Obj.code === 'ER_BAD_FIELD_ERROR' || err2Obj.sqlMessage?.includes('is_active') || err2Obj.sqlMessage?.includes('sort_order')) {
+              const [result] = await connection.execute(
+                "INSERT INTO products (title, description, image, category, link) VALUES (?, ?, ?, ?, ?)",
+                [title, description, finalImage, category || "", link || ""]
+              ) as [ResultSetHeader, unknown];
+              insertId = result.insertId;
+            } else {
+              throw err2;
+            }
+          }
         } else {
           throw error;
         }
@@ -117,7 +150,7 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { id, title, description, image, images, category, link } = body;
+    const { id, title, description, image, images, category, link, is_active, sort_order } = body;
 
     if (!id || !title || !description) {
       return NextResponse.json(
@@ -150,18 +183,52 @@ export async function PUT(request: NextRequest) {
 
     // images kolonunu kontrol et ve güncelle (eğer yoksa)
     try {
+      // is_active ve sort_order desteği ekle
       await query(
-        "UPDATE products SET title = ?, description = ?, image = ?, images = ?, category = ?, link = ? WHERE id = ?",
-        [title, description, finalImage, imagesJson, category || "", link || "", id]
+        "UPDATE products SET title = ?, description = ?, image = ?, images = ?, category = ?, link = ?, is_active = ?, sort_order = ? WHERE id = ?",
+        [
+          title, 
+          description, 
+          finalImage, 
+          imagesJson, 
+          category || "", 
+          link || "",
+          is_active !== undefined ? (is_active ? 1 : 0) : 1,
+          sort_order !== undefined ? sort_order : 0,
+          id
+        ]
       );
     } catch (error: unknown) {
       // images kolonu yoksa sadece image kullan
       const err = error as { code?: string; sqlMessage?: string };
       if (err.code === 'ER_BAD_FIELD_ERROR' || err.sqlMessage?.includes('images')) {
-        await query(
-          "UPDATE products SET title = ?, description = ?, image = ?, category = ?, link = ? WHERE id = ?",
-          [title, description, finalImage, category || "", link || "", id]
-        );
+        try {
+          // is_active ve sort_order ile dene
+          await query(
+            "UPDATE products SET title = ?, description = ?, image = ?, category = ?, link = ?, is_active = ?, sort_order = ? WHERE id = ?",
+            [
+              title, 
+              description, 
+              finalImage, 
+              category || "", 
+              link || "",
+              is_active !== undefined ? (is_active ? 1 : 0) : 1,
+              sort_order !== undefined ? sort_order : 0,
+              id
+            ]
+          );
+        } catch (err2: unknown) {
+          // is_active ve sort_order yoksa eski formatı kullan
+          const err2Obj = err2 as { code?: string; sqlMessage?: string };
+          if (err2Obj.code === 'ER_BAD_FIELD_ERROR' || err2Obj.sqlMessage?.includes('is_active') || err2Obj.sqlMessage?.includes('sort_order')) {
+            await query(
+              "UPDATE products SET title = ?, description = ?, image = ?, category = ?, link = ? WHERE id = ?",
+              [title, description, finalImage, category || "", link || "", id]
+            );
+          } else {
+            throw err2;
+          }
+        }
       } else {
         throw error;
       }

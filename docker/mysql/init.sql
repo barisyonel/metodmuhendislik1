@@ -74,13 +74,7 @@ CREATE TABLE IF NOT EXISTS `hero_sliders` (
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Varsayılan slider'ları ekle
-INSERT INTO `hero_sliders` (`title`, `subtitle`, `description`, `image_url`, `link`, `color`, `sort_order`, `is_active`) VALUES
-('Elektrik Pano & Marin Pano Üretimi', 'Güvenli Enerji Dağıtım Çözümleri', '20+ yıllık deneyimimizle elektrik pano ve marin pano üretiminde sektörün öncü firması. Sıvaüstü, sıvaaltı, dahili ve marin pano üretimi ile güvenilir enerji dağıtım çözümleri sunuyoruz.', '/elektrıkpano.png', '/hizmetler/elektrik-pano-uretime', 'from-blue-600/50 via-blue-700/50 to-slate-900/60', 1, TRUE),
-('CNC Lazer Kesim', 'Hassas ve Hızlı Üretim', 'Yüksek teknoloji lazer kesim makinelerimiz ile hassas ve hızlı üretim çözümleri', '/metod.png', '/hizmetler/cnc-lazer-kesim', 'from-blue-500/40 via-blue-700/50 to-slate-900/60', 2, TRUE),
-('CNC Büküm', 'Profesyonel İmalat Çözümleri', 'CNC büküm teknolojimiz ile şekillendirme işlemlerinde mükemmellik', '/cncbukum.png', '/hizmetler/cnc-bukum', 'from-slate-600/40 via-slate-700/50 to-blue-800/60', 3, TRUE),
-('Metal Kaynak & İmalat', 'Profesyonel Kaynak Hizmetleri', 'Metal kaynak ve imalat hizmetlerimizle endüstriyel üretimde güvenilir çözümler', '/kaynak.png', '/hizmetler/kaynak', 'from-orange-500/40 via-orange-600/50 to-slate-900/60', 4, TRUE)
-ON DUPLICATE KEY UPDATE title=title;
+-- Varsayılan slider'lar kaldırıldı - Admin panelinden eklenebilir
 
 -- Projeler tablosu
 CREATE TABLE IF NOT EXISTS `projects` (
@@ -88,6 +82,7 @@ CREATE TABLE IF NOT EXISTS `projects` (
   `title` VARCHAR(255) NOT NULL,
   `description` TEXT,
   `image_url` VARCHAR(500) NOT NULL,
+  `images` TEXT NULL,
   `category` VARCHAR(100) DEFAULT 'Genel',
   `client_name` VARCHAR(255),
   `location` VARCHAR(255),
@@ -97,4 +92,28 @@ CREATE TABLE IF NOT EXISTS `projects` (
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Hizmetler tablosu (Navbar menüsü için)
+CREATE TABLE IF NOT EXISTS `services` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `name` VARCHAR(255) NOT NULL,
+  `href` VARCHAR(500) NOT NULL,
+  `icon` VARCHAR(10) DEFAULT '⚡',
+  `description` TEXT,
+  `sort_order` INT DEFAULT 0,
+  `is_active` BOOLEAN DEFAULT TRUE,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Varsayılan hizmetleri ekle
+INSERT INTO `services` (`name`, `href`, `icon`, `description`, `sort_order`, `is_active`) VALUES
+('Elektrik Pano Üretimi', '/hizmetler/elektrik-pano-uretime', '⚡', 'Sıvaüstü, sıvaaltı ve marin pano üretimi', 1, TRUE),
+('CNC Lazer Kesim', '/hizmetler/cnc-lazer-kesim', '⚡', 'Hassas lazer kesim çözümleri', 2, TRUE),
+('CNC Büküm', '/hizmetler/cnc-bukum', '🔧', 'Profesyonel büküm hizmetleri', 3, TRUE),
+('Kaynak', '/hizmetler/kaynak', '🔥', 'Metal kaynak ve imalat', 4, TRUE),
+('Elektrostatik Toz Boya', '/hizmetler/elektrostatik-toz-boya', '🎨', 'Yüksek kaliteli toz boya', 5, TRUE),
+('Mağaza Raf Ve Ürünleri', '/hizmetler/magaza-raf-ve-urunleri', '📦', 'Mağaza raf sistemleri', 6, TRUE),
+('Çelik Konstrüksiyon', '/hizmetler/celik-konstruksiyon', '🏗️', 'Endüstriyel çelik yapılar', 7, TRUE)
+ON DUPLICATE KEY UPDATE name=name;
 

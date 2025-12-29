@@ -2,19 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { isAuthenticated } from "@/lib/auth";
 import { query } from "@/lib/db";
 
-interface Slider {
-  id: number;
-  title: string;
-  subtitle: string;
-  description: string;
-  image_url: string;
-  video_url: string | null;
-  link: string;
-  color: string;
-  sort_order: number;
-  is_active: boolean;
-}
-
 // Slider güncelle
 export async function PUT(
   request: NextRequest,
@@ -33,19 +20,22 @@ export async function PUT(
     const body = await request.json();
     const { title, subtitle, description, image_url, video_url, link, color, sort_order, is_active } = body;
 
-    if (!title || !image_url) {
+    if (!image_url) {
       return NextResponse.json(
-        { success: false, message: "Başlık ve görsel URL gerekli" },
+        { success: false, message: "Görsel URL gerekli" },
         { status: 400 }
       );
     }
+
+    // Başlık yoksa basit bir başlık oluştur
+    const finalTitle = title || "Slider";
 
     await query(
       `UPDATE hero_sliders 
        SET title = ?, subtitle = ?, description = ?, image_url = ?, video_url = ?, link = ?, color = ?, sort_order = ?, is_active = ?, updated_at = NOW()
        WHERE id = ?`,
       [
-        title,
+        finalTitle,
         subtitle || "",
         description || "",
         image_url,
@@ -62,12 +52,20 @@ export async function PUT(
       success: true,
       message: "Slider başarıyla güncellendi",
     });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Slider güncelleme hatası:", error);
+    const err = error as { code?: string; sqlMessage?: string; message?: string; errno?: number };
+    console.error("Error details:", {
+      code: err.code,
+      sqlMessage: err.sqlMessage,
+      message: err.message,
+      errno: err.errno,
+    });
+    const errorMessage = err.sqlMessage || err.message || "Slider güncellenirken hata oluştu";
     return NextResponse.json(
       {
         success: false,
-        message: "Slider güncellenirken hata oluştu",
+        message: errorMessage,
       },
       { status: 500 }
     );
@@ -96,12 +94,20 @@ export async function DELETE(
       success: true,
       message: "Slider başarıyla silindi",
     });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Slider silme hatası:", error);
+    const err = error as { code?: string; sqlMessage?: string; message?: string; errno?: number };
+    console.error("Error details:", {
+      code: err.code,
+      sqlMessage: err.sqlMessage,
+      message: err.message,
+      errno: err.errno,
+    });
+    const errorMessage = err.sqlMessage || err.message || "Slider silinirken hata oluştu";
     return NextResponse.json(
       {
         success: false,
-        message: "Slider silinirken hata oluştu",
+        message: errorMessage,
       },
       { status: 500 }
     );

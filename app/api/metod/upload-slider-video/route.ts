@@ -57,18 +57,43 @@ export async function POST(request: NextRequest) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Base64'e dönüştür
-    const base64 = buffer.toString("base64");
-    const dataURI = `data:${file.type};base64,${base64}`;
-
-    // Cloudinary'ye yükle - slider video için özel klasör
-    const result = await cloudinary.uploader.upload(dataURI, {
-      folder: "metod-muhendislik/slider-videos",
-      resource_type: "video",
-      transformation: [
-        { quality: "auto", fetch_format: "auto" },
-      ],
+    console.log("Cloudinary'ye video yükleme başlıyor...");
+    console.log("Video dosya bilgileri:", {
+      name: file.name,
+      size: file.size,
+      type: file.type,
     });
+    console.log("Cloudinary config:", {
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME || "dkkd4jvyk",
+      has_api_key: !!process.env.CLOUDINARY_API_KEY,
+      has_api_secret: !!process.env.CLOUDINARY_API_SECRET,
+    });
+
+    // Stream upload kullan (büyük video dosyaları için daha iyi)
+    const result = await new Promise((resolve, reject) => {
+      cloudinary.uploader.upload_stream(
+        {
+          folder: "metod-muhendislik/slider-videos",
+          resource_type: "video",
+          transformation: [
+            { quality: "auto", fetch_format: "auto" },
+          ],
+          timeout: 120000, // 120 saniye timeout (video için daha uzun)
+          chunk_size: 10000000, // 10MB chunk size
+        },
+        (error, result) => {
+          if (error) {
+            reject(error);
+          } else if (result) {
+            resolve(result);
+          } else {
+            reject(new Error("Cloudinary upload failed: No result returned"));
+          }
+        }
+      ).end(buffer);
+    }) as { secure_url: string; public_id: string };
+
+    console.log("Cloudinary video yükleme başarılı:", result.secure_url);
 
     return NextResponse.json({
       success: true,
