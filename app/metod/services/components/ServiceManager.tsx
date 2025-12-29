@@ -396,5 +396,3 @@ export default function ServiceManager() {
     </div>
   );
 }
-
-
