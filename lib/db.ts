@@ -10,17 +10,33 @@ let pool: mysql.Pool | null = null;
 
 function getPool() {
   if (!pool) {
+    // Vercel'de localhost kullanılamaz - remote veritabanı gerekli
+    const dbHost = process.env.DB_HOST || 'localhost';
+    const dbPort = parseInt(process.env.DB_PORT || '3306');
+    
+    // Production'da localhost kullanımını engelle
+    if ((process.env.NODE_ENV === 'production' || process.env.VERCEL === '1') && 
+        (dbHost === 'localhost' || dbHost === '127.0.0.1')) {
+      console.error('❌ HATA: Vercel/Production ortamında localhost kullanılamaz!');
+      console.error('Lütfen remote bir MySQL veritabanı kullanın (PlanetScale, Railway, AWS RDS, vb.)');
+      console.error('DB_HOST environment variable\'ını remote host adresi ile güncelleyin.');
+    }
+    
     pool = mysql.createPool({
-      host: process.env.DB_HOST || 'localhost',
+      host: dbHost,
       user: process.env.DB_USER || 'metodmuhendislik',
       password: process.env.DB_PASSWORD || 'metod2024!',
       database: process.env.DB_NAME || 'metodmuhendislik_db',
-      port: parseInt(process.env.DB_PORT || '3307'),
+      port: dbPort,
       waitForConnections: true,
       connectionLimit: 10,
       queueLimit: 0,
       charset: 'utf8mb4',
       connectTimeout: 60000,
+      // SSL ayarları (remote veritabanı için gerekebilir)
+      ssl: process.env.DB_SSL === 'true' ? {
+        rejectUnauthorized: false
+      } : undefined,
     });
     
     // Bağlantı kurulduğunda charset'i ayarla
