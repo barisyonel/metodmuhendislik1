@@ -2,6 +2,9 @@ import { redirect } from "next/navigation";
 import { isAuthenticated } from "@/lib/auth";
 import ServiceManager from "./components/ServiceManager";
 
+// Force dynamic rendering because we use cookies for authentication
+export const dynamic = 'force-dynamic';
+
 export default async function AdminServicesPage() {
   const authenticated = await isAuthenticated();
 

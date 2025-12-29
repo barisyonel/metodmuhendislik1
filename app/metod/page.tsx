@@ -3,6 +3,9 @@ import { isAuthenticated } from "@/lib/auth";
 import Link from "next/link";
 import LogoutButton from "./components/LogoutButton";
 
+// Force dynamic rendering because we use cookies for authentication
+export const dynamic = 'force-dynamic';
+
 export default async function AdminDashboardPage() {
   const authenticated = await isAuthenticated();
 

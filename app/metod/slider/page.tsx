@@ -2,6 +2,9 @@ import { redirect } from "next/navigation";
 import { isAuthenticated } from "@/lib/auth";
 import SliderManager from "./components/SliderManager";
 
+// Force dynamic rendering because we use cookies for authentication
+export const dynamic = 'force-dynamic';
+
 export default async function AdminSliderPage() {
   const authenticated = await isAuthenticated();
 
