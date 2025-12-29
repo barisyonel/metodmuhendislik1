@@ -6,7 +6,6 @@ export async function isAuthenticated(): Promise<boolean> {
     const token = cookieStore.get("metod_admin_token");
     
     if (!token || !token.value) {
-      console.log("Yetkilendirme hatası: Token bulunamadı");
       return false;
     }
 
@@ -17,17 +16,18 @@ export async function isAuthenticated(): Promise<boolean> {
       const isValid = decoded.includes(":") && decoded.split(":").length === 2;
       
       if (!isValid) {
-        console.log("Yetkilendirme hatası: Geçersiz token formatı");
         return false;
       }
       
       return true;
     } catch (error) {
-      console.error("Token decode hatası:", error);
+      // Token decode hatası - sessizce false döndür
       return false;
     }
   } catch (error) {
-    console.error("Yetkilendirme kontrolü hatası:", error);
+    // Dynamic server usage hatası - bu normal, sadece false döndür
+    // Bu hata Next.js'in cookies() kullanımından kaynaklanıyor
+    // ve route segment config'de dynamic = 'force-dynamic' ile çözülmeli
     return false;
   }
 }

@@ -4,6 +4,7 @@ import ServiceManager from "./components/ServiceManager";
 
 // Force dynamic rendering because we use cookies for authentication
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function AdminServicesPage() {
   const authenticated = await isAuthenticated();

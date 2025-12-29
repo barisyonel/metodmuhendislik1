@@ -4,6 +4,7 @@ import ProjectManager from "./components/ProjectManager";
 
 // Force dynamic rendering because we use cookies for authentication
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function AdminProjectsPage() {
   const authenticated = await isAuthenticated();
