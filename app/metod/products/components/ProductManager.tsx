@@ -20,8 +20,10 @@ export default function ProductManager() {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [uploadingIndex, setUploadingIndex] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
   const [imagePreview, setImagePreview] = useState<string>("");
+  const [productImages, setProductImages] = useState<string[]>([]);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -40,25 +42,47 @@ export default function ProductManager() {
   const loadProducts = async () => {
     try {
       setLoading(true);
-      const response = await fetch("/api/metod/products");
+      const response = await fetch(`/api/metod/products?t=${Date.now()}`, {
+        cache: 'no-store',
+      });
       const data = await response.json();
       if (data.success) {
         const productsData = Array.isArray(data.data) ? data.data : [];
-        console.log("Yüklenen ürünler:", productsData.length);
+        console.log(`✅ ${productsData.length} ürün yüklendi`);
+        
+        // Her ürün için görselleri kontrol et
+        productsData.forEach((product: Product) => {
+          let imageCount = 0;
+          if (product.image) imageCount++;
+          if (product.images) {
+            try {
+              const parsed = typeof product.images === 'string' 
+                ? JSON.parse(product.images) 
+                : product.images;
+              if (Array.isArray(parsed)) {
+                imageCount = parsed.length;
+              }
+            } catch (e) {
+              // Parse hatası
+            }
+          }
+          console.log(`  Ürün ${product.id} (${product.title}): ${imageCount} görsel`);
+        });
+        
         setProducts(productsData);
       } else {
-        console.error("Ürün yükleme hatası:", data.message);
+        console.error("❌ Ürün yükleme hatası:", data.message);
         setProducts([]);
       }
     } catch (error) {
-      console.error("Ürünler yüklenirken hata:", error);
+      console.error("❌ Ürünler yüklenirken hata:", error);
       setProducts([]);
     } finally {
       setLoading(false);
     }
   };
 
-  // Görsel yükleme
+  // Tek görsel yükleme (ana görsel için)
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -95,7 +119,17 @@ export default function ProductManager() {
         const imageUrl = data.url;
         setFormData((prev) => ({ ...prev, image: imageUrl }));
         setImagePreview(imageUrl);
-        alert("✅ Görsel başarıyla Cloudinary'ye yüklendi!");
+        // Ana görseli images array'inin başına ekle (eğer yoksa)
+        setProductImages(prev => {
+          if (prev.includes(imageUrl)) {
+            // Zaten varsa başa taşı
+            return [imageUrl, ...prev.filter(img => img !== imageUrl)];
+          } else {
+            // Yoksa başa ekle
+            return [imageUrl, ...prev];
+          }
+        });
+        alert("✅ Ana görsel başarıyla yüklendi!");
       } else {
         const errorMsg = data.message || "Görsel yüklenirken bir hata oluştu";
         console.error("Upload error response:", data);
@@ -111,13 +145,144 @@ export default function ProductManager() {
     }
   };
 
+  // Birden fazla görsel yükleme
+  const handleMultipleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    // Maksimum 6 görsel kontrolü
+    const currentImageCount = productImages.length;
+    const maxImages = 6;
+    
+    if (currentImageCount >= maxImages) {
+      alert(`⚠️ Maksimum ${maxImages} görsel ekleyebilirsiniz!\n\nŞu anda ${currentImageCount} görsel var.`);
+      e.target.value = "";
+      return;
+    }
+
+    const validFiles = Array.from(files).filter(file => {
+      if (!file.type.startsWith("image/")) {
+        alert(`${file.name} bir görsel dosyası değil!`);
+        return false;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        alert(`${file.name} dosyası 10MB'dan büyük!`);
+        return false;
+      }
+      return true;
+    });
+
+    if (validFiles.length === 0) return;
+
+    // Toplam görsel sayısı kontrolü (mevcut + yeni)
+    const totalAfterUpload = currentImageCount + validFiles.length;
+    if (totalAfterUpload > maxImages) {
+      const allowedCount = maxImages - currentImageCount;
+      alert(`⚠️ Maksimum ${maxImages} görsel ekleyebilirsiniz!\n\nŞu anda ${currentImageCount} görsel var. Sadece ${allowedCount} görsel daha ekleyebilirsiniz.`);
+      e.target.value = "";
+      return;
+    }
+
+    // Her dosyayı sırayla yükle
+    for (let i = 0; i < validFiles.length; i++) {
+      const file = validFiles[i];
+      setUploadingIndex(i);
+      
+      try {
+        const uploadFormData = new FormData();
+        uploadFormData.append("file", file);
+
+        const response = await fetch("/api/metod/upload-product", {
+          method: "POST",
+          body: uploadFormData,
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({ message: "Sunucu hatası" }));
+          throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        
+        if (data.success && data.url) {
+          const imageUrl = data.url;
+          console.log(`✅ Görsel ${i + 1}/${validFiles.length} yüklendi:`, imageUrl);
+          
+          // Yeni görseli ekle (duplicate kontrolü ile)
+          setProductImages(prev => {
+            if (prev.includes(imageUrl)) {
+              console.log("⚠️ Görsel zaten mevcut, atlanıyor:", imageUrl);
+              return prev;
+            }
+            const newImages = [...prev, imageUrl];
+            const maxImages = 6;
+            console.log(`📸 Görsel eklendi. Toplam görsel sayısı: ${newImages.length}/${maxImages}`);
+            
+            // Maksimum 6 görsel kontrolü
+            if (newImages.length > maxImages) {
+              alert(`⚠️ Maksimum ${maxImages} görsel ekleyebilirsiniz!`);
+              return prev;
+            }
+            
+            return newImages;
+          });
+          
+          // İlk görsel ana görsel değilse, ana görseli ayarla
+          if (i === 0 && !imagePreview) {
+            console.log("⭐ İlk görsel ana görsel olarak ayarlanıyor:", imageUrl);
+            setImagePreview(imageUrl);
+            setFormData(prev => ({ ...prev, image: imageUrl }));
+          }
+        } else {
+          alert(`❌ ${file.name} yüklenirken hata: ${data.message || "Bilinmeyen hata"}`);
+        }
+      } catch (error) {
+        console.error(`Upload error for ${file.name}:`, error);
+        alert(`❌ ${file.name} yüklenirken hata oluştu`);
+      }
+    }
+    
+    setUploadingIndex(null);
+    e.target.value = "";
+    if (validFiles.length > 0) {
+      alert(`✅ ${validFiles.length} görsel başarıyla yüklendi!`);
+    }
+  };
+
+  // Görsel silme
+  const handleRemoveImage = (index: number) => {
+    const removedImage = productImages[index];
+    const newImages = productImages.filter((_, i) => i !== index);
+    setProductImages(newImages);
+    
+    // Eğer silinen görsel ana görselse, ilk görseli ana görsel yap
+    if (removedImage === imagePreview && newImages.length > 0) {
+      setImagePreview(newImages[0]);
+      setFormData(prev => ({ ...prev, image: newImages[0] }));
+    } else if (newImages.length === 0) {
+      setImagePreview("");
+      setFormData(prev => ({ ...prev, image: "" }));
+    }
+  };
+
+  // Ana görsel seçme
+  const handleSetMainImage = (imageUrl: string) => {
+    setImagePreview(imageUrl);
+    setFormData(prev => ({ ...prev, image: imageUrl }));
+    // Görseli başa taşı
+    setProductImages(prev => {
+      const filtered = prev.filter(img => img !== imageUrl);
+      return [imageUrl, ...filtered];
+    });
+  };
+
   // Form gönder
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const finalImageUrl = imagePreview || formData.image;
     if (!finalImageUrl || finalImageUrl.trim() === '' || !finalImageUrl.startsWith('http')) {
-      alert("❌ Lütfen geçerli bir görsel yükleyin (URL 'http' ile başlamalıdır)!");
+      alert("❌ Lütfen geçerli bir ana görsel yükleyin (URL 'http' ile başlamalıdır)!");
       return;
     }
 
@@ -133,17 +298,59 @@ export default function ProductManager() {
         : "/api/metod/products";
       const method = editingProduct ? "PUT" : "POST";
 
+      // Görselleri hazırla - İLK GÖRSEL KAPAK FOTOĞRAFI OLACAK
+      let allImages: string[] = [];
+      
+      // productImages array'inden başla
+      if (productImages.length > 0) {
+        allImages = [...productImages];
+      }
+      
+      // Kapak fotoğrafını (ana görsel) başa ekle (eğer yoksa)
+      // İlk görsel her zaman kapak fotoğrafı olacak
+      if (finalImageUrl.trim()) {
+        if (!allImages.includes(finalImageUrl.trim())) {
+          // Kapak fotoğrafı yoksa başa ekle
+          allImages = [finalImageUrl.trim(), ...allImages];
+        } else {
+          // Kapak fotoğrafı zaten varsa, başa taşı
+          allImages = [finalImageUrl.trim(), ...allImages.filter(img => img !== finalImageUrl.trim())];
+        }
+      }
+      
+      // Eğer hiç görsel yoksa, en azından kapak fotoğrafını ekle
+      if (allImages.length === 0 && finalImageUrl.trim()) {
+        allImages = [finalImageUrl.trim()];
+      }
+      
+      // Maksimum 6 görsel kontrolü
+      if (allImages.length > 6) {
+        alert(`⚠️ Maksimum 6 görsel ekleyebilirsiniz! İlk 6 görsel kaydedilecek.`);
+        allImages = allImages.slice(0, 6);
+      }
+      
+      console.log("📸 Kaydedilecek görseller:", {
+        total: allImages.length,
+        kapakFotoğrafı: allImages[0] || "Yok",
+        ekGörseller: allImages.slice(1),
+      });
+
       const submitData = {
         title: formData.title.trim(),
         description: formData.description.trim(),
         image: finalImageUrl.trim(),
+        images: allImages, // Her zaman images array'i gönder (tek görsel olsa bile)
         category: formData.category.trim() || "",
         link: formData.link.trim() || "",
         sort_order: formData.sort_order || 0,
         is_active: formData.is_active !== undefined ? formData.is_active : true,
       };
 
-      console.log("Ürün kaydediliyor:", submitData);
+      console.log("📤 Ürün kaydediliyor:", {
+        ...submitData,
+        imagesCount: submitData.images?.length || 0,
+        images: submitData.images,
+      });
 
       const response = await fetch(url, {
         method,
@@ -159,14 +366,53 @@ export default function ProductManager() {
       }
 
       const data = await response.json();
+      console.log("📥 API Response:", data);
+      console.log("📥 API Response Data:", {
+        success: data.success,
+        message: data.message,
+        data: data.data,
+        imagesCount: data.data?.imagesCount,
+        images: data.data?.images,
+      });
+      
       if (data.success) {
-        await loadProducts();
-        resetForm();
-        alert(editingProduct ? "✅ Ürün başarıyla güncellendi!" : "✅ Ürün başarıyla eklendi!");
+        console.log("✅ Ürün başarıyla kaydedildi!");
+        console.log("📸 Gönderilen görsel sayısı:", allImages.length);
+        console.log("📸 API'den dönen görsel sayısı:", data.data?.imagesCount || 0);
         
-        // Frontend'i tetikle
+        // Kısa bir bekleme (veritabanı güncellemesi için)
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // Ürünleri yeniden yükle
+        await loadProducts();
+        
+        // Yüklenen ürünü kontrol et
+        if (editingProduct) {
+          const updatedProduct = products.find(p => p.id === editingProduct.id);
+          if (updatedProduct) {
+            console.log("🔄 Güncellenen ürün:", updatedProduct);
+            console.log("🔄 Ürün görselleri:", updatedProduct.images);
+          }
+        }
+        
+        // Formu sıfırla
+        resetForm();
+        
+        // Başarı mesajı
+        const savedImagesCount = data.data?.imagesCount || allImages.length;
+        const message = editingProduct 
+          ? `✅ Ürün başarıyla güncellendi!\n\n📸 ${savedImagesCount} görsel kaydedildi.\n\nSayfa yenilenecek...`
+          : `✅ Ürün başarıyla eklendi!\n\n📸 ${savedImagesCount} görsel kaydedildi.\n\nSayfa yenilenecek...`;
+        alert(message);
+        
+        // Frontend'i tetikle ve sayfayı yenile
         if (typeof window !== 'undefined') {
-          window.dispatchEvent(new Event('product-updated'));
+          setTimeout(() => {
+            window.dispatchEvent(new Event('product-updated'));
+            console.log("🔄 Frontend güncelleme eventi gönderildi");
+            // Sayfayı yenile (görsellerin görünmesi için)
+            window.location.reload();
+          }, 1500);
         }
       } else {
         throw new Error(data.message || "Bilinmeyen hata");
@@ -221,6 +467,41 @@ export default function ProductManager() {
       is_active: product.is_active === true || product.is_active === 1,
     });
     setImagePreview(product.image || "");
+    
+    // Görselleri parse et
+    let images: string[] = [];
+    
+    // Önce images JSON kolonunu parse et
+    if (product.images) {
+      try {
+        const parsed = typeof product.images === 'string' 
+          ? JSON.parse(product.images) 
+          : product.images;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          images = parsed;
+          console.log(`📸 Ürün ${product.id} - ${parsed.length} görsel parse edildi:`, parsed);
+        }
+      } catch (e) {
+        console.error("Images parse error:", e, "Raw images:", product.images);
+      }
+    }
+    
+    // Ana görseli ekle (eğer yoksa başa ekle, varsa başa taşı)
+    if (product.image) {
+      if (!images.includes(product.image)) {
+        images = [product.image, ...images];
+      } else {
+        images = [product.image, ...images.filter(img => img !== product.image)];
+      }
+    }
+    
+    // Eğer hiç görsel yoksa ve sadece product.image varsa, onu kullan
+    if (images.length === 0 && product.image) {
+      images = [product.image];
+    }
+    
+    console.log(`✅ Ürün ${product.id} - Toplam ${images.length} görsel yüklendi:`, images);
+    setProductImages(images);
     setShowForm(true);
   };
 
@@ -236,6 +517,7 @@ export default function ProductManager() {
       is_active: true,
     });
     setImagePreview("");
+    setProductImages([]);
     setEditingProduct(null);
     setShowForm(false);
   };
@@ -335,30 +617,30 @@ export default function ProductManager() {
                 />
               </div>
 
-              {/* Görsel Yükleme */}
+              {/* Ana Görsel Yükleme */}
               <div className="bg-blue-50 p-4 rounded-lg border-2 border-blue-200">
                 <label className="block text-sm font-bold text-slate-700 mb-3">
-                  <span className="text-red-500">*</span> Ürün Görseli (Zorunlu)
+                  <span className="text-red-500">*</span> Ana Görsel (Zorunlu - Kartlarda görünecek)
                 </label>
                 <div className="space-y-3">
                   {imagePreview && imagePreview.trim() !== '' ? (
                     <div className="relative w-full h-64 rounded-lg overflow-hidden border-2 border-green-400 shadow-lg bg-slate-100">
                       <Image
                         src={imagePreview}
-                        alt="Product Preview"
+                        alt="Ana Görsel Önizleme"
                         fill
                         className="object-cover"
                         unoptimized={true}
                       />
                       <div className="absolute top-2 right-2 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold z-10 shadow-lg">
-                        ✓ Görsel Yüklendi
+                        ✓ Ana Görsel
                       </div>
                     </div>
                   ) : (
                     <div className="relative w-full h-48 rounded-lg border-2 border-dashed border-slate-300 bg-slate-50 flex items-center justify-center">
                       <div className="text-center">
-                        <p className="text-slate-400 text-sm mb-2">Görsel önizlemesi</p>
-                        <p className="text-slate-300 text-xs">Görsel yüklendikten sonra burada görünecek</p>
+                        <p className="text-slate-400 text-sm mb-2">Ana görsel önizlemesi</p>
+                        <p className="text-slate-300 text-xs">Ana görsel yüklendikten sonra burada görünecek</p>
                       </div>
                     </div>
                   )}
@@ -374,9 +656,120 @@ export default function ProductManager() {
                     {uploading && (
                       <div className="absolute top-3 right-4 flex items-center gap-2 text-sm text-blue-600 bg-white/90 px-2 py-1 rounded">
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                        <span>Cloudinary&apos;ye yükleniyor...</span>
+                        <span>Yükleniyor...</span>
                       </div>
                     )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Ek Görseller (Galeri) */}
+              <div className="bg-purple-50 p-4 rounded-lg border-2 border-purple-200">
+                <label className="block text-sm font-bold text-slate-700 mb-3">
+                  📸 Ek Görseller (Ürün detay sayfasında galeri olarak görünecek)
+                </label>
+                <div className="space-y-4">
+                  {/* Görsel Sayısı Bilgisi */}
+                  <div className="mb-2 p-2 bg-purple-100 rounded-lg">
+                    <p className="text-sm font-bold text-purple-700">
+                      📸 {productImages.length} / 6 görsel yüklü
+                      {productImages.length >= 6 && (
+                        <span className="ml-2 text-red-600">(Maksimum limit)</span>
+                      )}
+                    </p>
+                    <p className="text-xs text-purple-600 mt-1">
+                      💡 İlk görsel kapak fotoğrafı olarak ürün kartlarında görünecek
+                    </p>
+                  </div>
+                  
+                  {/* Mevcut Görseller */}
+                  {productImages.length > 0 && (
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                      {productImages.map((img, index) => (
+                        <div
+                          key={index}
+                          className={`relative aspect-square rounded-lg overflow-hidden border-2 ${
+                            img === imagePreview
+                              ? "border-green-500 ring-2 ring-green-300"
+                              : "border-gray-300"
+                          } group`}
+                        >
+                          <Image
+                            src={img}
+                            alt={`Görsel ${index + 1}`}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 50vw, 25vw"
+                            unoptimized={true}
+                          />
+                          {img === imagePreview && (
+                            <div className="absolute top-1 left-1 bg-green-500 text-white px-2 py-1 rounded text-xs font-bold z-10">
+                              📸 Kapak
+                            </div>
+                          )}
+                          {index === 0 && img !== imagePreview && (
+                            <div className="absolute top-1 right-1 bg-blue-500 text-white px-2 py-1 rounded text-xs font-bold z-10">
+                              1️⃣
+                            </div>
+                          )}
+                          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                            {img !== imagePreview && (
+                              <button
+                                type="button"
+                                onClick={() => handleSetMainImage(img)}
+                                className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs font-bold"
+                                title="Kapak fotoğrafı yap"
+                              >
+                                📸 Kapak Yap
+                              </button>
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveImage(index)}
+                              className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-xs font-bold"
+                              title="Sil"
+                            >
+                              🗑️ Sil
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Görsel Yükleme Butonu */}
+                  <div className="relative">
+                    <input
+                      type="file"
+                      id="product-images-input"
+                      accept="image/jpeg,image/jpg,image/png,image/webp"
+                      onChange={handleMultipleImageUpload}
+                      disabled={uploadingIndex !== null}
+                      multiple
+                      className="w-full px-4 py-3 border-2 border-purple-400 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-600 bg-white cursor-pointer hover:border-purple-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    />
+                    {uploadingIndex !== null && (
+                      <div className="absolute top-3 right-4 flex items-center gap-2 text-sm text-purple-600 bg-white/90 px-2 py-1 rounded">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-purple-600"></div>
+                        <span>Yükleniyor... ({uploadingIndex + 1})</span>
+                      </div>
+                    )}
+                    <div className="mt-2 space-y-1">
+                      <p className="text-xs text-slate-500">
+                        💡 Birden fazla görsel seçebilirsiniz (Ctrl/Cmd + tıklama ile çoklu seçim).
+                      </p>
+                      <p className="text-xs text-slate-500">
+                        ⭐ Ana görseli (kapak fotoğrafı) değiştirmek için görselin üzerine gelip "Kapak Yap" butonuna tıklayın.
+                      </p>
+                      <p className="text-xs text-slate-500">
+                        📌 Maksimum 6 görsel ekleyebilirsiniz. İlk görsel ürün kartlarında kapak fotoğrafı olarak görünecek.
+                      </p>
+                      {productImages.length > 0 && (
+                        <p className="text-xs font-bold text-purple-600">
+                          ✅ {productImages.length} görsel hazır - Ürünü kaydedin!
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -515,25 +908,61 @@ export default function ProductManager() {
                       : "border-slate-200 opacity-60"
                   } overflow-hidden shadow-lg hover:shadow-2xl transition-all`}
                 >
-                  {/* Görsel */}
-                  <div className="relative w-full h-64 bg-slate-100">
-                    {product.image && product.image.trim() !== '' ? (
-                      <Image
-                        src={product.image}
-                        alt={product.title || `Ürün ${product.id}`}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                        unoptimized={true}
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-slate-400 bg-slate-50">
-                        <div className="text-center p-4">
-                          <div className="text-4xl mb-2">📦</div>
-                          <p className="text-sm font-bold">Görsel Yok</p>
-                        </div>
-                      </div>
-                    )}
+                  {/* Görsel Galeri */}
+                  <div className="relative w-full h-64 bg-slate-100 overflow-hidden">
+                    {(() => {
+                      // Görselleri parse et
+                      let productImagesList: string[] = [];
+                      if (product.image) {
+                        productImagesList.push(product.image);
+                      }
+                      if (product.images) {
+                        try {
+                          const parsed = typeof product.images === 'string' 
+                            ? JSON.parse(product.images) 
+                            : product.images;
+                          if (Array.isArray(parsed) && parsed.length > 0) {
+                            productImagesList = parsed;
+                            if (product.image && !productImagesList.includes(product.image)) {
+                              productImagesList = [product.image, ...productImagesList];
+                            }
+                          }
+                        } catch (e) {
+                          // Parse hatası - görmezden gel
+                        }
+                      }
+                      
+                      if (productImagesList.length > 0) {
+                        return (
+                          <>
+                            <Image
+                              src={productImagesList[0]}
+                              alt={product.title || `Ürün ${product.id}`}
+                              fill
+                              className="object-cover"
+                              sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                              unoptimized={true}
+                            />
+                            {/* Görsel sayacı badge */}
+                            {productImagesList.length > 1 && (
+                              <div className="absolute top-2 left-2 bg-black/70 text-white px-3 py-1 rounded-full text-xs font-bold z-10 backdrop-blur-sm flex items-center gap-1">
+                                <span>📸</span>
+                                <span>{productImagesList.length}</span>
+                              </div>
+                            )}
+                          </>
+                        );
+                      } else {
+                        return (
+                          <div className="w-full h-full flex items-center justify-center text-slate-400 bg-slate-50">
+                            <div className="text-center p-4">
+                              <div className="text-4xl mb-2">📦</div>
+                              <p className="text-sm font-bold">Görsel Yok</p>
+                            </div>
+                          </div>
+                        );
+                      }
+                    })()}
                     {product.is_active !== true && product.is_active !== 1 && (
                       <div className="absolute top-2 right-2 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold z-10 shadow-lg">
                         Pasif

@@ -6,10 +6,21 @@ export const dynamic = 'force-dynamic';
 
 // Detaylı veritabanı debug endpoint'i
 export async function GET() {
+  interface ConnectionDetails {
+    test?: number;
+    current_time?: string;
+    [key: string]: unknown;
+  }
+
+  interface QueryData {
+    count?: number;
+    [key: string]: unknown;
+  }
+
   const debugInfo: {
-    connection: { status: string; error?: string; details?: any };
+    connection: { status: string; error?: string; details?: ConnectionDetails };
     tables: { status: string; tables?: string[]; error?: string };
-    testQueries: { [key: string]: { status: string; data?: any; error?: string } };
+    testQueries: { [key: string]: { status: string; data?: QueryData; error?: string } };
     env: { [key: string]: string | boolean };
   } = {
     connection: { status: 'checking' },
@@ -27,10 +38,10 @@ export async function GET() {
 
   // 1. Bağlantı testi
   try {
-    const testResult = await query("SELECT 1 as test, NOW() as current_time");
+    const testResult = await query<Array<{ test: number; current_time: string }>>("SELECT 1 as test, NOW() as current_time");
     debugInfo.connection = {
       status: 'success',
-      details: testResult,
+      details: testResult as unknown as ConnectionDetails,
     };
   } catch (error: unknown) {
     const err = error as { code?: string; message?: string; errno?: number; sqlMessage?: string };

@@ -49,7 +49,7 @@ export default function Header() {
         });
         // Response'u doğrudan JSON olarak al
         const data = await response.json();
-        
+
         // Hata durumunu kontrol et
         if (!data.success) {
           console.error("❌ Hizmetler API hatası:", {
@@ -69,7 +69,7 @@ export default function Header() {
           ]);
           return;
         }
-        
+
         if (data.success && Array.isArray(data.data) && data.data.length > 0) {
           setHizmetler(
             data.data.map((s: { name: string; href: string; icon: string; description?: string }) => ({
@@ -192,7 +192,7 @@ export default function Header() {
             {/* LOGO */}
             <Link
               href="/"
-              className="group flex items-center relative z-10 flex-shrink-0"
+              className="group flex items-center relative z-10 shrink-0"
               aria-label="Ana Sayfa"
             >
               <div className="relative h-12 w-auto md:h-14 flex-shrink-0 transition-transform duration-300 group-hover:scale-105">
@@ -546,7 +546,7 @@ export default function Header() {
                   className="flex items-center"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  <div className="relative h-10 w-auto flex-shrink-0">
+                  <div className="relative h-10 w-auto shrink-0">
                     <Image
                       src="/logo.png"
                       alt="Metod Mühendislik Logo"
@@ -739,7 +739,7 @@ export default function Header() {
                   href="https://wa.me/905425786060?text=Merhaba,%20teklif%20almak%20istiyorum."
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block px-4 py-3.5 rounded-xl bg-gradient-to-r from-green-600 to-green-700 text-white font-bold text-center hover:from-green-700 hover:to-green-800 transition-all flex items-center justify-center gap-2 shadow-lg"
+                  className="px-4 py-3.5 rounded-xl bg-gradient-to-r from-green-600 to-green-700 text-white font-bold text-center hover:from-green-700 hover:to-green-800 transition-all flex items-center justify-center gap-2 shadow-lg"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">

@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS `products` (
   `title` VARCHAR(255) NOT NULL,
   `description` TEXT,
   `image` VARCHAR(500),
+  `images` TEXT NULL COMMENT 'JSON array of image URLs',
   `category` VARCHAR(100),
   `link` VARCHAR(500),
   `is_active` BOOLEAN DEFAULT TRUE,
@@ -38,15 +39,8 @@ CREATE TABLE IF NOT EXISTS `products` (
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Örnek ürünler ekle
-INSERT INTO `products` (`title`, `description`, `image`, `category`, `link`, `is_active`, `sort_order`) VALUES
-('Elektrik Pano Sistemleri', 'Sıvaüstü, sıvaaltı ve dahili elektrik pano üretimi. Uluslararası standartlara uygun, güvenli ve verimli enerji dağıtım çözümleri.', 'https://picsum.photos/seed/panel1/600/400', 'Elektrik Panoları', '/urunler/urunler/elektrik-pano-sistemleri', TRUE, 1),
-('CNC Lazer Kesilmiş Parçalar', 'Hassas CNC lazer kesim ile üretilmiş metal parçalar. ±0.05 mm hassasiyet ile endüstriyel standartlarda üretim.', 'https://picsum.photos/seed/cnc1/600/400', 'CNC İmalat', '/urunler/urunler/cnc-lazer-kesilmis-parcalar', TRUE, 2),
-('Bükülmüş Metal Levhalar', 'CNC büküm teknolojisi ile şekillendirilmiş metal levhalar. Kompleks geometrili parçalar için profesyonel çözümler.', 'https://picsum.photos/seed/bend1/600/400', 'CNC Büküm', '/urunler/urunler/bukulmus-metal-levhalar', TRUE, 3),
-('Çelik Konstrüksiyon Elemanları', 'Endüstriyel yapılar için çelik konstrüksiyon elemanları. Mühendislik standartlarına uygun, dayanıklı ve güvenilir.', 'https://picsum.photos/seed/steel1/600/400', 'Konstrüksiyon', '/urunler/urunler/celik-konstruksiyon-elemanlari', TRUE, 4),
-('Mağaza Raf Sistemleri', 'Özel tasarım mağaza raf sistemleri. Estetik ve fonksiyonel çözümler ile mağaza içi düzenlemeleriniz için ideal.', 'https://picsum.photos/seed/shelf1/600/400', 'Mağaza Ürünleri', '/urunler/urunler/magaza-raf-sistemleri', TRUE, 5),
-('Toz Boyalı Ürünler', 'Elektrostatik toz boya ile kaplanmış ürünler. RAL renk standardına uygun, uzun ömürlü ve estetik yüzey işlemleri.', 'https://picsum.photos/seed/paint1/600/400', 'Yüzey İşleme', '/urunler/urunler/toz-boyalı-urunler', TRUE, 6)
-ON DUPLICATE KEY UPDATE title=title;
+-- Örnek ürünler kaldırıldı - Tüm ürünler admin panelinden eklenmeli
+-- Ürün eklemek için: /metod/products sayfasından admin panelini kullanın
 
 CREATE TABLE IF NOT EXISTS `messages` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,

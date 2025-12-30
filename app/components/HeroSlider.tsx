@@ -2,7 +2,6 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, EffectFade, Navigation, Pagination } from "swiper/modules";
 import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 
 // Swiper stilleri
@@ -22,16 +21,6 @@ interface SliderData {
   color: string;
 }
 
-// Varsayılan slider'lar kaldırıldı - Admin panelinden eklenebilir
-const defaultSlides: Array<{
-  id: number;
-  img: string;
-  title: string;
-  subtitle: string;
-  description: string;
-  color: string;
-  link: string;
-}> = [];
 
 export default function HeroSlider() {
   const [slides, setSlides] = useState<Array<{
@@ -140,10 +129,7 @@ export default function HeroSlider() {
 
     loadSliders();
     
-    // Her 5 saniyede bir slider'ları yeniden yükle (güncellemeler için - daha hızlı senkronizasyon)
-    const interval = setInterval(loadSliders, 5000);
-    
-    // Admin panelinden güncelleme event'ini dinle
+    // Admin panelinden güncelleme event'ini dinle (otomatik yenileme kaldırıldı)
     const handleSliderUpdate = () => {
       console.log("🔄 Slider güncelleme event'i alındı, slider'lar yeniden yükleniyor...");
       loadSliders();
@@ -154,7 +140,6 @@ export default function HeroSlider() {
     }
     
     return () => {
-      clearInterval(interval);
       if (typeof window !== 'undefined') {
         window.removeEventListener('slider-updated', handleSliderUpdate);
       }

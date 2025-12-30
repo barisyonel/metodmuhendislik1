@@ -2,81 +2,71 @@ import Link from "next/link";
 import Image from "next/image";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
+import { query } from "@/lib/db";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Projelerimiz | Gemiler için Elektrik Panoları ve Endüstriyel Çözümler",
+  title: "Ürünlerimiz | Metod Mühendislik - Elektrik Pano ve Endüstriyel Çözümler",
   description:
-    "Metod Mühendislik&apos;in tamamladığı projeler: Marin pano (gemi elektrik panoları), sıvaüstü panolar, sıvaaltı panolar, endüstriyel elektrik panoları. 20+ yıllık deneyimle gerçekleştirdiğimiz başarılı projeler.",
+    "Metod Mühendislik ürünleri: Elektrik panoları, CNC lazer kesim, CNC büküm, kaynak, toz boya ve çelik konstrüksiyon. 20+ yıllık deneyimle üretilen kaliteli ürünler.",
   keywords:
-    "gemi elektrik panoları, marin pano, denizcilik elektrik panoları, gemi pano üretimi, endüstriyel projeler, elektrik pano projeleri, tamamlanan projeler, Metod Mühendislik projeleri",
+    "elektrik pano, ürünler, CNC lazer kesim, CNC büküm, kaynak, toz boya, çelik konstrüksiyon, endüstriyel ürünler, Metod Mühendislik ürünleri",
 };
 
-// Proje verileri
-const projects = [
-  {
-    id: 1,
-    name: "Gemiler için Elektrik Panoları (Marin Pano)",
-    slug: "gemiler-icin-elektrik-panolari",
-    description:
-      "Denizcilik sektöründe kullanılan marin elektrik panoları. Paslanmaz çelik yapı, su geçirmez muhafaza, deniz suyuna dayanıklı koruyucu kaplama. IEC 60092 standartlarına uygun.",
-    image: "/elektrıkpano.png",
-    category: "Marin Pano",
-    features: [
-      "Paslanmaz çelik gövde",
-      "IP66/IP67 koruma sınıfı",
-      "Deniz suyuna dayanıklı",
-      "IEC 60092 standartları",
-    ],
-  },
-  {
-    id: 2,
-    name: "Sıvaüstü Elektrik Panoları",
-    slug: "sivaustu-elektrik-panolari",
-    description:
-      "Endüstriyel tesisler ve binalar için sıvaüstü montaj elektrik panoları. Modern tasarım, kolay bakım, yüksek güvenlik standartları.",
-    image: "/elektrıkpano.png",
-    category: "Elektrik Panoları",
-    features: [
-      "IP54 koruma sınıfı",
-      "Kolay montaj",
-      "Geniş kablolama alanı",
-      "Modüler yapı",
-    ],
-  },
-  {
-    id: 3,
-    name: "Sıvaaltı Elektrik Panoları",
-    slug: "sivaalti-elektrik-panolari",
-    description:
-      "Duvar içine montaj edilen sıvaaltı elektrik panoları. Estetik görünüm, güvenli kullanım, kompakt tasarım.",
-    image: "/elektrıkpano.png",
-    category: "Elektrik Panoları",
-    features: [
-      "Kompakt tasarım",
-      "Estetik görünüm",
-      "IP65 koruma sınıfı",
-      "Kolay erişim",
-    ],
-  },
-  {
-    id: 4,
-    name: "Dikili Tip Endüstriyel Panolar",
-    slug: "dikili-tip-panolar",
-    description:
-      "Fabrika ve endüstriyel tesisler için dikili tip elektrik panoları. Yüksek akım kapasitesi, dayanıklı yapı, profesyonel çözümler.",
-    image: "/elektrıkpano.png",
-    category: "Endüstriyel Panolar",
-    features: [
-      "Yüksek akım kapasitesi",
-      "Dayanıklı çelik gövde",
-      "Geniş iç hacim",
-      "Özel tasarım seçenekleri",
-    ],
-  },
-];
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
-export default function ProductsPage() {
+interface Product {
+  id: number;
+  title: string;
+  description: string;
+  image: string;
+  images?: string | string[] | null;
+  category: string;
+  link: string;
+  is_active?: boolean | number;
+  sort_order?: number;
+}
+
+// Double-encoded Türkçe karakterleri düzelt
+function fixTurkishEncoding(text: string | null | undefined): string {
+  if (!text) return "";
+  
+  try {
+    if (!text.includes('Ã') && !text.includes('Ä') && !text.includes('Å')) {
+      return text;
+    }
+    return Buffer.from(text, 'latin1').toString('utf8');
+  } catch (error) {
+    return text;
+  }
+}
+
+function fixProductEncoding(product: Product): Product {
+  return {
+    ...product,
+    title: fixTurkishEncoding(product.title),
+    description: fixTurkishEncoding(product.description),
+    category: fixTurkishEncoding(product.category),
+  };
+}
+
+async function getProducts(): Promise<Product[]> {
+  try {
+    const products = await query<Product[]>(
+      "SELECT * FROM products WHERE is_active = TRUE OR is_active = 1 ORDER BY sort_order ASC, created_at DESC"
+    );
+    const productsData = Array.isArray(products) ? products : [];
+    return productsData.map(fixProductEncoding);
+  } catch (error) {
+    console.error("Ürünler yüklenirken hata:", error);
+    return [];
+  }
+}
+
+export default async function ProductsPage() {
+  const products = await getProducts();
+
   return (
     <>
       <Header />
@@ -89,114 +79,166 @@ export default function ProductsPage() {
           <div className="container mx-auto px-6 relative z-10">
             <div className="max-w-3xl mx-auto text-center">
               <span className="inline-block text-blue-200 font-black text-xs tracking-[0.4em] uppercase mb-4 px-4 py-1.5 bg-blue-900/30 rounded-full">
-                Projelerimiz
+                Ürünlerimiz
               </span>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-black mb-6 tracking-tight">
-                Başarıyla Tamamlanan{" "}
-                <span className="text-blue-300">Projelerimiz</span>
+                Kaliteli{" "}
+                <span className="text-blue-300">Ürünlerimiz</span>
               </h1>
               <p className="text-xl text-blue-100 leading-relaxed">
-                20+ yıllık deneyimimizle gerçekleştirdiğimiz elektrik pano ve endüstriyel üretim projeleri. 
-                Gemiler için marin panolar, endüstriyel tesisler ve binalar için profesyonel çözümler.
+                20+ yıllık deneyimimizle ürettiğimiz elektrik pano ve endüstriyel üretim çözümleri. 
+                Elektrik panoları, CNC lazer kesim, büküm, kaynak ve çelik konstrüksiyon ürünleri.
               </p>
             </div>
           </div>
         </section>
 
-        {/* Projeler Grid */}
+        {/* Ürünler Grid */}
         <section className="py-20 md:py-32 bg-white">
           <div className="container mx-auto px-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
-              {projects.map((project) => (
-                <div
-                  key={project.id}
-                  className="group relative bg-white rounded-2xl border-2 border-slate-200 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden"
+            {products.length === 0 ? (
+              <div className="text-center py-20">
+                <div className="text-6xl mb-4">📦</div>
+                <h3 className="text-2xl font-black text-slate-900 mb-2">
+                  Henüz ürün eklenmemiş
+                </h3>
+                <p className="text-slate-600 mb-6">
+                  Ürünler admin panelinden eklendikten sonra burada görünecektir.
+                </p>
+                <Link
+                  href="/metod/products"
+                  className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-blue-700 transition-all"
                 >
-                  {/* Görsel */}
-                  <div className="relative h-64 overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200">
-                    {project.image ? (
-                      <Image
-                        src={project.image}
-                        alt={project.name}
-                        fill
-                        className="object-cover group-hover:scale-110 transition-transform duration-700"
-                        sizes="(max-width: 768px) 100vw, 50vw"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <span className="text-slate-400 text-sm">Proje Görseli</span>
+                  Admin Paneline Git
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </Link>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
+                {products.map((product) => {
+                // Ürün linkini belirle
+                const productUrl = product.link 
+                  ? (product.link.startsWith('/') ? product.link : `/${product.link}`)
+                  : `/urunler/urunler/${product.id}`;
+
+                // Görselleri parse et
+                let productImages: string[] = [];
+                if (product.image) {
+                  productImages.push(product.image);
+                }
+                if (product.images) {
+                  try {
+                    const parsed = typeof product.images === 'string' 
+                      ? JSON.parse(product.images) 
+                      : product.images;
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                      productImages = parsed;
+                      if (product.image && !productImages.includes(product.image)) {
+                        productImages = [product.image, ...productImages];
+                      }
+                    }
+                  } catch (e) {
+                    // Parse hatası - görmezden gel
+                  }
+                }
+
+                return (
+                  <Link
+                    key={product.id}
+                    href={productUrl}
+                    className="group relative bg-white rounded-2xl border-2 border-slate-200 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden flex flex-col h-full"
+                  >
+                    {/* Görsel */}
+                    <div className="relative h-80 overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200">
+                      {productImages.length > 0 ? (
+                        <>
+                          <Image
+                            src={productImages[0]}
+                            alt={product.title}
+                            fill
+                            className="object-cover group-hover:scale-110 transition-transform duration-700"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          />
+                          {/* Hover'da ikinci görsel (eğer varsa) */}
+                          {productImages.length > 1 && productImages[1] && (
+                            <Image
+                              src={productImages[1]}
+                              alt={`${product.title} - Görsel 2`}
+                              fill
+                              className="absolute inset-0 object-cover opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            />
+                          )}
+                          {/* Görsel sayacı badge */}
+                          {productImages.length > 1 && (
+                            <div className="absolute top-3 right-3 bg-black/60 text-white px-3 py-1 rounded-full text-xs font-bold z-10 backdrop-blur-sm">
+                              📸 {productImages.length}
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <span className="text-slate-400 text-sm">Görsel yükleniyor...</span>
+                        </div>
+                      )}
+                      {/* Overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                      {/* Kategori Badge */}
+                      {product.category && (
+                        <div className="absolute top-4 left-4 z-10">
+                          <span className="inline-block px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded-full shadow-lg">
+                            {product.category}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* İçerik */}
+                    <div className="p-6 lg:p-8 flex flex-col grow">
+                      <h3 className="text-2xl font-black text-slate-900 mb-3 group-hover:text-blue-600 transition-colors line-clamp-2">
+                        {product.title}
+                      </h3>
+                      <p className="text-slate-600 leading-relaxed mb-6 line-clamp-4 grow">
+                        {product.description}
+                      </p>
+
+                      {/* Detay Butonu */}
+                      <div className="mt-auto">
+                        <div className="inline-flex items-center gap-2 text-blue-600 font-semibold hover:gap-3 transition-all group-hover:text-blue-700">
+                          <span>Ürün Detaylarını İncele</span>
+                          <svg
+                            className="w-4 h-4 transform group-hover:translate-x-1 transition-transform"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M9 5l7 7-7 7"
+                            />
+                          </svg>
+                        </div>
                       </div>
-                    )}
-                    {/* Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent"></div>
-                    {/* Kategori Badge */}
-                    <div className="absolute top-4 left-4 z-10">
-                      <span className="inline-block px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded-full shadow-lg">
-                        {project.category}
-                      </span>
                     </div>
-                  </div>
-
-                  {/* İçerik */}
-                  <div className="p-6 lg:p-8">
-                    <h3 className="text-2xl font-black text-slate-900 mb-3 group-hover:text-blue-600 transition-colors">
-                      {project.name}
-                    </h3>
-                    <p className="text-slate-600 leading-relaxed mb-6">
-                      {project.description}
-                    </p>
-
-                    {/* Özellikler */}
-                    <div className="mb-6">
-                      <h4 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-3">
-                        Özellikler
-                      </h4>
-                      <ul className="space-y-2">
-                        {project.features.map((feature, idx) => (
-                          <li key={idx} className="flex items-center gap-2 text-slate-700">
-                            <svg
-                              className="w-4 h-4 text-blue-600 flex-shrink-0"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M5 13l4 4L19 7"
-                              />
-                            </svg>
-                            <span className="text-sm">{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    {/* Detay Butonu */}
-                    <Link
-                      href={`/urunler/urunler/${project.slug}`}
-                      className="inline-flex items-center gap-2 text-blue-600 font-semibold hover:gap-3 transition-all group-hover:text-blue-700"
-                    >
-                      <span>Proje Detaylarını İncele</span>
-                      <svg
-                        className="w-4 h-4 transform group-hover:translate-x-1 transition-transform"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M9 5l7 7-7 7"
-                        />
-                      </svg>
-                    </Link>
-                  </div>
-                </div>
-              ))}
-            </div>
+                  </Link>
+                );
+              })}
+              </div>
+            )}
           </div>
         </section>
 

@@ -1,15 +1,17 @@
+"use client";
 import Link from "next/link";
 import Image from "next/image";
-import { query } from "@/lib/db";
+import { useEffect, useState } from "react";
 
 interface Product {
   id: number;
   title: string;
   description: string;
   image: string;
+  images?: string | string[] | null;
   category: string;
   link: string;
-  is_active?: boolean;
+  is_active?: boolean | number;
   sort_order?: number;
 }
 
@@ -43,116 +45,106 @@ function fixProductEncoding(product: Product): Product {
   };
 }
 
-async function getProducts(): Promise<Product[]> {
-  try {
-    // Önce is_active ve sort_order ile sorgu dene
-    try {
-      const products = await query<Product[]>(
-        "SELECT * FROM products WHERE is_active = TRUE OR is_active = 1 ORDER BY sort_order ASC, created_at DESC LIMIT 6"
-      );
-      const productsData = Array.isArray(products) ? products : [];
-      // Türkçe karakterleri düzelt
-      const fixedProducts = productsData.map(fixProductEncoding);
-      console.log(`✅ ${fixedProducts.length} aktif ürün yüklendi`);
-      return fixedProducts;
-    } catch (err: unknown) {
-      // is_active kolonu yoksa basit sorgu dene
-      const error = err as { code?: string; message?: string; sqlMessage?: string };
-      if (error.code === 'ER_BAD_FIELD_ERROR' || error.message?.includes('is_active') || error.sqlMessage?.includes('is_active')) {
-        try {
-          // sort_order ile dene
-          const products = await query<Product[]>(
-            "SELECT * FROM products ORDER BY sort_order ASC, created_at DESC LIMIT 6"
-          );
-          const productsData = Array.isArray(products) ? products : [];
-          // Türkçe karakterleri düzelt
-          return productsData.map(fixProductEncoding);
-        } catch (err2: unknown) {
-          // sort_order da yoksa en basit sorgu
-          const error2 = err2 as { code?: string; message?: string; sqlMessage?: string };
-          if (error2.code === 'ER_BAD_FIELD_ERROR' || error2.message?.includes('sort_order') || error2.sqlMessage?.includes('sort_order')) {
-            const products = await query<Product[]>(
-              "SELECT * FROM products ORDER BY created_at DESC LIMIT 6"
-            );
-            const productsData = Array.isArray(products) ? products : [];
-            // Türkçe karakterleri düzelt
-            return productsData.map(fixProductEncoding);
-          }
-          throw err2;
-        }
-      }
-      throw err;
-    }
-  } catch (error: unknown) {
-    const err = error as { code?: string; message?: string };
-    // Veritabanı bağlantı hatası için özel mesaj
-    if (err.code === 'ECONNREFUSED') {
-      console.warn("Veritabanı bağlantısı reddedildi. Varsayılan ürünler gösteriliyor.");
-    } else {
-      console.error("Ürünler yüklenirken hata:", error);
-    }
-    // Hata durumunda varsayılan ürünler
-    return [
-      {
-        id: 1,
-        title: "Elektrik Pano Sistemleri",
-        description:
-          "Sıvaüstü, sıvaaltı ve dahili elektrik pano üretimi. Uluslararası standartlara uygun, güvenli ve verimli enerji dağıtım çözümleri. IEC standartlarına uygun profesyonel üretim.",
-        image: "/elektrıkpano.png",
-        link: "/urunler/urunler/elektrik-pano-sistemleri",
-        category: "Elektrik Panoları",
-      },
-      {
-        id: 2,
-        title: "CNC Lazer Kesilmiş Parçalar",
-        description:
-          "Hassas CNC lazer kesim ile üretilmiş metal parçalar. ±0.05 mm hassasiyet ile endüstriyel standartlarda üretim. Kompleks geometrili parçalar için profesyonel çözümler.",
-        image: "/metod.png",
-        link: "/urunler/urunler/cnc-lazer-kesim",
-        category: "CNC Lazer Kesim",
-      },
-      {
-        id: 3,
-        title: "Bükülmüş Metal Levhalar",
-        description:
-          "CNC büküm teknolojisi ile şekillendirilmiş metal levhalar. Kompleks geometrili parçalar için profesyonel çözümler. Kalınlığı 6 mm&apos;ye kadar sac malzemelerde yüksek hassasiyetli büküm hizmetleri.",
-        image: "/kaynak.png",
-        link: "/urunler/urunler/kaynak-imalat",
-        category: "CNC Büküm",
-      },
-      {
-        id: 4,
-        title: "Toz Boyalı Ürünler",
-        description:
-          "Elektrostatik toz boya ile kaplanmış ürünler. RAL renk standardına uygun, uzun ömürlü ve estetik yüzey işlemleri. Çevre dostu ve kalıcı yüzey kaplama çözümleri.",
-        image: "/Elektrostatik Toz Boya.png",
-        link: "/urunler/urunler/toz-boya",
-        category: "Yüzey İşleme",
-      },
-      {
-        id: 5,
-        title: "Çelik Konstrüksiyon Elemanları",
-        description:
-          "Endüstriyel yapılar için çelik konstrüksiyon elemanları. Mühendislik standartlarına uygun, dayanıklı ve güvenilir. Fabrika binaları, çatı sistemleri ve endüstriyel tesisler için profesyonel çözümler.",
-        image: "/Çelik Konstrüksiyon.png",
-        link: "/urunler/urunler/celik-konstruksiyon",
-        category: "Konstrüksiyon",
-      },
-      {
-        id: 6,
-        title: "Mağaza Raf Sistemleri",
-        description:
-          "Özel tasarım mağaza raf sistemleri. Estetik ve fonksiyonel çözümler ile mağaza içi düzenlemeleriniz için ideal. İhtiyacınıza özel tasarım ve üretim çözümleri.",
-        image: "/Mağaza Raf Sistemleri ve Ürünleri.png",
-        link: "/urunler/urunler/magaza-raf-sistemleri",
-        category: "Mağaza Ürünleri",
-      },
-    ];
-  }
-}
+export default function ProductsList() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
-export default async function ProductsList() {
-  const products = await getProducts();
+  const loadProducts = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`/api/metod/products?t=${Date.now()}`, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+        },
+      });
+      const data = await response.json();
+      
+      if (data.success && Array.isArray(data.data)) {
+        const productsData = data.data
+          .filter((p: Product) => Boolean(p.is_active) || p.is_active === 1)
+          .sort((a: Product, b: Product) => (a.sort_order || 0) - (b.sort_order || 0))
+          .slice(0, 6)
+          .map(fixProductEncoding);
+        
+        console.log(`✅ ${productsData.length} aktif ürün yüklendi`);
+        setProducts(productsData);
+      } else {
+        console.warn("⚠️ API'den ürün verisi gelmedi veya başarısız");
+        setProducts([]);
+      }
+    } catch (error) {
+      console.error("Ürünler yüklenirken hata:", error);
+      setProducts([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadProducts();
+    
+    // Admin panelinden güncelleme event'ini dinle (otomatik yenileme kaldırıldı)
+    const handleProductUpdate = () => {
+      console.log("🔄 Ürün güncelleme eventi alındı, yeniden yükleniyor...");
+      setTimeout(loadProducts, 1000); // 1 saniye bekle (veritabanı güncellemesi için)
+    };
+    
+    window.addEventListener('product-updated', handleProductUpdate);
+    
+    return () => {
+      window.removeEventListener('product-updated', handleProductUpdate);
+    };
+  }, []);
+
+  // Ürün görsellerini parse et
+  function parseProductImages(product: Product): string[] {
+    const images: string[] = [];
+    
+    // Önce images JSON kolonunu parse et
+    if (product.images) {
+      try {
+        const parsed = typeof product.images === 'string' 
+          ? JSON.parse(product.images) 
+          : product.images;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          // Geçerli görselleri filtrele
+          const validImages = parsed.filter((img: string) => img && typeof img === 'string' && img.trim() !== '');
+          images.push(...validImages);
+        }
+      } catch (e) {
+        console.error("Images parse error:", e, "Raw images:", product.images);
+      }
+    }
+    
+    // Ana görseli ekle (eğer yoksa başa ekle, varsa başa taşı)
+    if (product.image && product.image.trim() !== '') {
+      if (!images.includes(product.image)) {
+        images.unshift(product.image); // Başa ekle
+      } else {
+        // Ana görsel zaten varsa, başa taşı
+        const filtered = images.filter(img => img !== product.image);
+        images.length = 0;
+        images.push(product.image, ...filtered);
+      }
+    }
+    
+    // Eğer hiç görsel yoksa ve sadece product.image varsa, onu kullan
+    if (images.length === 0 && product.image && product.image.trim() !== '') {
+      images.push(product.image);
+    }
+    
+    return images;
+  }
+
+  if (loading) {
+    return (
+      <div className="col-span-full text-center py-12">
+        <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <p className="mt-4 text-slate-600">Ürünler yükleniyor...</p>
+      </div>
+    );
+  }
 
   if (!products || products.length === 0) {
     return (
@@ -170,6 +162,10 @@ export default async function ProductsList() {
           ? (product.link.startsWith('/') ? product.link : `/${product.link}`)
           : `/urunler/urunler/${product.id}`;
         
+        // Görselleri parse et
+        const productImages = parseProductImages(product);
+        const hasMultipleImages = productImages.length > 1;
+        
         return (
         <Link
           href={productUrl}
@@ -177,16 +173,36 @@ export default async function ProductsList() {
           className="group relative overflow-hidden rounded-2xl bg-white border-2 border-slate-200 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 flex flex-col h-full"
         >
           {/* Ürün Görseli - Sabit Yükseklik */}
-          <div className="relative w-full h-64 bg-gray-50 overflow-hidden flex items-center justify-center">
-            {product.image ? (
-              <Image
-                src={product.image}
-                alt={product.title}
-                width={600}
-                height={400}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              />
+          <div className="relative w-full h-80 bg-gray-50 overflow-hidden flex items-center justify-center">
+            {productImages.length > 0 ? (
+              <>
+                {/* Ana görsel */}
+                <Image
+                  src={productImages[0]}
+                  alt={product.title}
+                  width={600}
+                  height={400}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                />
+                {/* Hover'da ikinci görsel (eğer varsa) */}
+                {hasMultipleImages && productImages[1] && (
+                  <Image
+                    src={productImages[1]}
+                    alt={`${product.title} - Görsel 2`}
+                    width={600}
+                    height={400}
+                    className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  />
+                )}
+                {/* Görsel sayacı badge */}
+                {hasMultipleImages && (
+                  <div className="absolute top-3 right-3 bg-black/60 text-white px-3 py-1 rounded-full text-xs font-bold z-10 backdrop-blur-sm">
+                    📸 {productImages.length}
+                  </div>
+                )}
+              </>
             ) : (
               <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
                 <span className="text-gray-400 text-sm">Görsel yükleniyor...</span>

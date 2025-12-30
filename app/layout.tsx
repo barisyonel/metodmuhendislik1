@@ -36,11 +36,25 @@ export const metadata: Metadata = {
     siteName: "Metod Mühendislik",
     title: "Metod Mühendislik | Endüstriyel Üretim ve Mühendislik Çözümleri",
     description: "CNC lazer kesim, CNC büküm, metal kaynak, elektrik pano, marin pano ve mühendislik çözümleri. Endüstriyel üretimde kalite ve güvenin adresi.",
+    images: [
+      {
+        url: "/logo.png",
+        width: 464,
+        height: 111,
+        alt: "Metod Mühendislik Logo",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Metod Mühendislik | Endüstriyel Üretim ve Mühendislik Çözümleri",
     description: "CNC lazer kesim, CNC büküm, metal kaynak, elektrik pano, marin pano ve mühendislik çözümleri.",
+    images: ["/logo.png"],
+  },
+  icons: {
+    icon: "/logo.png",
+    shortcut: "/logo.png",
+    apple: "/logo.png",
   },
   robots: {
     index: true,

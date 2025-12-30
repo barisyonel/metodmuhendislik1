@@ -120,6 +120,14 @@ export async function POST(request: NextRequest) {
     const body = await request.json() as ProductPostBody;
     const { title, description, image, images, category, link, is_active, sort_order } = body;
 
+    console.log("📥 POST - Gelen veri:", {
+      title,
+      image,
+      images,
+      imagesType: typeof images,
+      isArray: Array.isArray(images),
+    });
+
     if (!title || !description) {
       return NextResponse.json(
         { success: false, message: "Başlık ve açıklama zorunludur" },
@@ -130,23 +138,47 @@ export async function POST(request: NextRequest) {
     // images kolonu varsa kullan, yoksa image kullan
     // images zaten array veya JSON string olarak gelebilir
     let imagesJson: string = "";
-    if (images) {
+
+    // Önce images'i kontrol et
+    if (images !== undefined && images !== null) {
       // Eğer images zaten string ise (JSON), direkt kullan
       if (typeof images === 'string') {
-        imagesJson = images;
+        // JSON string ise, geçerli mi kontrol et
+        try {
+          const parsed = JSON.parse(images);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            imagesJson = images; // Geçerli JSON array
+          } else {
+            // Boş array veya geçersiz, image'den oluştur
+            imagesJson = JSON.stringify([image || ""].filter(Boolean));
+          }
+        } catch {
+          // Geçersiz JSON ise, array olarak yeniden oluştur
+          imagesJson = JSON.stringify([image || ""].filter(Boolean));
+        }
       } else if (Array.isArray(images)) {
         // Eğer array ise, JSON'a çevir
-        imagesJson = JSON.stringify(images);
+        const validImages = images.filter(img => img && typeof img === 'string' && img.trim() !== '');
+        imagesJson = validImages.length > 0 ? JSON.stringify(validImages) : JSON.stringify([image || ""].filter(Boolean));
       } else {
-        imagesJson = "";
+        // Geçersiz tip ise, image'den oluştur
+        imagesJson = JSON.stringify([image || ""].filter(Boolean));
       }
     } else if (image) {
       // Sadece image varsa, array olarak kaydet
       imagesJson = JSON.stringify([image]);
     } else {
-      imagesJson = "";
+      // Hiç görsel yoksa boş array
+      imagesJson = JSON.stringify([]);
     }
-    
+
+    console.log("💾 POST - Images JSON kaydediliyor:", {
+      imagesInput: images,
+      imageInput: image,
+      imagesJson: imagesJson,
+      parsed: JSON.parse(imagesJson || '[]'),
+    });
+
     const finalImage = image || "";
 
     // images kolonunu kontrol et ve ekle (eğer yoksa)
@@ -158,11 +190,11 @@ export async function POST(request: NextRequest) {
         const [result] = await connection.execute(
           "INSERT INTO products (title, description, image, images, category, link, is_active, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
           [
-            title, 
-            description, 
-            finalImage, 
-            imagesJson, 
-            category || "", 
+            title,
+            description,
+            finalImage,
+            imagesJson,
+            category || "",
             link || "",
             is_active !== undefined ? (is_active ? 1 : 0) : 1,
             sort_order || 0
@@ -170,18 +202,27 @@ export async function POST(request: NextRequest) {
         );
         const resultHeader = result as ResultSetHeader;
         insertId = resultHeader.insertId;
+        console.log("✅ Ürün başarıyla eklendi (images kolonu ile). ID:", insertId);
       } catch (error: unknown) {
-        // images kolonu yoksa sadece image kullan
+        // images kolonu yoksa önce eklemeyi dene
         if (isDatabaseError(error) && (error.code === 'ER_BAD_FIELD_ERROR' || error.sqlMessage?.includes('images'))) {
+          console.warn("⚠️ images kolonu bulunamadı, ekleniyor...");
           try {
-            // is_active ve sort_order ile dene
+            // images kolonunu ekle
+            await connection.execute(
+              "ALTER TABLE products ADD COLUMN images TEXT NULL AFTER image"
+            );
+            console.log("✅ images kolonu eklendi, tekrar deniyor...");
+
+            // Tekrar eklemeyi dene
             const [result] = await connection.execute(
-              "INSERT INTO products (title, description, image, category, link, is_active, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?)",
+              "INSERT INTO products (title, description, image, images, category, link, is_active, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
               [
-                title, 
-                description, 
-                finalImage, 
-                category || "", 
+                title,
+                description,
+                finalImage,
+                imagesJson,
+                category || "",
                 link || "",
                 is_active !== undefined ? (is_active ? 1 : 0) : 1,
                 sort_order || 0
@@ -189,16 +230,27 @@ export async function POST(request: NextRequest) {
             );
             const resultHeader = result as ResultSetHeader;
             insertId = resultHeader.insertId;
-          } catch (err2: unknown) {
-            // is_active ve sort_order yoksa eski formatı kullan
-            if (isDatabaseError(err2) && (err2.code === 'ER_BAD_FIELD_ERROR' || err2.sqlMessage?.includes('is_active') || err2.sqlMessage?.includes('sort_order'))) {
+            console.log("✅ Ürün başarıyla eklendi (images kolonu eklendikten sonra). ID:", insertId);
+          } catch (alterError: unknown) {
+            console.error("❌ images kolonu eklenirken hata:", alterError);
+            // Kolon eklenemezse, sadece image ile kaydet
+            try {
               const [result] = await connection.execute(
-                "INSERT INTO products (title, description, image, category, link) VALUES (?, ?, ?, ?, ?)",
-                [title, description, finalImage, category || "", link || ""]
+                "INSERT INTO products (title, description, image, category, link, is_active, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                [
+                  title,
+                  description,
+                  finalImage,
+                  category || "",
+                  link || "",
+                  is_active !== undefined ? (is_active ? 1 : 0) : 1,
+                  sort_order || 0
+                ]
               );
               const resultHeader = result as ResultSetHeader;
               insertId = resultHeader.insertId;
-            } else {
+              console.warn("⚠️ Ürün eklendi ama images kolonu kullanılamadı. Sadece image kaydedildi.");
+            } catch (err2: unknown) {
               throw err2;
             }
           }
@@ -210,11 +262,38 @@ export async function POST(request: NextRequest) {
       connection.release();
     }
 
+    // Eklenen ürünü tekrar çek ve görselleri kontrol et
+    let insertedProduct = null;
+    try {
+      const [insertedRows] = await connection.execute(
+        "SELECT * FROM products WHERE id = ?",
+        [insertId]
+      ) as [Array<Record<string, unknown>>, unknown];
+      if (insertedRows && insertedRows.length > 0) {
+        insertedProduct = insertedRows[0];
+        console.log("✅ Eklenen ürün veritabanından çekildi:", {
+          id: insertedProduct.id,
+          title: insertedProduct.title,
+          image: insertedProduct.image,
+          images: insertedProduct.images,
+          imagesParsed: insertedProduct.images ? JSON.parse(String(insertedProduct.images || '[]')) : [],
+        });
+      }
+    } catch (checkError) {
+      console.error("⚠️ Eklenen ürün kontrol edilirken hata:", checkError);
+    } finally {
+      connection.release();
+    }
+
     return NextResponse.json(
       {
         success: true,
         message: "Ürün başarıyla eklendi",
-        data: { id: insertId },
+        data: {
+          id: insertId,
+          images: imagesJson,
+          imagesCount: JSON.parse(imagesJson || '[]').length,
+        },
       },
       {
         headers: {
@@ -272,58 +351,83 @@ export async function PUT(request: NextRequest) {
     } else {
       imagesJson = "";
     }
-    
+
     const finalImage = image || "";
 
     // images kolonunu kontrol et ve güncelle (eğer yoksa)
+    const connection = await getConnection();
     try {
-      // is_active ve sort_order desteği ekle
-      await query(
-        "UPDATE products SET title = ?, description = ?, image = ?, images = ?, category = ?, link = ?, is_active = ?, sort_order = ? WHERE id = ?",
-        [
-          title, 
-          description, 
-          finalImage, 
-          imagesJson, 
-          category || "", 
-          link || "",
-          is_active !== undefined ? (is_active ? 1 : 0) : 1,
-          sort_order !== undefined ? sort_order : 0,
-          id
-        ]
-      );
-    } catch (error: unknown) {
-      // images kolonu yoksa sadece image kullan
-      if (isDatabaseError(error) && (error.code === 'ER_BAD_FIELD_ERROR' || error.sqlMessage?.includes('images'))) {
-        try {
-          // is_active ve sort_order ile dene
-          await query(
-            "UPDATE products SET title = ?, description = ?, image = ?, category = ?, link = ?, is_active = ?, sort_order = ? WHERE id = ?",
-            [
-              title, 
-              description, 
-              finalImage, 
-              category || "", 
-              link || "",
-              is_active !== undefined ? (is_active ? 1 : 0) : 1,
-              sort_order !== undefined ? sort_order : 0,
-              id
-            ]
-          );
-        } catch (err2: unknown) {
-          // is_active ve sort_order yoksa eski formatı kullan
-          if (isDatabaseError(err2) && (err2.code === 'ER_BAD_FIELD_ERROR' || err2.sqlMessage?.includes('is_active') || err2.sqlMessage?.includes('sort_order'))) {
-            await query(
-              "UPDATE products SET title = ?, description = ?, image = ?, category = ?, link = ? WHERE id = ?",
-              [title, description, finalImage, category || "", link || "", id]
+      try {
+        // is_active ve sort_order desteği ekle
+        await connection.execute(
+          "UPDATE products SET title = ?, description = ?, image = ?, images = ?, category = ?, link = ?, is_active = ?, sort_order = ? WHERE id = ?",
+          [
+            title,
+            description,
+            finalImage,
+            imagesJson,
+            category || "",
+            link || "",
+            is_active !== undefined ? (is_active ? 1 : 0) : 1,
+            sort_order !== undefined ? sort_order : 0,
+            id
+          ]
+        );
+        console.log("✅ Ürün güncellendi (images kolonu ile). ID:", id);
+      } catch (error: unknown) {
+        // images kolonu yoksa önce eklemeyi dene
+        if (isDatabaseError(error) && (error.code === 'ER_BAD_FIELD_ERROR' || error.sqlMessage?.includes('images'))) {
+          console.warn("⚠️ images kolonu bulunamadı, ekleniyor...");
+          try {
+            // images kolonunu ekle
+            await connection.execute(
+              "ALTER TABLE products ADD COLUMN images TEXT NULL AFTER image"
             );
-          } else {
-            throw err2;
+            console.log("✅ images kolonu eklendi, tekrar deniyor...");
+
+            // Tekrar güncellemeyi dene
+            await connection.execute(
+              "UPDATE products SET title = ?, description = ?, image = ?, images = ?, category = ?, link = ?, is_active = ?, sort_order = ? WHERE id = ?",
+              [
+                title,
+                description,
+                finalImage,
+                imagesJson,
+                category || "",
+                link || "",
+                is_active !== undefined ? (is_active ? 1 : 0) : 1,
+                sort_order !== undefined ? sort_order : 0,
+                id
+              ]
+            );
+            console.log("✅ Ürün güncellendi (images kolonu eklendikten sonra). ID:", id);
+          } catch (alterError: unknown) {
+            console.error("❌ images kolonu eklenirken hata:", alterError);
+            // Kolon eklenemezse, sadece image ile güncelle
+            await connection.execute(
+              "UPDATE products SET title = ?, description = ?, image = ?, category = ?, link = ?, is_active = ?, sort_order = ? WHERE id = ?",
+              [
+                title,
+                description,
+                finalImage,
+                category || "",
+                link || "",
+                is_active !== undefined ? (is_active ? 1 : 0) : 1,
+                sort_order !== undefined ? sort_order : 0,
+                id
+              ]
+            );
+            console.warn("⚠️ Ürün güncellendi ama images kolonu kullanılamadı. Sadece image güncellendi.");
           }
+        } else {
+          throw error;
         }
-      } else {
-        throw error;
+      } finally {
+        connection.release();
       }
+    } catch (error: unknown) {
+      connection.release();
+      throw error;
     }
 
     return NextResponse.json(

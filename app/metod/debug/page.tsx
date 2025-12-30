@@ -2,10 +2,21 @@
 
 import { useState, useEffect } from "react";
 
+interface ConnectionDetails {
+  test?: number;
+  current_time?: string;
+  [key: string]: unknown;
+}
+
+interface QueryData {
+  count?: number;
+  [key: string]: unknown;
+}
+
 interface DebugInfo {
-  connection: { status: string; error?: string; details?: any };
+  connection: { status: string; error?: string; details?: ConnectionDetails };
   tables: { status: string; tables?: string[]; error?: string };
-  testQueries: { [key: string]: { status: string; data?: any; error?: string } };
+  testQueries: { [key: string]: { status: string; data?: QueryData; error?: string } };
   env: { [key: string]: string | boolean };
 }
 
@@ -170,7 +181,7 @@ export default function DebugPage() {
             </h2>
             <ul className="list-disc list-inside space-y-2 text-yellow-700">
               <li>
-                <strong>Local Development:</strong> Docker MySQL container'ının çalıştığından emin olun:
+                <strong>Local Development:</strong> Docker MySQL container&apos;ının çalıştığından emin olun:
                 <code className="block bg-yellow-100 p-2 rounded mt-1">
                   docker-compose up -d
                 </code>
@@ -190,7 +201,7 @@ export default function DebugPage() {
                 >
                   /api/metod/test-db
                 </a>{" "}
-                endpoint'ini kontrol edin
+                endpoint&apos;ini kontrol edin
               </li>
             </ul>
           </div>

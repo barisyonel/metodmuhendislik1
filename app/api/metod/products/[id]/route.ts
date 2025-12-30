@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isAuthenticated } from "@/lib/auth";
-import { query } from "@/lib/db";
+import { query, getConnection } from "@/lib/db";
 
 // Force dynamic rendering because we use cookies for authentication
 export const dynamic = 'force-dynamic';
@@ -68,80 +68,154 @@ export async function PUT(
     }
 
     // images kolonu varsa kullan, yoksa image kullan
-    let imagesJson: string;
+    let imagesJson: string = "";
+    
+    // Önce images'i kontrol et
     if (images) {
       if (typeof images === 'string') {
-        imagesJson = images;
+        // JSON string ise, geçerli mi kontrol et
+        try {
+          JSON.parse(images); // Validate JSON
+          imagesJson = images;
+        } catch {
+          // Geçersiz JSON ise, array olarak yeniden oluştur
+          imagesJson = JSON.stringify([image || ""].filter(Boolean));
+        }
       } else if (Array.isArray(images)) {
-        imagesJson = JSON.stringify(images);
+        // Eğer array ise, JSON'a çevir
+        const validImages = images.filter(img => img && typeof img === 'string' && img.trim() !== '');
+        imagesJson = validImages.length > 0 ? JSON.stringify(validImages) : JSON.stringify([image || ""].filter(Boolean));
       } else {
-        imagesJson = "";
+        // Geçersiz tip ise, image'den oluştur
+        imagesJson = JSON.stringify([image || ""].filter(Boolean));
       }
     } else if (image) {
+      // Sadece image varsa, array olarak kaydet
       imagesJson = JSON.stringify([image]);
     } else {
-      imagesJson = "";
+      // Hiç görsel yoksa boş array
+      imagesJson = JSON.stringify([]);
     }
+    
+    console.log("💾 UPDATE - Images JSON kaydediliyor:", {
+      id,
+      imagesInput: images,
+      imageInput: image,
+      imagesJson: imagesJson,
+      parsed: JSON.parse(imagesJson || '[]'),
+    });
     
     const finalImage = image || "";
 
     // images kolonunu kontrol et ve güncelle (eğer yoksa)
+    const connection = await getConnection();
     try {
-      // is_active ve sort_order desteği ekle
-      await query(
-        "UPDATE products SET title = ?, description = ?, image = ?, images = ?, category = ?, link = ?, is_active = ?, sort_order = ? WHERE id = ?",
-        [
-          title, 
-          description, 
-          finalImage, 
-          imagesJson, 
-          category || "", 
-          link || "",
-          is_active !== undefined ? (is_active ? 1 : 0) : 1,
-          sort_order !== undefined ? sort_order : 0,
-          id
-        ]
-      );
-    } catch (error: unknown) {
-      // images kolonu yoksa sadece image kullan
-      const err = error as { code?: string; sqlMessage?: string };
-      if (err.code === 'ER_BAD_FIELD_ERROR' || err.sqlMessage?.includes('images')) {
-        try {
-          // is_active ve sort_order ile dene
-          await query(
-            "UPDATE products SET title = ?, description = ?, image = ?, category = ?, link = ?, is_active = ?, sort_order = ? WHERE id = ?",
-            [
-              title, 
-              description, 
-              finalImage, 
-              category || "", 
-              link || "",
-              is_active !== undefined ? (is_active ? 1 : 0) : 1,
-              sort_order !== undefined ? sort_order : 0,
-              id
-            ]
-          );
-        } catch (err2: unknown) {
-          // is_active ve sort_order yoksa eski formatı kullan
-          const err2Obj = err2 as { code?: string; sqlMessage?: string };
-          if (err2Obj.code === 'ER_BAD_FIELD_ERROR' || err2Obj.sqlMessage?.includes('is_active') || err2Obj.sqlMessage?.includes('sort_order')) {
-            await query(
-              "UPDATE products SET title = ?, description = ?, image = ?, category = ?, link = ? WHERE id = ?",
-              [title, description, finalImage, category || "", link || "", id]
+      try {
+        // is_active ve sort_order desteği ekle
+        await connection.execute(
+          "UPDATE products SET title = ?, description = ?, image = ?, images = ?, category = ?, link = ?, is_active = ?, sort_order = ? WHERE id = ?",
+          [
+            title, 
+            description, 
+            finalImage, 
+            imagesJson, 
+            category || "", 
+            link || "",
+            is_active !== undefined ? (is_active ? 1 : 0) : 1,
+            sort_order !== undefined ? sort_order : 0,
+            id
+          ]
+        );
+        console.log("✅ Ürün güncellendi (images kolonu ile). ID:", id);
+      } catch (error: unknown) {
+        // images kolonu yoksa önce eklemeyi dene
+        const err = error as { code?: string; sqlMessage?: string };
+        if (err.code === 'ER_BAD_FIELD_ERROR' || err.sqlMessage?.includes('images')) {
+          console.warn("⚠️ images kolonu bulunamadı, ekleniyor...");
+          try {
+            // images kolonunu ekle
+            await connection.execute(
+              "ALTER TABLE products ADD COLUMN images TEXT NULL AFTER image"
             );
-          } else {
-            throw err2;
+            console.log("✅ images kolonu eklendi, tekrar deniyor...");
+            
+            // Tekrar güncellemeyi dene
+            await connection.execute(
+              "UPDATE products SET title = ?, description = ?, image = ?, images = ?, category = ?, link = ?, is_active = ?, sort_order = ? WHERE id = ?",
+              [
+                title, 
+                description, 
+                finalImage, 
+                imagesJson, 
+                category || "", 
+                link || "",
+                is_active !== undefined ? (is_active ? 1 : 0) : 1,
+                sort_order !== undefined ? sort_order : 0,
+                id
+              ]
+            );
+            console.log("✅ Ürün güncellendi (images kolonu eklendikten sonra). ID:", id);
+          } catch (alterError: unknown) {
+            console.error("❌ images kolonu eklenirken hata:", alterError);
+            // Kolon eklenemezse, sadece image ile güncelle
+            await connection.execute(
+              "UPDATE products SET title = ?, description = ?, image = ?, category = ?, link = ?, is_active = ?, sort_order = ? WHERE id = ?",
+              [
+                title, 
+                description, 
+                finalImage, 
+                category || "", 
+                link || "",
+                is_active !== undefined ? (is_active ? 1 : 0) : 1,
+                sort_order !== undefined ? sort_order : 0,
+                id
+              ]
+            );
+            console.warn("⚠️ Ürün güncellendi ama images kolonu kullanılamadı. Sadece image güncellendi.");
           }
+        } else {
+          throw error;
         }
-      } else {
-        throw error;
+      } finally {
+        connection.release();
       }
+    } catch (error: unknown) {
+      connection.release();
+      throw error;
+    }
+
+    // Güncellenen ürünü tekrar çek ve görselleri kontrol et
+    const checkConnection = await getConnection();
+    try {
+      const [updatedRows] = await checkConnection.execute(
+        "SELECT * FROM products WHERE id = ?",
+        [id]
+      ) as [Array<Record<string, unknown>>, unknown];
+      if (updatedRows && updatedRows.length > 0) {
+        const updatedProduct = updatedRows[0];
+        console.log("✅ Güncellenen ürün veritabanından çekildi:", {
+          id: updatedProduct.id,
+          title: updatedProduct.title,
+          image: updatedProduct.image,
+          images: updatedProduct.images,
+          imagesParsed: updatedProduct.images ? JSON.parse(String(updatedProduct.images || '[]')) : [],
+        });
+      }
+    } catch (checkError) {
+      console.error("⚠️ Güncellenen ürün kontrol edilirken hata:", checkError);
+    } finally {
+      checkConnection.release();
     }
 
     return NextResponse.json(
       {
         success: true,
         message: "Ürün başarıyla güncellendi",
+        data: {
+          id: Number(id),
+          images: imagesJson,
+          imagesCount: JSON.parse(imagesJson || '[]').length,
+        },
       },
       {
         headers: {
