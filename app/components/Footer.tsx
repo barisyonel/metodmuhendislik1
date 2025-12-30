@@ -23,7 +23,27 @@ export default function Footer() {
         });
         // Response'u doğrudan JSON olarak al
         const data = await response.json();
-        if (data.success && Array.isArray(data.data)) {
+        
+        // Hata durumunu kontrol et
+        if (!data.success) {
+          console.warn("⚠️ Hizmetler API hatası:", {
+            error: data.error,
+            errorCode: data.errorCode,
+            message: data.message,
+          });
+          // Fallback hizmetler
+          setServices([
+            { name: "CNC Lazer Kesim", href: "/hizmetler/cnc-lazer-kesim" },
+            { name: "CNC Büküm", href: "/hizmetler/cnc-bukum" },
+            { name: "Kaynak", href: "/hizmetler/kaynak" },
+            { name: "Elektrostatik Toz Boya", href: "/hizmetler/elektrostatik-toz-boya" },
+            { name: "Elektrik Pano Üretimi", href: "/hizmetler/elektrik-pano-uretime" },
+            { name: "Çelik Konstrüksiyon", href: "/hizmetler/celik-konstruksiyon" },
+          ]);
+          return;
+        }
+        
+        if (data.success && Array.isArray(data.data) && data.data.length > 0) {
           setServices(
             data.data.slice(0, 6).map((s: { name: string; href: string }) => ({
               name: s.name || "",
@@ -31,7 +51,7 @@ export default function Footer() {
             }))
           );
         } else {
-          // Fallback
+          // Fallback hizmetler
           setServices([
             { name: "CNC Lazer Kesim", href: "/hizmetler/cnc-lazer-kesim" },
             { name: "CNC Büküm", href: "/hizmetler/cnc-bukum" },
@@ -42,9 +62,15 @@ export default function Footer() {
           ]);
         }
       } catch (error) {
-        console.error("Hizmetler yüklenirken hata:", error);
+        console.error("❌ Hizmetler API hatası:", error);
+        // Fallback hizmetler
         setServices([
           { name: "CNC Lazer Kesim", href: "/hizmetler/cnc-lazer-kesim" },
+          { name: "CNC Büküm", href: "/hizmetler/cnc-bukum" },
+          { name: "Kaynak", href: "/hizmetler/kaynak" },
+          { name: "Elektrostatik Toz Boya", href: "/hizmetler/elektrostatik-toz-boya" },
+          { name: "Elektrik Pano Üretimi", href: "/hizmetler/elektrik-pano-uretime" },
+          { name: "Çelik Konstrüksiyon", href: "/hizmetler/celik-konstruksiyon" },
         ]);
       }
     };
