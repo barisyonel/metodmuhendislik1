@@ -6,40 +6,86 @@ import type { ResultSetHeader } from "mysql2";
 // Force dynamic rendering because we use cookies for authentication
 export const dynamic = 'force-dynamic';
 
+// Product interface
+interface Product {
+  id: number;
+  title: string;
+  description: string;
+  image: string;
+  images?: string;
+  category?: string;
+  link?: string;
+  is_active?: boolean | number;
+  sort_order?: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
+// Database error interface
+interface DatabaseError extends Error {
+  code?: string;
+  errno?: number;
+  sqlMessage?: string;
+  sqlState?: string;
+}
+
+// Type guard for DatabaseError
+function isDatabaseError(error: unknown): error is DatabaseError {
+  return error instanceof Error && 'code' in error;
+}
+
+// Request body interfaces
+interface ProductPostBody {
+  title: string;
+  description: string;
+  image?: string;
+  images?: string | string[];
+  category?: string;
+  link?: string;
+  is_active?: boolean | number;
+  sort_order?: number;
+}
+
+interface ProductPutBody extends ProductPostBody {
+  id: number;
+}
+
 // Tüm ürünleri getir
 export async function GET() {
   try {
-    const products = await query<Array<Record<string, unknown>>>(
+    const products = await query<Product[]>(
       "SELECT * FROM products ORDER BY created_at DESC"
     );
     return NextResponse.json({ success: true, data: products || [] });
   } catch (error: unknown) {
-    const err = error as { code?: string; message?: string; errno?: number; sqlMessage?: string };
+    const err = isDatabaseError(error) ? error : { message: String(error) };
     console.error("❌ Products GET error:", {
-      code: err.code,
+      code: isDatabaseError(error) ? error.code : undefined,
       message: err.message,
-      errno: err.errno,
-      sqlMessage: err.sqlMessage,
+      errno: isDatabaseError(error) ? error.errno : undefined,
+      sqlMessage: isDatabaseError(error) ? error.sqlMessage : undefined,
       fullError: String(error),
     });
 
     let errorMessage = "Ürünler yüklenirken hata oluştu";
-    if (err.code === 'ECONNREFUSED' || err.code === 'ETIMEDOUT' || err.code === 'ENOTFOUND') {
-      errorMessage = "Veritabanı bağlantısı kurulamadı. Lütfen veritabanı sunucusunun çalıştığından emin olun.";
-    } else if (err.code === 'ER_NO_SUCH_TABLE') {
-      errorMessage = "Products tablosu bulunamadı. Lütfen migration script'ini çalıştırın.";
+    if (isDatabaseError(error)) {
+      if (error.code === 'ECONNREFUSED' || error.code === 'ETIMEDOUT' || error.code === 'ENOTFOUND') {
+        errorMessage = "Veritabanı bağlantısı kurulamadı. Lütfen veritabanı sunucusunun çalıştığından emin olun.";
+      } else if (error.code === 'ER_NO_SUCH_TABLE') {
+        errorMessage = "Products tablosu bulunamadı. Lütfen migration script'ini çalıştırın.";
+      }
     }
 
     return NextResponse.json(
       {
         success: false,
         message: errorMessage,
-        errorCode: err.code,
-        errorDetails: process.env.NODE_ENV === 'development' ? {
-          code: err.code,
-          message: err.message,
-          errno: err.errno,
-          sqlMessage: err.sqlMessage,
+        errorCode: isDatabaseError(error) ? error.code : undefined,
+        errorDetails: process.env.NODE_ENV === 'development' && isDatabaseError(error) ? {
+          code: error.code,
+          message: error.message,
+          errno: error.errno,
+          sqlMessage: error.sqlMessage,
         } : undefined,
       },
       { status: 500 }
@@ -59,7 +105,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body = await request.json();
+    const body = await request.json() as ProductPostBody;
     const { title, description, image, images, category, link, is_active, sort_order } = body;
 
     if (!title || !description) {
@@ -71,7 +117,7 @@ export async function POST(request: NextRequest) {
 
     // images kolonu varsa kullan, yoksa image kullan
     // images zaten array veya JSON string olarak gelebilir
-    let imagesJson: string;
+    let imagesJson: string = "";
     if (images) {
       // Eğer images zaten string ise (JSON), direkt kullan
       if (typeof images === 'string') {
@@ -109,12 +155,12 @@ export async function POST(request: NextRequest) {
             is_active !== undefined ? (is_active ? 1 : 0) : 1,
             sort_order || 0
           ]
-        ) as [ResultSetHeader, unknown];
-        insertId = result.insertId;
+        );
+        const resultHeader = result as ResultSetHeader;
+        insertId = resultHeader.insertId;
       } catch (error: unknown) {
         // images kolonu yoksa sadece image kullan
-        const err = error as { code?: string; sqlMessage?: string };
-        if (err.code === 'ER_BAD_FIELD_ERROR' || err.sqlMessage?.includes('images')) {
+        if (isDatabaseError(error) && (error.code === 'ER_BAD_FIELD_ERROR' || error.sqlMessage?.includes('images'))) {
           try {
             // is_active ve sort_order ile dene
             const [result] = await connection.execute(
@@ -128,17 +174,18 @@ export async function POST(request: NextRequest) {
                 is_active !== undefined ? (is_active ? 1 : 0) : 1,
                 sort_order || 0
               ]
-            ) as [ResultSetHeader, unknown];
-            insertId = result.insertId;
+            );
+            const resultHeader = result as ResultSetHeader;
+            insertId = resultHeader.insertId;
           } catch (err2: unknown) {
             // is_active ve sort_order yoksa eski formatı kullan
-            const err2Obj = err2 as { code?: string; sqlMessage?: string };
-            if (err2Obj.code === 'ER_BAD_FIELD_ERROR' || err2Obj.sqlMessage?.includes('is_active') || err2Obj.sqlMessage?.includes('sort_order')) {
+            if (isDatabaseError(err2) && (err2.code === 'ER_BAD_FIELD_ERROR' || err2.sqlMessage?.includes('is_active') || err2.sqlMessage?.includes('sort_order'))) {
               const [result] = await connection.execute(
                 "INSERT INTO products (title, description, image, category, link) VALUES (?, ?, ?, ?, ?)",
                 [title, description, finalImage, category || "", link || ""]
-              ) as [ResultSetHeader, unknown];
-              insertId = result.insertId;
+              );
+              const resultHeader = result as ResultSetHeader;
+              insertId = resultHeader.insertId;
             } else {
               throw err2;
             }
@@ -177,7 +224,7 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    const body = await request.json();
+    const body = await request.json() as ProductPutBody;
     const { id, title, description, image, images, category, link, is_active, sort_order } = body;
 
     if (!id || !title || !description) {
@@ -189,7 +236,7 @@ export async function PUT(request: NextRequest) {
 
     // images kolonu varsa kullan, yoksa image kullan
     // images zaten array veya JSON string olarak gelebilir
-    let imagesJson: string;
+    let imagesJson: string = "";
     if (images) {
       // Eğer images zaten string ise (JSON), direkt kullan
       if (typeof images === 'string') {
@@ -228,8 +275,7 @@ export async function PUT(request: NextRequest) {
       );
     } catch (error: unknown) {
       // images kolonu yoksa sadece image kullan
-      const err = error as { code?: string; sqlMessage?: string };
-      if (err.code === 'ER_BAD_FIELD_ERROR' || err.sqlMessage?.includes('images')) {
+      if (isDatabaseError(error) && (error.code === 'ER_BAD_FIELD_ERROR' || error.sqlMessage?.includes('images'))) {
         try {
           // is_active ve sort_order ile dene
           await query(
@@ -247,8 +293,7 @@ export async function PUT(request: NextRequest) {
           );
         } catch (err2: unknown) {
           // is_active ve sort_order yoksa eski formatı kullan
-          const err2Obj = err2 as { code?: string; sqlMessage?: string };
-          if (err2Obj.code === 'ER_BAD_FIELD_ERROR' || err2Obj.sqlMessage?.includes('is_active') || err2Obj.sqlMessage?.includes('sort_order')) {
+          if (isDatabaseError(err2) && (err2.code === 'ER_BAD_FIELD_ERROR' || err2.sqlMessage?.includes('is_active') || err2.sqlMessage?.includes('sort_order'))) {
             await query(
               "UPDATE products SET title = ?, description = ?, image = ?, category = ?, link = ? WHERE id = ?",
               [title, description, finalImage, category || "", link || "", id]
