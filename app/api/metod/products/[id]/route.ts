@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { isAuthenticated } from "@/lib/auth";
 import { query, getConnection } from "@/lib/db";
 
@@ -183,6 +184,11 @@ export async function PUT(
       connection.release();
       throw error;
     }
+    
+    // Cache'i temizle - tüm ürün sayfalarını yeniden oluştur
+    revalidatePath('/urunler');
+    revalidatePath('/');
+    revalidatePath('/metod/products');
 
     // Güncellenen ürünü tekrar çek ve görselleri kontrol et
     const checkConnection = await getConnection();
@@ -248,7 +254,29 @@ export async function DELETE(
     }
 
     const { id } = await params;
+    
+    // Önce ürünü kontrol et
+    const product = await query<Array<{ id: number; image?: string; images?: string }>>(
+      "SELECT id, image, images FROM products WHERE id = ?",
+      [id]
+    );
+    
+    if (product.length === 0) {
+      return NextResponse.json(
+        { success: false, message: "Ürün bulunamadı" },
+        { status: 404 }
+      );
+    }
+    
+    // Ürünü sil
     await query("DELETE FROM products WHERE id = ?", [id]);
+    
+    console.log(`✅ Ürün ${id} başarıyla silindi`);
+    
+    // Cache'i temizle - tüm ürün sayfalarını yeniden oluştur
+    revalidatePath('/urunler');
+    revalidatePath('/');
+    revalidatePath('/metod/products');
 
     return NextResponse.json(
       {
@@ -258,6 +286,9 @@ export async function DELETE(
       {
         headers: {
           'Content-Type': 'application/json; charset=utf-8',
+          'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
         },
       }
     );

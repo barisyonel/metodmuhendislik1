@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { isAuthenticated } from "@/lib/auth";
 import { query, getConnection } from "@/lib/db";
 import type { ResultSetHeader } from "mysql2";
@@ -64,6 +65,9 @@ export async function GET() {
       {
         headers: {
           'Content-Type': 'application/json; charset=utf-8',
+          'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
         },
       }
     );
@@ -295,6 +299,11 @@ export async function POST(request: NextRequest) {
     } finally {
       connection.release();
     }
+    
+    // Cache'i temizle - tüm ürün sayfalarını yeniden oluştur
+    revalidatePath('/urunler');
+    revalidatePath('/');
+    revalidatePath('/metod/products');
 
     return NextResponse.json(
       {

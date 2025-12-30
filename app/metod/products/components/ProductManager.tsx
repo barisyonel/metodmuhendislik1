@@ -408,24 +408,38 @@ export default function ProductManager({ initialProducts = [] }: { initialProduc
     }
 
     try {
-      const response = await fetch(`/api/metod/products/${id}`, {
+      setLoading(true);
+      const response = await fetch(`/api/metod/products/${id}?t=${Date.now()}`, {
         method: "DELETE",
+        cache: 'no-store',
       });
 
       const data = await response.json();
       if (data.success) {
-        loadProducts();
+        // Önce state'ten kaldır (anında görünürlük için)
+        setProducts(prev => prev.filter(p => p.id !== id));
+        
+        // Sonra veritabanından yeniden yükle
+        await loadProducts();
+        
         alert("✅ Ürün silindi!");
         
-        // Frontend'i tetikle
+        // Frontend'i tetikle ve sayfayı yenile
         if (typeof window !== 'undefined') {
           window.dispatchEvent(new Event('product-updated'));
+          // Sayfayı yenile (tüm sayfalarda güncelleme için)
+          setTimeout(() => {
+            window.location.reload();
+          }, 500);
         }
       } else {
         alert("❌ Hata: " + data.message);
       }
-    } catch {
+    } catch (error) {
+      console.error("Delete error:", error);
       alert("❌ Bir hata oluştu!");
+    } finally {
+      setLoading(false);
     }
   };
 
