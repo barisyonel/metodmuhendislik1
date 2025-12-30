@@ -8,7 +8,7 @@ interface Slider {
   subtitle: string;
   description: string;
   image_url: string;
-  video_url: string | null;
+  video_url?: string | null;
   link: string;
   color: string;
   sort_order: number;
@@ -46,7 +46,7 @@ export default function SliderManager({ initialSliders = [] }: { initialSliders?
         }
       );
       if (activeSliderWithVideo) {
-        setCurrentVideoUrl(activeSliderWithVideo.video_url);
+        setCurrentVideoUrl(activeSliderWithVideo.video_url ?? null);
       }
     }
   }, [initialSliders]);
@@ -70,8 +70,8 @@ export default function SliderManager({ initialSliders = [] }: { initialSliders?
           }
         );
         if (activeSliderWithVideo) {
-          setCurrentVideoUrl(activeSliderWithVideo.video_url);
-          setVideoPreview(activeSliderWithVideo.video_url);
+          setCurrentVideoUrl(activeSliderWithVideo.video_url ?? null);
+          setVideoPreview(activeSliderWithVideo.video_url ?? "");
         } else {
           setCurrentVideoUrl(null);
           setVideoPreview("");

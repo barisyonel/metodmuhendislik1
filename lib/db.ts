@@ -50,10 +50,12 @@ function getPool() {
       queueLimit: 0,
       charset: 'utf8mb4',
       connectTimeout: 60000,
-      // SSL ayarları - Local development için false, production için true
-      ssl: useSSL ? {
-        rejectUnauthorized: process.env.DB_SSL_REJECT_UNAUTHORIZED === 'true'
-      } : false, // false olarak ayarla (undefined yerine) - MySQL SSL desteklemiyorsa
+      // SSL ayarları - Local development için undefined, production için true
+      ...(useSSL ? {
+        ssl: {
+          rejectUnauthorized: process.env.DB_SSL_REJECT_UNAUTHORIZED === 'true'
+        }
+      } : {}),
     });
     
     // Bağlantı kurulduğunda charset'i ayarla
