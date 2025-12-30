@@ -74,7 +74,9 @@ async function getProducts(): Promise<Product[]> {
             const products = await query<Product[]>(
               "SELECT * FROM products ORDER BY created_at DESC LIMIT 6"
             );
-            return Array.isArray(products) ? products : [];
+            const productsData = Array.isArray(products) ? products : [];
+            // Türkçe karakterleri düzelt
+            return productsData.map(fixProductEncoding);
           }
           throw err2;
         }
