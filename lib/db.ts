@@ -49,6 +49,10 @@ function getPool() {
   return pool;
 }
 
+// Bağlantı hatası loglama için throttle mekanizması
+let lastConnectionErrorLog = 0;
+const CONNECTION_ERROR_LOG_INTERVAL = 60000; // 60 saniyede bir log
+
 export async function query<T = unknown>(sql: string, params?: unknown[]): Promise<T> {
   try {
     const pool = getPool();
@@ -64,12 +68,6 @@ export async function query<T = unknown>(sql: string, params?: unknown[]): Promi
     // We need to cast rows to T
     return rows;
   } catch (error: unknown) {
-    // Tüm hataları logla - production'da bile
-    console.error("❌ Database query error:", {
-      sql: sql.substring(0, 200),
-      params: params || [],
-      error: error instanceof Error ? error.message : String(error),
-    });
     // MySQL hatalarını daha iyi yakalama ve loglama
     let errorCode = 'UNKNOWN';
     let errorMessage = 'Unknown database error';
@@ -109,18 +107,26 @@ export async function query<T = unknown>(sql: string, params?: unknown[]): Promi
     
     // Bağlantı hataları (hem production hem development için sessiz)
     if (isConnectionError) {
-      // Bağlantı hatalarını sessizce handle et - fallback mekanizmaları kullanılacak
-      // Sadece debug modunda logla
-      if (process.env.DEBUG === 'true' || process.env.DB_DEBUG === 'true') {
-        console.warn('Database connection unavailable. Using fallback data.');
-        console.warn('  Code:', errorCode);
-        console.warn('  Message:', errorMessage);
+      // Bağlantı hatalarını throttle ile logla - spam'i önle
+      const now = Date.now();
+      if (now - lastConnectionErrorLog > CONNECTION_ERROR_LOG_INTERVAL) {
+        lastConnectionErrorLog = now;
+        // Sadece debug modunda veya ilk hatada detaylı log
+        if (process.env.DEBUG === 'true' || process.env.DB_DEBUG === 'true') {
+          console.warn('⚠️ Database connection unavailable. Using fallback data.');
+          console.warn('  Code:', errorCode);
+          console.warn('  Message:', errorMessage);
+          console.warn('  (Bu hata 60 saniyede bir loglanacak)');
+        } else {
+          // Production'da sadece tek satır uyarı
+          console.warn('⚠️ Database connection unavailable. Using fallback data.');
+        }
       }
     } else {
       // Gerçek hatalar için (bağlantı dışı) detaylı loglama
       const isDevelopment = process.env.NODE_ENV === 'development';
       if (isDevelopment || !isProduction) {
-        console.error('Database query error:');
+        console.error('❌ Database query error:');
         console.error('  Code:', errorCode);
         console.error('  Message:', errorMessage);
         if (errno !== undefined) console.error('  Errno:', errno);
@@ -133,7 +139,7 @@ export async function query<T = unknown>(sql: string, params?: unknown[]): Promi
         }
       } else {
         // Production'da gerçek hatalar için sadece özet log
-        console.error('Database query error:', errorCode, errorMessage);
+        console.error('❌ Database query error:', errorCode, errorMessage);
       }
     }
     

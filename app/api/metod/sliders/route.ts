@@ -20,6 +20,10 @@ interface Slider {
   updated_at: string;
 }
 
+// Bağlantı hatası loglama için throttle mekanizması
+let lastSliderErrorLog = 0;
+const SLIDER_ERROR_LOG_INTERVAL = 60000; // 60 saniyede bir log
+
 // Tüm slider'ları getir (Public API - yetkilendirme gerekmez)
 export async function GET() {
   try {
@@ -28,29 +32,42 @@ export async function GET() {
     );
 
     const slidersData = Array.isArray(sliders) ? sliders : [];
-    console.log(`Slider'lar yüklendi: ${slidersData.length} adet`);
+    // Sadece başarılı durumlarda log (spam'i önlemek için)
+    if (slidersData.length > 0 && process.env.NODE_ENV === 'development') {
+      console.log(`✅ Slider'lar yüklendi: ${slidersData.length} adet`);
+    }
     
     return NextResponse.json({
       success: true,
       data: slidersData,
     });
   } catch (error: unknown) {
-    console.error("Slider yükleme hatası:", error);
     const err = error as { code?: string; sqlMessage?: string; message?: string };
-    console.error("Error details:", {
-      code: err.code,
-      sqlMessage: err.sqlMessage,
-      message: err.message,
-    });
     
     // Veritabanı bağlantı hatası durumunda boş array döndür (frontend'in çalışması için)
-    if (err.code === 'ECONNREFUSED') {
-      console.warn("Veritabanı bağlantısı yok - boş slider listesi döndürülüyor");
+    if (err.code === 'ECONNREFUSED' || err.code === 'ETIMEDOUT' || err.code === 'ENOTFOUND') {
+      // Throttle loglama - spam'i önle
+      const now = Date.now();
+      if (now - lastSliderErrorLog > SLIDER_ERROR_LOG_INTERVAL) {
+        lastSliderErrorLog = now;
+        // Sadece development'ta veya debug modunda log
+        if (process.env.NODE_ENV === 'development' || process.env.DEBUG === 'true') {
+          console.warn("⚠️ Veritabanı bağlantısı yok - boş slider listesi döndürülüyor");
+        }
+      }
+      
       return NextResponse.json({
         success: true,
         data: [],
-        warning: "Veritabanı bağlantısı kurulamadı. Docker MySQL container'ının çalıştığından emin olun.",
+        warning: process.env.NODE_ENV === 'development' 
+          ? "Veritabanı bağlantısı kurulamadı. Docker MySQL container'ının çalıştığından emin olun."
+          : undefined,
       });
+    }
+    
+    // Diğer hatalar için sadece development'ta log
+    if (process.env.NODE_ENV === 'development') {
+      console.error("❌ Slider yükleme hatası:", error);
     }
     
     // Hata durumunda boş array döndür
