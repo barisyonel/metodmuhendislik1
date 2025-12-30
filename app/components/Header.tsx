@@ -49,7 +49,28 @@ export default function Header() {
         });
         // Response'u doğrudan JSON olarak al
         const data = await response.json();
-        if (data.success && Array.isArray(data.data)) {
+        
+        // Hata durumunu kontrol et
+        if (!data.success) {
+          console.error("❌ Hizmetler API hatası:", {
+            error: data.error,
+            errorCode: data.errorCode,
+            message: data.message,
+          });
+          // Fallback: Varsayılan hizmetler
+          setHizmetler([
+            { name: "Elektrik Pano Üretimi", href: "/hizmetler/elektrik-pano-uretime", icon: "⚡", description: "Sıvaüstü, sıvaaltı ve marin pano üretimi" },
+            { name: "CNC Lazer Kesim", href: "/hizmetler/cnc-lazer-kesim", icon: "⚡", description: "Hassas lazer kesim çözümleri" },
+            { name: "CNC Büküm", href: "/hizmetler/cnc-bukum", icon: "🔧", description: "Profesyonel büküm hizmetleri" },
+            { name: "Kaynak", href: "/hizmetler/kaynak", icon: "🔥", description: "Metal kaynak ve imalat" },
+            { name: "Elektrostatik Toz Boya", href: "/hizmetler/elektrostatik-toz-boya", icon: "🎨", description: "Yüksek kaliteli toz boya" },
+            { name: "Mağaza Raf Ve Ürünleri", href: "/hizmetler/magaza-raf-ve-urunleri", icon: "📦", description: "Mağaza raf sistemleri" },
+            { name: "Çelik Konstrüksiyon", href: "/hizmetler/celik-konstruksiyon", icon: "🏗️", description: "Endüstriyel çelik yapılar" },
+          ]);
+          return;
+        }
+        
+        if (data.success && Array.isArray(data.data) && data.data.length > 0) {
           setHizmetler(
             data.data.map((s: { name: string; href: string; icon: string; description?: string }) => ({
               name: s.name || "",

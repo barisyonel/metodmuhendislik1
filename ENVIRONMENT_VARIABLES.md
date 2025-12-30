@@ -166,3 +166,4 @@ Sorun yaşıyorsanız:
 2. Vercel deployment loglarını kontrol edin
 3. `/api/metod/test-db` endpoint'ini test edin
 
+

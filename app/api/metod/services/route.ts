@@ -51,20 +51,28 @@ export async function GET(request: NextRequest) {
       fullError: String(error),
     });
     
-    // Hata durumunda boş array döndür ama hata bilgisini de ekle
+    // Hata durumunda açık hata mesajı döndür
+    const isConnectionError = err.code === 'ECONNREFUSED' || err.code === 'ETIMEDOUT' || err.code === 'ENOTFOUND';
+    
     return NextResponse.json(
       {
         success: false,
         data: [],
-        error: process.env.NODE_ENV === 'development' ? {
+        error: isConnectionError 
+          ? "Veritabanı bağlantısı kurulamadı"
+          : "Hizmetler yüklenirken hata oluştu",
+        errorCode: err.code,
+        message: isConnectionError
+          ? (process.env.NODE_ENV === 'development' 
+              ? "Veritabanı bağlantısı kurulamadı. Lütfen veritabanı sunucusunun çalıştığından ve environment variables'ların doğru ayarlandığından emin olun."
+              : "Veritabanı bağlantısı kurulamadı")
+          : (err.sqlMessage || err.message || "Hizmetler yüklenirken hata oluştu"),
+        errorDetails: process.env.NODE_ENV === 'development' ? {
           code: err.code,
           message: err.message,
           errno: err.errno,
           sqlMessage: err.sqlMessage,
         } : undefined,
-        errorMessage: err.code === 'ECONNREFUSED' || err.code === 'ETIMEDOUT' 
-          ? "Veritabanı bağlantısı kurulamadı" 
-          : "Hizmetler yüklenirken hata oluştu",
       },
       {
         headers: {

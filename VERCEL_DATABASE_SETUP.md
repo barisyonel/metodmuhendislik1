@@ -139,3 +139,4 @@ Sorun yaşıyorsanız:
 2. `/api/metod/test-db` endpoint'ini test edin
 3. Veritabanı sağlayıcınızın dashboard'unu kontrol edin
 
+

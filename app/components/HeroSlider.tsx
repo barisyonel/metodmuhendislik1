@@ -63,8 +63,23 @@ export default function HeroSlider() {
         console.log("🔍 API'den gelen slider verisi:", {
           success: data.success,
           count: Array.isArray(data.data) ? data.data.length : 0,
+          error: data.error,
+          errorCode: data.errorCode,
+          message: data.message,
           allSliders: data.data,
         });
+        
+        // Hata durumunu kontrol et
+        if (!data.success) {
+          console.error("❌ API hatası:", {
+            error: data.error,
+            errorCode: data.errorCode,
+            message: data.message,
+          });
+          setSlides([]);
+          setGlobalVideoUrl(null);
+          return;
+        }
         
         if (data.success && Array.isArray(data.data) && data.data.length > 0) {
           // Sadece aktif slider'ları al ve sıralama yap

@@ -44,7 +44,7 @@ export async function GET() {
   } catch (error: unknown) {
     const err = error as { code?: string; sqlMessage?: string; message?: string };
     
-    // Veritabanı bağlantı hatası durumunda boş array döndür (frontend'in çalışması için)
+    // Veritabanı bağlantı hatası durumunda açık hata mesajı döndür
     if (err.code === 'ECONNREFUSED' || err.code === 'ETIMEDOUT' || err.code === 'ENOTFOUND') {
       // Throttle loglama - spam'i önle
       const now = Date.now();
@@ -57,11 +57,13 @@ export async function GET() {
       }
       
       return NextResponse.json({
-        success: true,
+        success: false,
         data: [],
-        warning: process.env.NODE_ENV === 'development' 
-          ? "Veritabanı bağlantısı kurulamadı. Docker MySQL container'ının çalıştığından emin olun."
-          : undefined,
+        error: "Veritabanı bağlantısı kurulamadı",
+        errorCode: err.code,
+        message: process.env.NODE_ENV === 'development' 
+          ? "Veritabanı bağlantısı kurulamadı. Lütfen veritabanı sunucusunun çalıştığından ve environment variables'ların doğru ayarlandığından emin olun."
+          : "Veritabanı bağlantısı kurulamadı",
       });
     }
     
