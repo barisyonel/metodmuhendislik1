@@ -13,7 +13,7 @@ export async function GET(
   try {
     const { id } = await params;
     const services = await query<Array<Record<string, unknown>>>(
-      "SELECT * FROM services WHERE id = ?",
+      "SELECT * FROM metod_services WHERE id = ?",
       [id]
     );
     
@@ -67,7 +67,7 @@ export async function PUT(
     }
 
     await query(
-      "UPDATE services SET name = ?, href = ?, icon = ?, description = ?, sort_order = ?, is_active = ? WHERE id = ?",
+      "UPDATE metod_services SET name = ?, href = ?, icon = ?, description = ?, sort_order = ?, is_active = ? WHERE id = ?",
       [
         name,
         href,
@@ -114,7 +114,7 @@ export async function DELETE(
     }
 
     const { id } = await params;
-    await query("DELETE FROM services WHERE id = ?", [id]);
+    await query("DELETE FROM metod_services WHERE id = ?", [id]);
 
     return NextResponse.json(
       {

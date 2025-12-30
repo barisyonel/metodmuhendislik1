@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { isAuthenticated } from "@/lib/auth";
+import { getAllServices } from "@/app/lib/data";
 import ServiceManager from "./components/ServiceManager";
 
 // Force dynamic rendering because we use cookies for authentication
@@ -12,6 +13,9 @@ export default async function AdminServicesPage() {
   if (!authenticated) {
     redirect("/metod/login");
   }
+
+  // ✅ Server Component - Veritabanından direkt çekiyoruz, API route'a gerek yok!
+  const services = await getAllServices();
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -37,7 +41,7 @@ export default async function AdminServicesPage() {
       </header>
 
       <main className="container mx-auto px-6 py-8">
-        <ServiceManager />
+        <ServiceManager initialServices={services} />
       </main>
     </div>
   );

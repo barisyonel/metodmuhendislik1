@@ -5,7 +5,15 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import EKatalogButton from "./EKatalogButton";
 
-export default function Header() {
+interface Service {
+  id: number;
+  name: string;
+  href: string;
+  icon: string;
+  description?: string;
+}
+
+export default function Header({ initialServices = [] }: { initialServices?: Service[] }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [clickedMenu, setClickedMenu] = useState<string | null>(null);
@@ -16,7 +24,27 @@ export default function Header() {
     href: string;
     icon: string;
     description: string;
-  }>>([]);
+  }>>(() => {
+    // Server component'ten gelen verileri kullan, API route'a gerek yok!
+    if (initialServices && initialServices.length > 0) {
+      return initialServices.map(s => ({
+        name: s.name || "",
+        href: s.href || "",
+        icon: s.icon || "⚡",
+        description: s.description || "",
+      }));
+    }
+    // Fallback hizmetler
+    return [
+      { name: "Elektrik Pano Üretimi", href: "/hizmetler/elektrik-pano-uretime", icon: "⚡", description: "Sıvaüstü, sıvaaltı ve marin pano üretimi" },
+      { name: "CNC Lazer Kesim", href: "/hizmetler/cnc-lazer-kesim", icon: "⚡", description: "Hassas lazer kesim çözümleri" },
+      { name: "CNC Büküm", href: "/hizmetler/cnc-bukum", icon: "🔧", description: "Profesyonel büküm hizmetleri" },
+      { name: "Kaynak", href: "/hizmetler/kaynak", icon: "🔥", description: "Metal kaynak ve imalat" },
+      { name: "Elektrostatik Toz Boya", href: "/hizmetler/elektrostatik-toz-boya", icon: "🎨", description: "Yüksek kaliteli toz boya" },
+      { name: "Mağaza Raf Ve Ürünleri", href: "/hizmetler/magaza-raf-ve-urunleri", icon: "📦", description: "Mağaza raf sistemleri" },
+      { name: "Çelik Konstrüksiyon", href: "/hizmetler/celik-konstruksiyon", icon: "🏗️", description: "Endüstriyel çelik yapılar" },
+    ];
+  });
   const pathname = usePathname();
 
   useEffect(() => {
@@ -36,70 +64,19 @@ export default function Header() {
     };
   }, [isMobileMenuOpen]);
 
-  // Hizmetleri API'den yükle
+  // Admin panelinden güncelleme event'ini dinle
   useEffect(() => {
-    const loadServices = async () => {
-      try {
-        const response = await fetch("/api/metod/services?t=" + Date.now(), {
-          cache: 'no-store',
-          headers: {
-            'Accept': 'application/json; charset=utf-8',
-            'Content-Type': 'application/json; charset=utf-8',
-          },
-        });
-        // Response'u doğrudan JSON olarak al
-        const data = await response.json();
-
-        // Hata durumunu kontrol et
-        if (!data.success) {
-          console.error("❌ Hizmetler API hatası:", {
-            error: data.error,
-            errorCode: data.errorCode,
-            message: data.message,
-          });
-          // Fallback: Varsayılan hizmetler
-          setHizmetler([
-            { name: "Elektrik Pano Üretimi", href: "/hizmetler/elektrik-pano-uretime", icon: "⚡", description: "Sıvaüstü, sıvaaltı ve marin pano üretimi" },
-            { name: "CNC Lazer Kesim", href: "/hizmetler/cnc-lazer-kesim", icon: "⚡", description: "Hassas lazer kesim çözümleri" },
-            { name: "CNC Büküm", href: "/hizmetler/cnc-bukum", icon: "🔧", description: "Profesyonel büküm hizmetleri" },
-            { name: "Kaynak", href: "/hizmetler/kaynak", icon: "🔥", description: "Metal kaynak ve imalat" },
-            { name: "Elektrostatik Toz Boya", href: "/hizmetler/elektrostatik-toz-boya", icon: "🎨", description: "Yüksek kaliteli toz boya" },
-            { name: "Mağaza Raf Ve Ürünleri", href: "/hizmetler/magaza-raf-ve-urunleri", icon: "📦", description: "Mağaza raf sistemleri" },
-            { name: "Çelik Konstrüksiyon", href: "/hizmetler/celik-konstruksiyon", icon: "🏗️", description: "Endüstriyel çelik yapılar" },
-          ]);
-          return;
-        }
-
-        if (data.success && Array.isArray(data.data) && data.data.length > 0) {
-          setHizmetler(
-            data.data.map((s: { name: string; href: string; icon: string; description?: string }) => ({
-              name: s.name || "",
-              href: s.href || "",
-              icon: s.icon || "⚡",
-              description: s.description || "",
-            }))
-          );
-        } else {
-          // Fallback: Varsayılan hizmetler
-          setHizmetler([
-            { name: "Elektrik Pano Üretimi", href: "/hizmetler/elektrik-pano-uretime", icon: "⚡", description: "Sıvaüstü, sıvaaltı ve marin pano üretimi" },
-            { name: "CNC Lazer Kesim", href: "/hizmetler/cnc-lazer-kesim", icon: "⚡", description: "Hassas lazer kesim çözümleri" },
-            { name: "CNC Büküm", href: "/hizmetler/cnc-bukum", icon: "🔧", description: "Profesyonel büküm hizmetleri" },
-            { name: "Kaynak", href: "/hizmetler/kaynak", icon: "🔥", description: "Metal kaynak ve imalat" },
-            { name: "Elektrostatik Toz Boya", href: "/hizmetler/elektrostatik-toz-boya", icon: "🎨", description: "Yüksek kaliteli toz boya" },
-            { name: "Mağaza Raf Ve Ürünleri", href: "/hizmetler/magaza-raf-ve-urunleri", icon: "📦", description: "Mağaza raf sistemleri" },
-            { name: "Çelik Konstrüksiyon", href: "/hizmetler/celik-konstruksiyon", icon: "🏗️", description: "Endüstriyel çelik yapılar" },
-          ]);
-        }
-      } catch (error) {
-        console.error("Hizmetler yüklenirken hata:", error);
-        // Fallback hizmetler
-        setHizmetler([
-          { name: "Elektrik Pano Üretimi", href: "/hizmetler/elektrik-pano-uretime", icon: "⚡", description: "Sıvaüstü, sıvaaltı ve marin pano üretimi" },
-        ]);
-      }
+    const handleServiceUpdate = () => {
+      console.log("🔄 Hizmet güncelleme eventi alındı, sayfa yenileniyor...");
+      // Sayfayı yenile (server component tekrar çalışacak)
+      window.location.reload();
     };
-    loadServices();
+    
+    window.addEventListener('service-updated', handleServiceUpdate);
+    
+    return () => {
+      window.removeEventListener('service-updated', handleServiceUpdate);
+    };
   }, []);
 
   useEffect(() => {

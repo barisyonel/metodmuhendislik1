@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { isAuthenticated } from "@/lib/auth";
+import { getAllSliders } from "@/app/lib/data";
 import SliderManager from "./components/SliderManager";
 
 // Force dynamic rendering because we use cookies for authentication
@@ -12,6 +13,9 @@ export default async function AdminSliderPage() {
   if (!authenticated) {
     redirect("/metod/login");
   }
+
+  // ✅ Server Component - Veritabanından direkt çekiyoruz, API route'a gerek yok!
+  const sliders = await getAllSliders();
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -39,7 +43,7 @@ export default async function AdminSliderPage() {
 
       {/* Main Content */}
       <main className="container mx-auto px-6 py-8">
-        <SliderManager />
+        <SliderManager initialSliders={sliders} />
       </main>
     </div>
   );

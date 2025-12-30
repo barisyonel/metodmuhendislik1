@@ -16,9 +16,10 @@ interface Project {
   is_active?: boolean | number;
 }
 
-export default function ProjectManager() {
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(true);
+export default function ProjectManager({ initialProjects = [] }: { initialProjects?: Project[] }) {
+  // ✅ Server Component'ten gelen verileri kullan, API route'a gerek yok!
+  const [projects, setProjects] = useState<Project[]>(initialProjects);
+  const [loading, setLoading] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -37,11 +38,7 @@ export default function ProjectManager() {
     is_active: true,
   });
 
-  // Projeleri yükle
-  useEffect(() => {
-    loadProjects();
-  }, []);
-
+  // Sadece refresh için kullan (CRUD işlemlerinden sonra)
   const loadProjects = async () => {
     try {
       setLoading(true);
@@ -49,15 +46,13 @@ export default function ProjectManager() {
       const data = await response.json();
       if (data.success) {
         const projectsData = Array.isArray(data.data) ? data.data : [];
-        console.log("Yüklenen projeler:", projectsData.length);
+        console.log("✅ Projeler yenilendi:", projectsData.length);
         setProjects(projectsData);
       } else {
         console.error("Proje yükleme hatası:", data.message);
-        setProjects([]);
       }
     } catch (error) {
       console.error("Projeler yüklenirken hata:", error);
-      setProjects([]);
     } finally {
       setLoading(false);
     }

@@ -35,7 +35,7 @@ interface Service {
 async function getServices(): Promise<Service[]> {
   try {
     const services = await query<Service[]>(
-      "SELECT * FROM services WHERE is_active = TRUE ORDER BY sort_order ASC, id ASC"
+      "SELECT * FROM metod_services WHERE is_active = TRUE ORDER BY sort_order ASC, id ASC"
     );
     return Array.isArray(services) ? services : [];
   } catch (error) {

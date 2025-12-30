@@ -15,9 +15,10 @@ interface Slider {
   is_active: boolean | number;
 }
 
-export default function SliderManager() {
-  const [sliders, setSliders] = useState<Slider[]>([]);
-  const [loading, setLoading] = useState(true);
+export default function SliderManager({ initialSliders = [] }: { initialSliders?: Slider[] }) {
+  // ✅ Server Component'ten gelen verileri kullan, API route'a gerek yok!
+  const [sliders, setSliders] = useState<Slider[]>(initialSliders);
+  const [loading, setLoading] = useState(false);
   const [editingSlider, setEditingSlider] = useState<Slider | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -35,11 +36,22 @@ export default function SliderManager() {
   const [videoPreview, setVideoPreview] = useState<string>("");
   const [currentVideoUrl, setCurrentVideoUrl] = useState<string | null>(null);
 
-  // Slider'ları yükle
+  // İlk yüklemede video URL'ini ayarla
   useEffect(() => {
-    loadSliders();
-  }, []);
+    if (initialSliders.length > 0) {
+      const activeSliderWithVideo = initialSliders.find(
+        (s: Slider) => {
+          const isActive = s.is_active === true || s.is_active === 1;
+          return isActive && s.video_url;
+        }
+      );
+      if (activeSliderWithVideo) {
+        setCurrentVideoUrl(activeSliderWithVideo.video_url);
+      }
+    }
+  }, [initialSliders]);
 
+  // Sadece refresh için kullan (CRUD işlemlerinden sonra)
   const loadSliders = async () => {
     try {
       setLoading(true);
@@ -47,7 +59,7 @@ export default function SliderManager() {
       const data = await response.json();
       if (data.success) {
         const slidersData = Array.isArray(data.data) ? data.data : [];
-        console.log("Yüklenen slider'lar:", slidersData.length);
+        console.log("✅ Slider'lar yenilendi:", slidersData.length);
         setSliders(slidersData);
         
         // Mevcut video URL'ini bul (ilk aktif slider'dan)

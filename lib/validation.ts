@@ -102,3 +102,4 @@ export type ServiceUpdateInput = z.infer<typeof serviceUpdateSchema>;
 export type ContactFormInput = z.infer<typeof contactFormSchema>;
 export type AuthInput = z.infer<typeof authSchema>;
 
+

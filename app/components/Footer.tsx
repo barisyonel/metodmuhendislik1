@@ -3,79 +3,53 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 
-export default function Footer() {
+interface Service {
+  id: number;
+  name: string;
+  href: string;
+  icon?: string;
+  description?: string;
+}
+
+export default function Footer({ initialServices = [] }: { initialServices?: Service[] }) {
   const currentYear = new Date().getFullYear();
-  const [services, setServices] = useState<Array<{
+  const [services] = useState<Array<{
     name: string;
     href: string;
-  }>>([]);
+  }>>(() => {
+    // Server component'ten gelen verileri kullan, API route'a gerek yok!
+    if (initialServices && initialServices.length > 0) {
+      return initialServices.slice(0, 6).map(s => ({
+        name: s.name || "",
+        href: s.href || "",
+      }));
+    }
+    // Fallback hizmetler
+    return [
+      { name: "CNC Lazer Kesim", href: "/hizmetler/cnc-lazer-kesim" },
+      { name: "CNC Büküm", href: "/hizmetler/cnc-bukum" },
+      { name: "Kaynak", href: "/hizmetler/kaynak" },
+      { name: "Elektrostatik Toz Boya", href: "/hizmetler/elektrostatik-toz-boya" },
+      { name: "Elektrik Pano Üretimi", href: "/hizmetler/elektrik-pano-uretime" },
+      { name: "Çelik Konstrüksiyon", href: "/hizmetler/celik-konstruksiyon" },
+    ];
+  });
 
-  // Hizmetleri API'den yükle
+  // Admin panelinden güncelleme event'ini dinle
   useEffect(() => {
-    const loadServices = async () => {
-      try {
-        const response = await fetch("/api/metod/services?t=" + Date.now(), {
-          cache: 'no-store',
-          headers: {
-            'Accept': 'application/json; charset=utf-8',
-            'Content-Type': 'application/json; charset=utf-8',
-          },
-        });
-        // Response'u doğrudan JSON olarak al
-        const data = await response.json();
-        
-        // Hata durumunu kontrol et
-        if (!data.success) {
-          console.warn("⚠️ Hizmetler API hatası:", {
-            error: data.error,
-            errorCode: data.errorCode,
-            message: data.message,
-          });
-          // Fallback hizmetler
-          setServices([
-            { name: "CNC Lazer Kesim", href: "/hizmetler/cnc-lazer-kesim" },
-            { name: "CNC Büküm", href: "/hizmetler/cnc-bukum" },
-            { name: "Kaynak", href: "/hizmetler/kaynak" },
-            { name: "Elektrostatik Toz Boya", href: "/hizmetler/elektrostatik-toz-boya" },
-            { name: "Elektrik Pano Üretimi", href: "/hizmetler/elektrik-pano-uretime" },
-            { name: "Çelik Konstrüksiyon", href: "/hizmetler/celik-konstruksiyon" },
-          ]);
-          return;
-        }
-        
-        if (data.success && Array.isArray(data.data) && data.data.length > 0) {
-          setServices(
-            data.data.slice(0, 6).map((s: { name: string; href: string }) => ({
-              name: s.name || "",
-              href: s.href || "",
-            }))
-          );
-        } else {
-          // Fallback hizmetler
-          setServices([
-            { name: "CNC Lazer Kesim", href: "/hizmetler/cnc-lazer-kesim" },
-            { name: "CNC Büküm", href: "/hizmetler/cnc-bukum" },
-            { name: "Kaynak", href: "/hizmetler/kaynak" },
-            { name: "Elektrostatik Toz Boya", href: "/hizmetler/elektrostatik-toz-boya" },
-            { name: "Elektrik Pano Üretimi", href: "/hizmetler/elektrik-pano-uretime" },
-            { name: "Çelik Konstrüksiyon", href: "/hizmetler/celik-konstruksiyon" },
-          ]);
-        }
-      } catch (error) {
-        console.error("❌ Hizmetler API hatası:", error);
-        // Fallback hizmetler
-        setServices([
-          { name: "CNC Lazer Kesim", href: "/hizmetler/cnc-lazer-kesim" },
-          { name: "CNC Büküm", href: "/hizmetler/cnc-bukum" },
-          { name: "Kaynak", href: "/hizmetler/kaynak" },
-          { name: "Elektrostatik Toz Boya", href: "/hizmetler/elektrostatik-toz-boya" },
-          { name: "Elektrik Pano Üretimi", href: "/hizmetler/elektrik-pano-uretime" },
-          { name: "Çelik Konstrüksiyon", href: "/hizmetler/celik-konstruksiyon" },
-        ]);
-      }
+    const handleServiceUpdate = () => {
+      console.log("🔄 Hizmet güncelleme eventi alındı, sayfa yenileniyor...");
+      // Sayfayı yenile (server component tekrar çalışacak)
+      window.location.reload();
     };
-    loadServices();
+    
+    window.addEventListener('service-updated', handleServiceUpdate);
+    
+    return () => {
+      window.removeEventListener('service-updated', handleServiceUpdate);
+    };
   }, []);
+
 
   return (
     <footer className="relative bg-gradient-to-br from-blue-950 via-indigo-950 to-slate-950 text-white overflow-hidden">

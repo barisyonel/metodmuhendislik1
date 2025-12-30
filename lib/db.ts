@@ -35,6 +35,10 @@ function getPool() {
       console.log(`   Password: ${dbPassword ? '***' : 'YOK'}`);
     }
     
+    // SSL ayarları
+    // Local development için SSL kapalı, production/Vercel için açık
+    const useSSL = process.env.DB_SSL === 'true' || (process.env.VERCEL === '1' && process.env.NODE_ENV === 'production');
+    
     pool = mysql.createPool({
       host: dbHost,
       user: dbUser,
@@ -46,12 +50,10 @@ function getPool() {
       queueLimit: 0,
       charset: 'utf8mb4',
       connectTimeout: 60000,
-      // SSL ayarları
-      // Vercel'de (production) SSL genellikle gereklidir
-      // Development'ta SSL kapalı (localhost için gerekli değil)
-      ssl: (process.env.DB_SSL === 'true' || (process.env.VERCEL === '1' && process.env.NODE_ENV === 'production')) ? {
+      // SSL ayarları - Local development için false, production için true
+      ssl: useSSL ? {
         rejectUnauthorized: process.env.DB_SSL_REJECT_UNAUTHORIZED === 'true'
-      } : undefined,
+      } : false, // false olarak ayarla (undefined yerine) - MySQL SSL desteklemiyorsa
     });
     
     // Bağlantı kurulduğunda charset'i ayarla

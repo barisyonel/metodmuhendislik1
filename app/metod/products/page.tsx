@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { isAuthenticated } from "@/lib/auth";
+import { getAllProducts } from "@/app/lib/data";
 import ProductManager from "./components/ProductManager";
 
 // Force dynamic rendering because we use cookies for authentication
@@ -12,6 +13,9 @@ export default async function AdminProductsPage() {
   if (!authenticated) {
     redirect("/metod/login");
   }
+
+  // ✅ Server Component - Veritabanından direkt çekiyoruz, API route'a gerek yok!
+  const products = await getAllProducts();
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -37,7 +41,7 @@ export default async function AdminProductsPage() {
       </header>
 
       <main className="container mx-auto px-6 py-8">
-        <ProductManager />
+        <ProductManager initialProducts={products} />
       </main>
     </div>
   );

@@ -14,9 +14,10 @@ interface Product {
   sort_order?: number;
 }
 
-export default function ProductManager() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+export default function ProductManager({ initialProducts = [] }: { initialProducts?: Product[] }) {
+  // ✅ Server Component'ten gelen verileri kullan, API route'a gerek yok!
+  const [products, setProducts] = useState<Product[]>(initialProducts);
+  const [loading, setLoading] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -34,11 +35,7 @@ export default function ProductManager() {
     is_active: true,
   });
 
-  // Ürünleri yükle
-  useEffect(() => {
-    loadProducts();
-  }, []);
-
+  // Sadece refresh için kullan (CRUD işlemlerinden sonra)
   const loadProducts = async () => {
     try {
       setLoading(true);
@@ -48,35 +45,13 @@ export default function ProductManager() {
       const data = await response.json();
       if (data.success) {
         const productsData = Array.isArray(data.data) ? data.data : [];
-        console.log(`✅ ${productsData.length} ürün yüklendi`);
-        
-        // Her ürün için görselleri kontrol et
-        productsData.forEach((product: Product) => {
-          let imageCount = 0;
-          if (product.image) imageCount++;
-          if (product.images) {
-            try {
-              const parsed = typeof product.images === 'string' 
-                ? JSON.parse(product.images) 
-                : product.images;
-              if (Array.isArray(parsed)) {
-                imageCount = parsed.length;
-              }
-            } catch {
-              // Parse hatası
-            }
-          }
-          console.log(`  Ürün ${product.id} (${product.title}): ${imageCount} görsel`);
-        });
-        
+        console.log(`✅ ${productsData.length} ürün yenilendi`);
         setProducts(productsData);
       } else {
         console.error("❌ Ürün yükleme hatası:", data.message);
-        setProducts([]);
       }
     } catch (error) {
       console.error("❌ Ürünler yüklenirken hata:", error);
-      setProducts([]);
     } finally {
       setLoading(false);
     }

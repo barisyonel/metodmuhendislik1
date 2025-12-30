@@ -11,9 +11,10 @@ interface Service {
   is_active?: boolean | number;
 }
 
-export default function ServiceManager() {
-  const [services, setServices] = useState<Service[]>([]);
-  const [loading, setLoading] = useState(true);
+export default function ServiceManager({ initialServices = [] }: { initialServices?: Service[] }) {
+  // ✅ Server Component'ten gelen verileri kullan, API route'a gerek yok!
+  const [services, setServices] = useState<Service[]>(initialServices);
+  const [loading, setLoading] = useState(false);
   const [editingService, setEditingService] = useState<Service | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -26,10 +27,7 @@ export default function ServiceManager() {
     is_active: true,
   });
 
-  useEffect(() => {
-    loadServices();
-  }, []);
-
+  // Sadece refresh için kullan (CRUD işlemlerinden sonra)
   const loadServices = async () => {
     try {
       setLoading(true);
@@ -37,12 +35,12 @@ export default function ServiceManager() {
       const data = await response.json();
       if (data.success) {
         setServices(Array.isArray(data.data) ? data.data : []);
+        console.log("✅ Hizmetler yenilendi");
       } else {
-        setServices([]);
+        console.error("Hizmet yükleme hatası:", data.message);
       }
     } catch (error) {
       console.error("Hizmetler yüklenirken hata:", error);
-      setServices([]);
     } finally {
       setLoading(false);
     }
@@ -80,6 +78,8 @@ export default function ServiceManager() {
       if (data.success) {
         await loadServices();
         resetForm();
+        // Frontend'i güncellemek için event gönder
+        window.dispatchEvent(new CustomEvent('service-updated'));
         alert(editingService ? "✅ Hizmet başarıyla güncellendi!" : "✅ Hizmet başarıyla eklendi!");
       } else {
         throw new Error(data.message || "Bilinmeyen hata");
@@ -106,6 +106,8 @@ export default function ServiceManager() {
       const data = await response.json();
       if (data.success) {
         loadServices();
+        // Frontend'i güncellemek için event gönder
+        window.dispatchEvent(new CustomEvent('service-updated'));
         alert("✅ Hizmet silindi!");
       } else {
         alert("❌ Hata: " + data.message);
@@ -155,6 +157,8 @@ export default function ServiceManager() {
       const data = await response.json();
       if (data.success) {
         loadServices();
+        // Frontend'i güncellemek için event gönder
+        window.dispatchEvent(new CustomEvent('service-updated'));
       }
     } catch {
       alert("❌ Sıralama güncellenirken hata oluştu!");

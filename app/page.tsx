@@ -1,6 +1,6 @@
-import Header from "./components/Header";
+import HeaderWrapper from "./components/HeaderWrapper";
 import HeroSlider from "./components/HeroSlider";
-import Footer from "./components/Footer";
+import FooterWrapper from "./components/FooterWrapper";
 import ProductsList from "./components/ProductsList";
 import EKatalogButton from "./components/EKatalogButton";
 import Link from "next/link";
@@ -181,7 +181,7 @@ export default async function HomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <Header />
+      <HeaderWrapper />
       <main>
         {/* MODERN HERO SECTION - Tam Ekran */}
         <section
@@ -492,7 +492,7 @@ export default async function HomePage() {
         </section>
 
       </main>
-      <Footer />
+      <FooterWrapper />
     </>
   );
 }

@@ -25,8 +25,8 @@ export async function GET(request: NextRequest) {
     
     // Admin paneli için tüm hizmetleri getir (aktif/pasif)
     const queryString = all
-      ? "SELECT * FROM services ORDER BY sort_order ASC, id ASC"
-      : "SELECT * FROM services WHERE is_active = TRUE ORDER BY sort_order ASC, id ASC";
+      ? "SELECT * FROM metod_services ORDER BY sort_order ASC, id ASC"
+      : "SELECT * FROM metod_services WHERE is_active = TRUE ORDER BY sort_order ASC, id ASC";
     
     const services = await query<Service[]>(queryString);
 
@@ -114,7 +114,7 @@ export async function POST(request: NextRequest) {
     });
 
     const result = await query<{ insertId: number }>(
-      `INSERT INTO services (name, href, icon, description, sort_order, is_active) 
+      `INSERT INTO metod_services (name, href, icon, description, sort_order, is_active) 
        VALUES (?, ?, ?, ?, ?, ?)`,
       [
         name,
@@ -151,7 +151,7 @@ export async function POST(request: NextRequest) {
     }
     
     if (err.code === 'ER_NO_SUCH_TABLE' || errorMessage.includes("doesn't exist")) {
-      errorMessage = "Services tablosu bulunamadı. Lütfen migration script'ini çalıştırın: scripts/create-services-table.sql";
+      errorMessage = "metod_services tablosu bulunamadı. Lütfen migration script'ini çalıştırın: directadmin-setup.sql";
     }
     
     return NextResponse.json(

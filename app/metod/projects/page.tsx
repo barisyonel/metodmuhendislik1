@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { isAuthenticated } from "@/lib/auth";
+import { getAllProjects } from "@/app/lib/data";
 import ProjectManager from "./components/ProjectManager";
 
 // Force dynamic rendering because we use cookies for authentication
@@ -12,6 +13,9 @@ export default async function AdminProjectsPage() {
   if (!authenticated) {
     redirect("/metod/login");
   }
+
+  // ✅ Server Component - Veritabanından direkt çekiyoruz, API route'a gerek yok!
+  const projects = await getAllProjects();
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -37,7 +41,7 @@ export default async function AdminProjectsPage() {
       </header>
 
       <main className="container mx-auto px-6 py-8">
-        <ProjectManager />
+        <ProjectManager initialProjects={projects} />
       </main>
     </div>
   );
