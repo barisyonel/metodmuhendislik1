@@ -117,24 +117,46 @@ export async function query<T = unknown>(sql: string, params?: unknown[]): Promi
     
     // Production ortamında ve bağlantı hatalarında daha az detaylı log
     const isConnectionError = errorCode === 'ECONNREFUSED' || errorCode === 'ETIMEDOUT' || 
-                              errorCode === 'ENOTFOUND' || errno === -111 || errno === -61;
+                              errorCode === 'ENOTFOUND' || errorCode === 'ER_ACCESS_DENIED_ERROR' ||
+                              errno === -111 || errno === -61 || errno === 1045;
     const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
     
-    // Bağlantı hataları (hem production hem development için sessiz)
+    // Bağlantı hataları (hem production hem development için)
     if (isConnectionError) {
       // Bağlantı hatalarını throttle ile logla - spam'i önle
       const now = Date.now();
       if (now - lastConnectionErrorLog > CONNECTION_ERROR_LOG_INTERVAL) {
         lastConnectionErrorLog = now;
-        // Sadece debug modunda veya ilk hatada detaylı log
-        if (process.env.DEBUG === 'true' || process.env.DB_DEBUG === 'true') {
-          console.warn('⚠️ Database connection unavailable. Using fallback data.');
-          console.warn('  Code:', errorCode);
-          console.warn('  Message:', errorMessage);
-          console.warn('  (Bu hata 60 saniyede bir loglanacak)');
+        // Production'da da hata logla (Vercel logs'da görünsün)
+        if (isProduction) {
+          console.error('❌ Database connection error:', {
+            code: errorCode,
+            message: errorMessage,
+            errno: errno,
+            env: {
+              DB_HOST: process.env.DB_HOST ? 'SET' : 'MISSING',
+              DB_PORT: process.env.DB_PORT || 'NOT SET',
+              DB_USER: process.env.DB_USER ? 'SET' : 'MISSING',
+              DB_NAME: process.env.DB_NAME ? 'SET' : 'MISSING',
+              DB_SSL: process.env.DB_SSL || 'NOT SET',
+              VERCEL: process.env.VERCEL || 'NOT SET',
+            },
+          });
         } else {
-          // Production'da sadece tek satır uyarı
-          console.warn('⚠️ Database connection unavailable. Using fallback data.');
+          // Development'ta detaylı log
+          console.error('❌ Database connection error:', {
+            code: errorCode,
+            message: errorMessage,
+            errno: errno,
+            sqlState: sqlState,
+            sqlMessage: sqlMessage,
+          });
+          console.error('💡 Veritabanı bağlantı bilgilerini kontrol edin:');
+          console.error(`   DB_HOST: ${process.env.DB_HOST || 'localhost'}`);
+          console.error(`   DB_PORT: ${process.env.DB_PORT || '3306'}`);
+          console.error(`   DB_USER: ${process.env.DB_USER || 'metodmuhendislik'}`);
+          console.error(`   DB_NAME: ${process.env.DB_NAME || 'metodmuhendislik_db'}`);
+          console.error(`   DB_SSL: ${process.env.DB_SSL || 'false'}`);
         }
       }
     } else {
