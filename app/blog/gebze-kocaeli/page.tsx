@@ -69,7 +69,7 @@ export default function GebzeKocaeliBlogPage() {
         <section className="py-16 md:py-24 bg-gradient-to-r from-blue-600 to-blue-700 text-white">
           <div className="container mx-auto px-6 text-center">
             <h2 className="text-3xl md:text-4xl font-black mb-6">
-              Gebze & Kocaeli'de Hizmet Almak İster misiniz?
+              Gebze & Kocaeli&apos;de Hizmet Almak İster misiniz?
             </h2>
             <p className="text-blue-100 text-lg mb-8 max-w-2xl mx-auto">
               Gebze ve Kocaeli bölgesinde elektrik pano ve kaynak hizmetleri için uzman ekibimizle iletişime geçin.

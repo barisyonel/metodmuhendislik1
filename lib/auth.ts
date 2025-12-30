@@ -1,39 +1,58 @@
 import { cookies } from "next/headers";
+import { verifyToken, getUsernameFromToken } from "./jwt";
+import { SESSION_COOKIE_NAME } from "./constants";
 
+/**
+ * Kullanıcının authenticated olup olmadığını kontrol eder
+ * @returns true eğer kullanıcı authenticated ise
+ */
 export async function isAuthenticated(): Promise<boolean> {
   try {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("metod_admin_token");
-  
+    const cookieStore = await cookies();
+    const token = cookieStore.get(SESSION_COOKIE_NAME);
+    
     if (!token || !token.value) {
-    return false;
-  }
-
-  // Token doğrulama (basit kontrol, production'da daha güvenli olmalı)
-  try {
-    const decoded = Buffer.from(token.value, "base64").toString("utf-8");
-      // Token geçerli mi kontrol et (username:timestamp formatında olmalı)
-      const isValid = decoded.includes(":") && decoded.split(":").length === 2;
-      
-      if (!isValid) {
-        return false;
-      }
-      
-      return true;
-    } catch (error) {
-      // Token decode hatası - sessizce false döndür
       return false;
     }
-  } catch (error) {
-    // Dynamic server usage hatası - bu normal, sadece false döndür
-    // Bu hata Next.js'in cookies() kullanımından kaynaklanıyor
-    // ve route segment config'de dynamic = 'force-dynamic' ile çözülmeli
+
+    // JWT token doğrulama
+    const payload = verifyToken(token.value);
+    
+    if (!payload || !payload.username) {
+      return false;
+    }
+    
+    return true;
+  } catch {
+    // Hata durumunda false döndür
     return false;
   }
 }
 
+/**
+ * Token'dan kullanıcı adını alır
+ * @returns Kullanıcı adı veya null
+ */
+export async function getCurrentUser(): Promise<string | null> {
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get(SESSION_COOKIE_NAME);
+    
+    if (!token || !token.value) {
+      return null;
+    }
+
+    return getUsernameFromToken(token.value);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Kullanıcıyı logout eder
+ */
 export async function logout() {
   const cookieStore = await cookies();
-  cookieStore.delete("metod_admin_token");
+  cookieStore.delete(SESSION_COOKIE_NAME);
 }
 

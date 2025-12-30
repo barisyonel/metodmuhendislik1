@@ -86,7 +86,7 @@ export default function BlogPage() {
                 Elektrik Pano ve Kaynak Hizmetleri Blog
               </h1>
               <p className="text-xl md:text-2xl text-blue-100 mb-8 leading-relaxed">
-                Marmara Bölgesi'ndeki tüm il ve ilçeler için elektrik pano üretimi, kaynak hizmetleri ve endüstriyel üretim çözümleri hakkında güncel bilgiler
+                Marmara Bölgesi&apos;ndeki tüm il ve ilçeler için elektrik pano üretimi, kaynak hizmetleri ve endüstriyel üretim çözümleri hakkında güncel bilgiler
               </p>
             </div>
           </div>
@@ -188,7 +188,7 @@ export default function BlogPage() {
               Bölgeniz İçin Özel Teklif Alın
             </h2>
             <p className="text-blue-100 text-lg mb-8 max-w-2xl mx-auto">
-              Marmara Bölgesi'ndeki tüm il ve ilçelerde elektrik pano ve kaynak hizmetleri için uzman ekibimizle iletişime geçin.
+              Marmara Bölgesi&apos;ndeki tüm il ve ilçelerde elektrik pano ve kaynak hizmetleri için uzman ekibimizle iletişime geçin.
             </p>
             <a
               href="https://wa.me/905425786060?text=Merhaba,%20teklif%20almak%20istiyorum."

@@ -137,7 +137,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
             {/* CTA Section */}
             <div className="mt-12 p-8 bg-gradient-to-br from-blue-50 to-slate-50 rounded-2xl border-2 border-blue-200">
               <h3 className="text-2xl font-black text-slate-900 mb-4">
-                {post.location}'de Hizmet Almak İster misiniz?
+                {post.location}&apos;de Hizmet Almak İster misiniz?
               </h3>
               <p className="text-slate-700 mb-6">
                 {post.location} bölgesinde elektrik pano ve kaynak hizmetleri için uzman ekibimizle iletişime geçin. Ücretsiz keşif ve teklif hizmeti sunuyoruz.

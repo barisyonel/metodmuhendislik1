@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { isAuthenticated } from "@/lib/auth";
 import { query, getConnection } from "@/lib/db";
 import type { ResultSetHeader } from "mysql2";
+import { productSchema } from "@/lib/validation";
+import { sanitizeInput, sanitizeHtml, sanitizeUrl } from "@/lib/sanitize";
+import { handleApiError, ValidationError, AuthenticationError } from "@/lib/errors";
 
 // Force dynamic rendering because we use cookies for authentication
 export const dynamic = 'force-dynamic';
@@ -111,29 +114,37 @@ export async function POST(request: NextRequest) {
     // Kimlik doğrulama kontrolü
     const authenticated = await isAuthenticated();
     if (!authenticated) {
-      return NextResponse.json(
-        { success: false, message: "Yetkisiz erişim" },
-        { status: 401 }
-      );
+      throw new AuthenticationError();
     }
 
-    const body = await request.json() as ProductPostBody;
-    const { title, description, image, images, category, link, is_active, sort_order } = body;
+    const body = await request.json();
+    
+    // Input sanitization
+    const sanitizedBody = {
+      title: sanitizeInput(body.title || ""),
+      description: sanitizeHtml(body.description || ""), // HTML içerik için sanitizeHtml
+      image: sanitizeUrl(body.image || ""),
+      images: body.images, // Array veya string olarak gelebilir, validation'da kontrol edilecek
+      category: sanitizeInput(body.category || ""),
+      link: sanitizeUrl(body.link || ""),
+      is_active: body.is_active,
+      sort_order: body.sort_order,
+    };
 
-    console.log("📥 POST - Gelen veri:", {
-      title,
-      image,
-      images,
-      imagesType: typeof images,
-      isArray: Array.isArray(images),
-    });
-
-    if (!title || !description) {
-      return NextResponse.json(
-        { success: false, message: "Başlık ve açıklama zorunludur" },
-        { status: 400 }
-      );
+    // Zod validation
+    const validationResult = productSchema.safeParse(sanitizedBody);
+    
+    if (!validationResult.success) {
+      const fields: Record<string, string> = {};
+      validationResult.error.issues.forEach((issue) => {
+        const field = issue.path.join(".");
+        fields[field] = issue.message;
+      });
+      
+      throw new ValidationError("Validasyon hatası", fields);
     }
+
+    const { title, description, image, images, category, link, is_active, sort_order } = validationResult.data;
 
     // images kolonu varsa kullan, yoksa image kullan
     // images zaten array veya JSON string olarak gelebilir
@@ -302,10 +313,15 @@ export async function POST(request: NextRequest) {
       }
     );
   } catch (error: unknown) {
-    console.error("Products POST error:", error);
+    const errorResponse = handleApiError(error);
     return NextResponse.json(
-      { success: false, message: "Ürün eklenirken hata oluştu" },
-      { status: 500 }
+      {
+        success: false,
+        message: errorResponse.message,
+        code: errorResponse.code,
+        details: errorResponse.details,
+      },
+      { status: errorResponse.status }
     );
   }
 }

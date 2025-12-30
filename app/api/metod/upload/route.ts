@@ -7,9 +7,9 @@ export const dynamic = 'force-dynamic';
 
 // Cloudinary yapılandırması
 cloudinary.config({
-  cloud_name: "dkkd4jvyk",
-  api_key: "527393514682555",
-  api_secret: "cabyJPZK6kJosJEd6PPLwR0jVco",
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME || "dkkd4jvyk",
+  api_key: process.env.CLOUDINARY_API_KEY || "527393514682555",
+  api_secret: process.env.CLOUDINARY_API_SECRET || "cabyJPZK6kJosJEd6PPLwR0jVco",
 });
 
 export async function POST(request: NextRequest) {

@@ -69,10 +69,10 @@ export default function DigerMarmaraBlogPage() {
         <section className="py-16 md:py-24 bg-gradient-to-r from-blue-600 to-blue-700 text-white">
           <div className="container mx-auto px-6 text-center">
             <h2 className="text-3xl md:text-4xl font-black mb-6">
-              Marmara Bölgesi'nde Hizmet Almak İster misiniz?
+              Marmara Bölgesi&apos;nde Hizmet Almak İster misiniz?
             </h2>
             <p className="text-blue-100 text-lg mb-8 max-w-2xl mx-auto">
-              Marmara Bölgesi'ndeki tüm illerde elektrik pano ve kaynak hizmetleri için uzman ekibimizle iletişime geçin.
+              Marmara Bölgesi&apos;ndeki tüm illerde elektrik pano ve kaynak hizmetleri için uzman ekibimizle iletişime geçin.
             </p>
             <a
               href="https://wa.me/905425786060?text=Merhaba,%20Marmara%20Bölgesi%20için%20teklif%20almak%20istiyorum."

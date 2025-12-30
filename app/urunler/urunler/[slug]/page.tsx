@@ -26,7 +26,7 @@ function fixTurkishEncoding(text: string | null | undefined): string {
       return text;
     }
     return Buffer.from(text, 'latin1').toString('utf8');
-  } catch (error) {
+  } catch {
     return text;
   }
 }
@@ -165,7 +165,7 @@ export default async function ProductDetail({
       let parsedImages: string[] = [];
       try {
         parsedImages = JSON.parse(imagesString);
-      } catch (parseError) {
+      } catch {
         if (Array.isArray(product.images)) {
           parsedImages = product.images;
         }

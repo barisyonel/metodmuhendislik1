@@ -251,7 +251,7 @@ export default function ProjectManager() {
       });
 
       if (!response.ok) {
-        let errorData: { message?: string; errorCode?: string; errorDetails?: any } = {};
+        let errorData: { message?: string; errorCode?: string; errorDetails?: unknown } = {};
         try {
           errorData = await response.json();
         } catch {

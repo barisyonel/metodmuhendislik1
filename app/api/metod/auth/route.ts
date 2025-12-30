@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { verifyAdmin } from "@/lib/db";
+import { generateToken } from "@/lib/jwt";
+import { authSchema } from "@/lib/validation";
+import { sanitizeInput } from "@/lib/sanitize";
+import { handleApiError, ValidationError, AuthenticationError } from "@/lib/errors";
+import { SESSION_COOKIE_NAME, SESSION_COOKIE_MAX_AGE } from "@/lib/constants";
 
 // Force dynamic rendering because we use cookies
 export const dynamic = 'force-dynamic';
@@ -8,57 +13,62 @@ export const dynamic = 'force-dynamic';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { username, password } = body;
+    
+    // Input sanitization
+    const sanitizedBody = {
+      username: sanitizeInput(body.username || ""),
+      password: body.password || "", // Password sanitize edilmez, hash'lenir
+    };
 
-    // Input validation
-    if (!username || !password || typeof username !== 'string' || typeof password !== 'string') {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Kullanıcı adı ve şifre gereklidir",
-        },
-        { status: 400 }
-      );
+    // Zod validation
+    const validationResult = authSchema.safeParse(sanitizedBody);
+    
+    if (!validationResult.success) {
+      const fields: Record<string, string> = {};
+      validationResult.error.issues.forEach((issue) => {
+        const field = issue.path.join(".");
+        fields[field] = issue.message;
+      });
+      
+      throw new ValidationError("Kullanıcı adı ve şifre gereklidir", fields);
     }
+
+    const { username, password } = validationResult.data;
 
     // Admin doğrulama
     const isValid = await verifyAdmin(username, password);
 
-    if (isValid) {
-      // Session token oluştur (production'da daha güvenli token kullanın)
-      const token = Buffer.from(`${username}:${Date.now()}`).toString("base64");
-      // Cookie'ye kaydet
-      const cookieStore = await cookies();
-      cookieStore.set("metod_admin_token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        maxAge: 60 * 60 * 24 * 7, // 7 gün
-        path: "/",
-      });
-
-      return NextResponse.json({
-        success: true,
-        message: "Giriş başarılı",
-      });
+    if (!isValid) {
+      throw new AuthenticationError("Kullanıcı adı veya şifre hatalı!");
     }
 
-    return NextResponse.json(
-      {
-        success: false,
-        message: "Kullanıcı adı veya şifre hatalı!",
-      },
-      { status: 401 }
-    );
+    // JWT token oluştur
+    const token = generateToken(username);
+    
+    // Cookie'ye kaydet
+    const cookieStore = await cookies();
+    cookieStore.set(SESSION_COOKIE_NAME, token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: SESSION_COOKIE_MAX_AGE,
+      path: "/",
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: "Giriş başarılı",
+    });
   } catch (error: unknown) {
-    console.error("Auth error:", error);
-    const err = error as { message?: string };
+    const errorResponse = handleApiError(error);
     return NextResponse.json(
       {
         success: false,
-        message: err.message || "Bir hata oluştu",
+        message: errorResponse.message,
+        code: errorResponse.code,
+        details: errorResponse.details,
       },
-      { status: 500 }
+      { status: errorResponse.status }
     );
   }
 }

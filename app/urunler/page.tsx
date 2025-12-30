@@ -37,7 +37,7 @@ function fixTurkishEncoding(text: string | null | undefined): string {
       return text;
     }
     return Buffer.from(text, 'latin1').toString('utf8');
-  } catch (error) {
+  } catch {
     return text;
   }
 }
@@ -149,7 +149,7 @@ export default async function ProductsPage() {
                         productImages = [product.image, ...productImages];
                       }
                     }
-                  } catch (e) {
+                  } catch {
                     // Parse hatası - görmezden gel
                   }
                 }

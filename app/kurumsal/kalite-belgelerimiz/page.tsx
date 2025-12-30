@@ -1,7 +1,6 @@
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 import type { Metadata } from "next";
-import Image from "next/image";
 
 export const metadata: Metadata = {
   title: "Kalite Belgelerimiz | Metod Mühendislik - ISO Sertifikaları",

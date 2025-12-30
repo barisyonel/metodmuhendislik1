@@ -13,6 +13,9 @@ function getPool() {
     // Vercel'de localhost kullanılamaz - remote veritabanı gerekli
     const dbHost = process.env.DB_HOST || 'localhost';
     const dbPort = parseInt(process.env.DB_PORT || '3306');
+    const dbUser = process.env.DB_USER || 'metodmuhendislik';
+    const dbPassword = process.env.DB_PASSWORD || 'metod2024!';
+    const dbName = process.env.DB_NAME || 'metodmuhendislik_db';
     
     // Production'da localhost kullanımını engelle
     if ((process.env.NODE_ENV === 'production' || process.env.VERCEL === '1') && 
@@ -22,11 +25,21 @@ function getPool() {
       console.error('DB_HOST environment variable\'ını remote host adresi ile güncelleyin.');
     }
     
+    // Development ortamında bağlantı bilgilerini logla (güvenlik için sadece development)
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🔌 Veritabanı bağlantı bilgileri:');
+      console.log(`   Host: ${dbHost}`);
+      console.log(`   Port: ${dbPort}`);
+      console.log(`   User: ${dbUser}`);
+      console.log(`   Database: ${dbName}`);
+      console.log(`   Password: ${dbPassword ? '***' : 'YOK'}`);
+    }
+    
     pool = mysql.createPool({
       host: dbHost,
-      user: process.env.DB_USER || 'metodmuhendislik',
-      password: process.env.DB_PASSWORD || 'metod2024!',
-      database: process.env.DB_NAME || 'metodmuhendislik_db',
+      user: dbUser,
+      password: dbPassword,
+      database: dbName,
       port: dbPort,
       waitForConnections: true,
       connectionLimit: 10,

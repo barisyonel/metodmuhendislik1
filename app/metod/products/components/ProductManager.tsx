@@ -62,7 +62,7 @@ export default function ProductManager() {
               if (Array.isArray(parsed)) {
                 imageCount = parsed.length;
               }
-            } catch (e) {
+            } catch {
               // Parse hatası
             }
           }
@@ -759,7 +759,7 @@ export default function ProductManager() {
                         💡 Birden fazla görsel seçebilirsiniz (Ctrl/Cmd + tıklama ile çoklu seçim).
                       </p>
                       <p className="text-xs text-slate-500">
-                        ⭐ Ana görseli (kapak fotoğrafı) değiştirmek için görselin üzerine gelip "Kapak Yap" butonuna tıklayın.
+                        ⭐ Ana görseli (kapak fotoğrafı) değiştirmek için görselin üzerine gelip &quot;Kapak Yap&quot; butonuna tıklayın.
                       </p>
                       <p className="text-xs text-slate-500">
                         📌 Maksimum 6 görsel ekleyebilirsiniz. İlk görsel ürün kartlarında kapak fotoğrafı olarak görünecek.
@@ -927,7 +927,7 @@ export default function ProductManager() {
                               productImagesList = [product.image, ...productImagesList];
                             }
                           }
-                        } catch (e) {
+                        } catch {
                           // Parse hatası - görmezden gel
                         }
                       }

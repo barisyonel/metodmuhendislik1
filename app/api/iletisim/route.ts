@@ -1,34 +1,42 @@
 import { NextRequest, NextResponse } from "next/server";
 import { query } from "@/lib/db";
+import { contactFormSchema } from "@/lib/validation";
+import { sanitizeInput, sanitizeHtml } from "@/lib/sanitize";
+import { handleApiError, ValidationError } from "@/lib/errors";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, email, phone, service, message } = body;
+    
+    // Input sanitization
+    const sanitizedBody = {
+      name: sanitizeInput(body.name || ""),
+      email: sanitizeInput(body.email || ""),
+      phone: sanitizeInput(body.phone || ""),
+      service: sanitizeInput(body.service || ""),
+      message: sanitizeHtml(body.message || ""), // HTML içerik için sanitizeHtml kullan
+    };
 
-    // Validasyon
-    if (!name || !email || !phone || !message) {
-      return NextResponse.json(
-        { success: false, message: "Lütfen tüm zorunlu alanları doldurun" },
-        { status: 400 }
-      );
+    // Zod validation
+    const validationResult = contactFormSchema.safeParse(sanitizedBody);
+    
+    if (!validationResult.success) {
+      const fields: Record<string, string> = {};
+      validationResult.error.issues.forEach((issue) => {
+        const field = issue.path.join(".");
+        fields[field] = issue.message;
+      });
+      
+      throw new ValidationError("Lütfen tüm zorunlu alanları doğru şekilde doldurun", fields);
     }
 
-    // E-posta format kontrolü
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return NextResponse.json(
-        { success: false, message: "Geçerli bir e-posta adresi giriniz" },
-        { status: 400 }
-      );
-    }
+    const { name, email, phone, service, message } = validationResult.data;
 
     // Veritabanına kaydet
     try {
-      // Önce service kolonunun var olup olmadığını kontrol et
       await query(
-        "INSERT INTO messages (name, email, phone, message, created_at) VALUES (?, ?, ?, ?, NOW())",
-        [name, email, phone || null, message]
+        "INSERT INTO messages (name, email, phone, service, message, created_at) VALUES (?, ?, ?, ?, ?, NOW())",
+        [name, email, phone, service || null, message]
       );
 
       return NextResponse.json({
@@ -44,10 +52,15 @@ export async function POST(request: NextRequest) {
       });
     }
   } catch (error: unknown) {
-    console.error("Contact form error:", error);
+    const errorResponse = handleApiError(error);
     return NextResponse.json(
-      { success: false, message: "Bir hata oluştu. Lütfen tekrar deneyin." },
-      { status: 500 }
+      {
+        success: false,
+        message: errorResponse.message,
+        code: errorResponse.code,
+        details: errorResponse.details,
+      },
+      { status: errorResponse.status }
     );
   }
 }

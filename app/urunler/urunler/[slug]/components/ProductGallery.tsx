@@ -16,24 +16,15 @@ export default function ProductGallery({ images, productTitle }: ProductGalleryP
   // Debug: Görselleri kontrol et
   console.log("🖼️ ProductGallery - Gelen görseller:", images, "Sayı:", images?.length);
 
-  if (!images || images.length === 0) {
-    console.warn("⚠️ ProductGallery - Görsel yok!");
-    return null;
-  }
-
   // Görselleri filtrele (boş veya geçersiz URL'leri kaldır)
-  const validImages = images.filter(img => img && typeof img === 'string' && img.trim() !== '');
-
-  if (validImages.length === 0) {
-    console.warn("⚠️ ProductGallery - Geçerli görsel yok!");
-    return null;
-  }
+  const validImages = images?.filter(img => img && typeof img === 'string' && img.trim() !== '') || [];
 
   // selectedImage'i validImages uzunluğuna göre sınırla
-  const safeSelectedImage = Math.min(selectedImage, validImages.length - 1);
+  const safeSelectedImage = validImages.length > 0 ? Math.min(selectedImage, validImages.length - 1) : 0;
 
-  // Klavye ile navigasyon
+  // Klavye ile navigasyon - useEffect hook'u conditional return'den önce olmalı
   useEffect(() => {
+    if (validImages.length === 0) return;
     const handleKeyPress = (e: KeyboardEvent) => {
       if (e.key === 'ArrowLeft' && safeSelectedImage > 0) {
         setSelectedImage(safeSelectedImage - 1);
@@ -45,6 +36,17 @@ export default function ProductGallery({ images, productTitle }: ProductGalleryP
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [safeSelectedImage, validImages.length]);
+
+  // Early return - hook'lardan sonra
+  if (!images || images.length === 0) {
+    console.warn("⚠️ ProductGallery - Görsel yok!");
+    return null;
+  }
+
+  if (validImages.length === 0) {
+    console.warn("⚠️ ProductGallery - Geçerli görsel yok!");
+    return null;
+  }
 
   return (
     <div className="space-y-6 animate-fade-in">

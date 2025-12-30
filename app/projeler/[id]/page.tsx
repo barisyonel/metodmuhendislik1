@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import Image from "next/image";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
@@ -32,7 +33,7 @@ export default function ProjectDetailPage() {
   const [loading, setLoading] = useState(true);
   const [imageList, setImageList] = useState<string[]>([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [swiperInstance, setSwiperInstance] = useState<any>(null);
+  const [swiperInstance, setSwiperInstance] = useState<import('swiper').Swiper | null>(null);
 
   useEffect(() => {
     const loadProject = async () => {
@@ -112,12 +113,12 @@ export default function ProjectDetailPage() {
         <main className="bg-white min-h-screen flex items-center justify-center">
           <div className="text-center">
             <p className="text-slate-600 text-lg mb-4">Proje bulunamadı</p>
-            <a
+            <Link
               href="/projeler"
               className="text-blue-600 hover:text-blue-700 font-bold"
             >
               ← Projelere Dön
-            </a>
+            </Link>
           </div>
         </main>
         <Footer />
@@ -145,7 +146,7 @@ export default function ProjectDetailPage() {
           </div>
           <div className="relative z-10 container mx-auto px-6 h-full flex items-center">
             <div className="max-w-4xl">
-              <a
+              <Link
                 href="/projeler"
                 className="inline-flex items-center gap-2 text-blue-300 hover:text-white mb-4 text-sm font-bold transition-colors"
               >
@@ -153,7 +154,7 @@ export default function ProjectDetailPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
                 </svg>
                 Projelere Dön
-              </a>
+              </Link>
               <span className="inline-block text-blue-300 font-black text-xs tracking-[0.4em] uppercase mb-4 px-4 py-1.5 bg-blue-900/30 rounded-full">
                 {project.category || "Proje"}
               </span>

@@ -38,7 +38,7 @@ function fixTurkishEncoding(text: string | null | undefined): string {
       return text;
     }
     return Buffer.from(text, 'latin1').toString('utf8');
-  } catch (error) {
+  } catch {
     return text;
   }
 }
@@ -51,14 +51,37 @@ export async function getProducts(limit?: number): Promise<Product[]> {
       `SELECT * FROM products WHERE (is_active = TRUE OR is_active = 1) ORDER BY sort_order ASC, created_at DESC ${limitClause}`
     );
     const productsData = Array.isArray(products) ? products : [];
+    
+    if (productsData.length === 0) {
+      console.warn("⚠️ Veritabanında aktif ürün bulunamadı");
+      return [];
+    }
+    
+    console.log(`✅ ${productsData.length} ürün başarıyla yüklendi`);
+    
     return productsData.map(product => ({
       ...product,
       title: fixTurkishEncoding(product.title),
       description: fixTurkishEncoding(product.description),
       category: fixTurkishEncoding(product.category),
     }));
-  } catch (error) {
-    console.error("Ürünler yüklenirken hata:", error);
+  } catch (error: unknown) {
+    const err = error as { code?: string; message?: string; errno?: number };
+    console.error("❌ Ürünler yüklenirken hata:", {
+      code: err.code,
+      message: err.message,
+      errno: err.errno,
+    });
+    
+    // Bağlantı hatası ise detaylı bilgi ver
+    if (err.code === 'ER_ACCESS_DENIED_ERROR' || err.code === 'ECONNREFUSED' || err.code === 'ENOTFOUND') {
+      console.error("💡 Veritabanı bağlantı bilgilerini kontrol edin:");
+      console.error(`   DB_HOST: ${process.env.DB_HOST || 'localhost'}`);
+      console.error(`   DB_PORT: ${process.env.DB_PORT || '3306'}`);
+      console.error(`   DB_USER: ${process.env.DB_USER || 'metodmuhendislik'}`);
+      console.error(`   DB_NAME: ${process.env.DB_NAME || 'metodmuhendislik_db'}`);
+    }
+    
     return [];
   }
 }
@@ -69,9 +92,33 @@ export async function getSliders(): Promise<Slider[]> {
     const sliders = await query<Slider[]>(
       "SELECT * FROM hero_sliders WHERE (is_active = TRUE OR is_active = 1) ORDER BY sort_order ASC, id ASC"
     );
-    return Array.isArray(sliders) ? sliders : [];
-  } catch (error) {
-    console.error("Slider'lar yüklenirken hata:", error);
+    const slidersData = Array.isArray(sliders) ? sliders : [];
+    
+    if (slidersData.length === 0) {
+      console.warn("⚠️ Veritabanında aktif slider bulunamadı");
+      return [];
+    }
+    
+    console.log(`✅ ${slidersData.length} slider başarıyla yüklendi`);
+    
+    return slidersData;
+  } catch (error: unknown) {
+    const err = error as { code?: string; message?: string; errno?: number };
+    console.error("❌ Slider'lar yüklenirken hata:", {
+      code: err.code,
+      message: err.message,
+      errno: err.errno,
+    });
+    
+    // Bağlantı hatası ise detaylı bilgi ver
+    if (err.code === 'ER_ACCESS_DENIED_ERROR' || err.code === 'ECONNREFUSED' || err.code === 'ENOTFOUND') {
+      console.error("💡 Veritabanı bağlantı bilgilerini kontrol edin:");
+      console.error(`   DB_HOST: ${process.env.DB_HOST || 'localhost'}`);
+      console.error(`   DB_PORT: ${process.env.DB_PORT || '3306'}`);
+      console.error(`   DB_USER: ${process.env.DB_USER || 'metodmuhendislik'}`);
+      console.error(`   DB_NAME: ${process.env.DB_NAME || 'metodmuhendislik_db'}`);
+    }
+    
     return [];
   }
 }

@@ -184,7 +184,7 @@ export default function IletisimPage() {
                   Konumumuz
                 </h2>
                 <p className="text-slate-600 text-lg max-w-2xl mx-auto">
-                  İTOSB Sanayi Bölgesi'nde bulunan tesisimizi ziyaret edebilir veya haritadan konumumuzu inceleyebilirsiniz.
+                  İTOSB Sanayi Bölgesi&apos;nde bulunan tesisimizi ziyaret edebilir veya haritadan konumumuzu inceleyebilirsiniz.
                 </p>
               </div>
               {/* HARİTA */}

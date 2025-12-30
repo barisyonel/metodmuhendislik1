@@ -25,7 +25,7 @@ import "swiper/css/pagination";
 
 export default function HeroSlider({ initialSliders = [] }: { initialSliders?: Slider[] }) {
   // Server component'ten gelen verileri kullan, API route'a gerek yok!
-  const [slides, setSlides] = useState<Array<{
+  const [slides] = useState<Array<{
     id: number;
     img: string;
     title: string;
@@ -49,15 +49,13 @@ export default function HeroSlider({ initialSliders = [] }: { initialSliders?: S
       }));
   });
   
-  const [globalVideoUrl, setGlobalVideoUrl] = useState<string | null>(() => {
+  const [globalVideoUrl] = useState<string | null>(() => {
     // İlk aktif slider'dan video URL'ini al
     const activeSliderWithVideo = initialSliders.find(
       (s) => (s.is_active === true || s.is_active === 1) && s.video_url
     );
     return activeSliderWithVideo?.video_url || null;
   });
-  
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     // Admin panelinden güncelleme event'ini dinle
@@ -77,18 +75,6 @@ export default function HeroSlider({ initialSliders = [] }: { initialSliders?: S
       }
     };
   }, []);
-
-  // Slider yoksa boş alan göster
-  if (loading) {
-    return (
-      <div className="h-full w-full relative bg-slate-900 flex items-center justify-center">
-        <div className="text-center text-white">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-white mb-4"></div>
-          <p>Slider yükleniyor...</p>
-        </div>
-      </div>
-    );
-  }
 
   if (slides.length === 0) {
     return (

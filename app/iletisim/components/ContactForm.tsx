@@ -36,7 +36,7 @@ export default function ContactForm() {
       } else {
         setStatus({ type: "error", message: data.message || "Bir hata oluştu" });
       }
-    } catch (error) {
+    } catch {
       setStatus({ type: "error", message: "Bir hata oluştu. Lütfen tekrar deneyin." });
     } finally {
       setLoading(false);

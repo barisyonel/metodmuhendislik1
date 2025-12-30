@@ -696,12 +696,12 @@ export default function SliderManager() {
                   {uploading && (
                       <div className="absolute top-3 right-4 flex items-center gap-2 text-sm text-blue-600 bg-white/90 px-2 py-1 rounded">
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                        <span>Cloudinary'ye yükleniyor...</span>
+                        <span>Cloudinary&apos;ye yükleniyor...</span>
                       </div>
                   )}
                     {!imagePreview && !uploading && (
                       <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-xs text-yellow-800">
-                        ⚠️ Lütfen bir görsel seçin. Görsel Cloudinary'ye yüklendikten sonra "Ekle" butonuna basabilirsiniz.
+                        ⚠️ Lütfen bir görsel seçin. Görsel Cloudinary&apos;ye yüklendikten sonra &quot;Ekle&quot; butonuna basabilirsiniz.
                       </div>
                     )}
                   </div>
@@ -806,7 +806,7 @@ export default function SliderManager() {
         <div className="text-center py-12 bg-white rounded-xl border-2 border-dashed border-slate-300">
           <div className="text-6xl mb-4">🖼️</div>
           <p className="text-slate-500 text-lg font-bold mb-2">Henüz slider eklenmemiş</p>
-          <p className="text-slate-400 text-sm mb-4">İlk slider'ınızı ekleyerek başlayın</p>
+          <p className="text-slate-400 text-sm mb-4">İlk slider&apos;ınızı ekleyerek başlayın</p>
           <button
             onClick={() => {
               resetForm();
@@ -814,7 +814,7 @@ export default function SliderManager() {
             }}
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-bold transition-all"
           >
-            + İlk Slider'ı Ekle
+            + İlk Slider&apos;ı Ekle
           </button>
         </div>
       ) : (

@@ -25,7 +25,7 @@ export default function IstanbulBlogPage() {
                 İstanbul İlçeleri Blog
               </h1>
               <p className="text-xl md:text-2xl text-blue-100 mb-8 leading-relaxed">
-                İstanbul'un 39 ilçesi için elektrik pano üretimi, kaynak hizmetleri ve endüstriyel üretim çözümleri hakkında detaylı bilgiler
+                İstanbul&apos;un 39 ilçesi için elektrik pano üretimi, kaynak hizmetleri ve endüstriyel üretim çözümleri hakkında detaylı bilgiler
               </p>
             </div>
           </div>
@@ -69,10 +69,10 @@ export default function IstanbulBlogPage() {
         <section className="py-16 md:py-24 bg-gradient-to-r from-blue-600 to-blue-700 text-white">
           <div className="container mx-auto px-6 text-center">
             <h2 className="text-3xl md:text-4xl font-black mb-6">
-              İstanbul'da Hizmet Almak İster misiniz?
+              İstanbul&apos;da Hizmet Almak İster misiniz?
             </h2>
             <p className="text-blue-100 text-lg mb-8 max-w-2xl mx-auto">
-              İstanbul'un tüm ilçelerinde elektrik pano ve kaynak hizmetleri için uzman ekibimizle iletişime geçin.
+              İstanbul&apos;un tüm ilçelerinde elektrik pano ve kaynak hizmetleri için uzman ekibimizle iletişime geçin.
             </p>
             <a
               href="https://wa.me/905425786060?text=Merhaba,%20İstanbul%20için%20teklif%20almak%20istiyorum."
