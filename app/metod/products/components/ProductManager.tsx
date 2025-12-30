@@ -7,7 +7,7 @@ interface Product {
   title: string;
   description: string;
   image: string;
-  images?: string | string[];
+  images?: string | string[] | null;
   category: string;
   link: string;
   is_active?: boolean | number;

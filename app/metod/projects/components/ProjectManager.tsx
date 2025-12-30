@@ -7,7 +7,7 @@ interface Project {
   title: string;
   description: string;
   image_url: string;
-  images?: string | string[];
+  images?: string | string[] | null;
   category: string;
   client_name?: string;
   location?: string;
