@@ -36,8 +36,8 @@ function getPool() {
     }
     
     // SSL ayarları
-    // Local development için SSL kapalı, production/Vercel için açık
-    const useSSL = process.env.DB_SSL === 'true' || (process.env.VERCEL === '1' && process.env.NODE_ENV === 'production');
+    // Environment variable'dan direkt oku (Vercel'de manuel ayarlanmalı)
+    const useSSL = process.env.DB_SSL === 'true';
     
     pool = mysql.createPool({
       host: dbHost,
