@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { isAuthenticated } from "@/lib/auth";
 import { query } from "@/lib/db";
 
@@ -30,6 +31,13 @@ export async function GET() {
     return NextResponse.json({
       success: true,
       data: Array.isArray(projects) ? projects : [],
+    }, {
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+      },
     });
   } catch (error: unknown) {
     const err = error as { code?: string; message?: string; errno?: number; sqlMessage?: string };
@@ -197,6 +205,11 @@ export async function POST(request: NextRequest) {
         throw error;
       }
     }
+    
+    // Cache'i temizle - tüm proje sayfalarını yeniden oluştur
+    revalidatePath('/projeler');
+    revalidatePath('/');
+    revalidatePath('/metod/projects');
 
     return NextResponse.json({
       success: true,

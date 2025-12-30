@@ -42,7 +42,9 @@ export default function ProjectManager({ initialProjects = [] }: { initialProjec
   const loadProjects = async () => {
     try {
       setLoading(true);
-      const response = await fetch("/api/metod/projects");
+      const response = await fetch(`/api/metod/projects?t=${Date.now()}`, {
+        cache: 'no-store',
+      });
       const data = await response.json();
       if (data.success) {
         const projectsData = Array.isArray(data.data) ? data.data : [];
@@ -271,7 +273,19 @@ export default function ProjectManager({ initialProjects = [] }: { initialProjec
         console.log("✅ Proje başarıyla kaydedildi!");
         await loadProjects();
         resetForm();
-        alert(editingProject ? "✅ Proje başarıyla güncellendi!" : "✅ Proje başarıyla eklendi!");
+        
+        const message = editingProject 
+          ? "✅ Proje başarıyla güncellendi!\n\nSayfa yenilenecek..."
+          : "✅ Proje başarıyla eklendi!\n\nSayfa yenilenecek...";
+        alert(message);
+        
+        // Frontend'i tetikle ve sayfayı yenile
+        if (typeof window !== 'undefined') {
+          setTimeout(() => {
+            window.dispatchEvent(new Event('project-updated'));
+            window.location.reload();
+          }, 1500);
+        }
       } else {
         console.error("❌ API başarısız yanıt:", data);
         throw new Error(data.message || "Bilinmeyen hata");
@@ -296,19 +310,38 @@ export default function ProjectManager({ initialProjects = [] }: { initialProjec
     }
 
     try {
-      const response = await fetch(`/api/metod/projects/${id}`, {
+      setLoading(true);
+      const response = await fetch(`/api/metod/projects/${id}?t=${Date.now()}`, {
         method: "DELETE",
+        cache: 'no-store',
       });
 
       const data = await response.json();
       if (data.success) {
-        loadProjects();
+        // Önce state'ten kaldır (anında görünürlük için)
+        setProjects(prev => prev.filter(p => p.id !== id));
+        
+        // Sonra veritabanından yeniden yükle
+        await loadProjects();
+        
         alert("✅ Proje silindi!");
+        
+        // Frontend'i tetikle ve sayfayı yenile
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new Event('project-updated'));
+          // Sayfayı yenile (tüm sayfalarda güncelleme için)
+          setTimeout(() => {
+            window.location.reload();
+          }, 500);
+        }
       } else {
         alert("❌ Hata: " + data.message);
       }
-    } catch {
+    } catch (error) {
+      console.error("Delete error:", error);
       alert("❌ Bir hata oluştu!");
+    } finally {
+      setLoading(false);
     }
   };
 

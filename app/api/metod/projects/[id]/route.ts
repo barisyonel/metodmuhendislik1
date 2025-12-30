@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { isAuthenticated } from "@/lib/auth";
 import { query } from "@/lib/db";
 
@@ -123,6 +124,11 @@ export async function PUT(
         throw error;
       }
     }
+    
+    // Cache'i temizle - tüm proje sayfalarını yeniden oluştur
+    revalidatePath('/projeler');
+    revalidatePath('/');
+    revalidatePath('/metod/projects');
 
     return NextResponse.json({
       success: true,
@@ -152,11 +158,39 @@ export async function DELETE(
     }
 
     const { id } = await params;
+    
+    // Önce projeyi kontrol et
+    const project = await query<Array<{ id: number }>>(
+      "SELECT id FROM projects WHERE id = ?",
+      [id]
+    );
+    
+    if (project.length === 0) {
+      return NextResponse.json(
+        { success: false, message: "Proje bulunamadı" },
+        { status: 404 }
+      );
+    }
+    
     await query("DELETE FROM projects WHERE id = ?", [id]);
+    
+    console.log(`✅ Proje ${id} başarıyla silindi`);
+    
+    // Cache'i temizle - tüm proje sayfalarını yeniden oluştur
+    revalidatePath('/projeler');
+    revalidatePath('/');
+    revalidatePath('/metod/projects');
 
     return NextResponse.json({
       success: true,
       message: "Proje başarıyla silindi",
+    }, {
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+      },
     });
   } catch (error: unknown) {
     console.error("Project DELETE error:", error);
