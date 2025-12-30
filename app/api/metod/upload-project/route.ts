@@ -70,11 +70,11 @@ export async function POST(request: NextRequest) {
     const result = await new Promise((resolve, reject) => {
       cloudinary.uploader.upload_stream(
         {
-          folder: "metod-muhendislik/projects",
-          resource_type: "image",
-          transformation: [
-            { width: 1200, height: 800, crop: "limit", quality: "auto" },
-          ],
+      folder: "metod-muhendislik/projects",
+      resource_type: "image",
+      transformation: [
+        { width: 1200, height: 800, crop: "limit", quality: "auto" },
+      ],
           timeout: 60000, // 60 saniye timeout
           chunk_size: 6000000, // 6MB chunk size
         },

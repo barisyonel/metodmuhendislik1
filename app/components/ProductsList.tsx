@@ -45,49 +45,19 @@ function fixProductEncoding(product: Product): Product {
   };
 }
 
-export default function ProductsList() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const loadProducts = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(`/api/metod/products?t=${Date.now()}`, {
-        cache: 'no-store',
-        headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-        },
-      });
-      const data = await response.json();
-      
-      if (data.success && Array.isArray(data.data)) {
-        const productsData = data.data
-          .filter((p: Product) => Boolean(p.is_active) || p.is_active === 1)
-          .sort((a: Product, b: Product) => (a.sort_order || 0) - (b.sort_order || 0))
-          .slice(0, 6)
-          .map(fixProductEncoding);
-        
-        console.log(`✅ ${productsData.length} aktif ürün yüklendi`);
-        setProducts(productsData);
-      } else {
-        console.warn("⚠️ API'den ürün verisi gelmedi veya başarısız");
-        setProducts([]);
-      }
-    } catch (error) {
-      console.error("Ürünler yüklenirken hata:", error);
-      setProducts([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+export default function ProductsList({ initialProducts = [] }: { initialProducts?: Product[] }) {
+  // Server component'ten gelen verileri kullan, API route'a gerek yok!
+  const [products] = useState<Product[]>(() => {
+    // İlk render'da server'dan gelen verileri kullan
+    return initialProducts.map(fixProductEncoding);
+  });
 
   useEffect(() => {
-    loadProducts();
-    
-    // Admin panelinden güncelleme event'ini dinle (otomatik yenileme kaldırıldı)
+    // Admin panelinden güncelleme event'ini dinle
     const handleProductUpdate = () => {
-      console.log("🔄 Ürün güncelleme eventi alındı, yeniden yükleniyor...");
-      setTimeout(loadProducts, 1000); // 1 saniye bekle (veritabanı güncellemesi için)
+      console.log("🔄 Ürün güncelleme eventi alındı, sayfa yenileniyor...");
+      // Sayfayı yenile (server component tekrar çalışacak)
+      window.location.reload();
     };
     
     window.addEventListener('product-updated', handleProductUpdate);
@@ -135,15 +105,6 @@ export default function ProductsList() {
     }
     
     return images;
-  }
-
-  if (loading) {
-    return (
-      <div className="col-span-full text-center py-12">
-        <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        <p className="mt-4 text-slate-600">Ürünler yükleniyor...</p>
-      </div>
-    );
   }
 
   if (!products || products.length === 0) {

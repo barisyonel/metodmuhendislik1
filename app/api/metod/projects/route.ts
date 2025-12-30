@@ -167,21 +167,21 @@ export async function POST(request: NextRequest) {
       if (err.code === 'ER_BAD_FIELD_ERROR' || err.sqlMessage?.includes('images')) {
         console.log("images kolonu yok, sadece image_url ile tekrar deniyor...");
         try {
-          const result = await query<{ insertId: number }>(
-            `INSERT INTO projects (title, description, image_url, category, client_name, location, project_date, sort_order, is_active) 
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [
-              title,
-              description || "",
-              image_url,
-              category || "Genel",
-              client_name || null,
-              location || null,
-              project_date || null,
-              sort_order || 0,
-              is_active !== undefined ? (is_active ? 1 : 0) : 1,
-            ]
-          );
+    const result = await query<{ insertId: number }>(
+      `INSERT INTO projects (title, description, image_url, category, client_name, location, project_date, sort_order, is_active) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        title,
+        description || "",
+        image_url,
+        category || "Genel",
+        client_name || null,
+        location || null,
+        project_date || null,
+        sort_order || 0,
+        is_active !== undefined ? (is_active ? 1 : 0) : 1,
+      ]
+    );
           insertId = result.insertId;
           console.log("✅ Proje başarıyla oluşturuldu (images olmadan), ID:", insertId);
         } catch (err2: unknown) {

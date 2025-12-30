@@ -4,13 +4,7 @@ import { Autoplay, EffectFade, Navigation, Pagination } from "swiper/modules";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
-// Swiper stilleri
-import "swiper/css";
-import "swiper/css/effect-fade";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-
-interface SliderData {
+interface Slider {
   id: number;
   title: string;
   subtitle: string;
@@ -19,10 +13,18 @@ interface SliderData {
   video_url?: string | null;
   link: string;
   color: string;
+  is_active: boolean | number;
+  sort_order: number;
 }
 
+// Swiper stilleri
+import "swiper/css";
+import "swiper/css/effect-fade";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 
-export default function HeroSlider() {
+export default function HeroSlider({ initialSliders = [] }: { initialSliders?: Slider[] }) {
+  // Server component'ten gelen verileri kullan, API route'a gerek yok!
   const [slides, setSlides] = useState<Array<{
     id: number;
     img: string;
@@ -31,108 +33,38 @@ export default function HeroSlider() {
     description: string;
     color: string;
     link: string;
-  }>>([]);
-  const [globalVideoUrl, setGlobalVideoUrl] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  }>>(() => {
+    // İlk render'da server'dan gelen verileri kullan
+    return initialSliders
+      .filter((s) => s.is_active === true || s.is_active === 1)
+      .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0))
+      .map((s) => ({
+        id: s.id,
+        img: s.image_url,
+        title: s.title,
+        subtitle: s.subtitle || "",
+        description: s.description || "",
+        color: s.color || "from-blue-600/50 via-blue-700/50 to-slate-900/60",
+        link: s.link || "#",
+      }));
+  });
+  
+  const [globalVideoUrl, setGlobalVideoUrl] = useState<string | null>(() => {
+    // İlk aktif slider'dan video URL'ini al
+    const activeSliderWithVideo = initialSliders.find(
+      (s) => (s.is_active === true || s.is_active === 1) && s.video_url
+    );
+    return activeSliderWithVideo?.video_url || null;
+  });
+  
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Slider verilerini API'den yükle
-    const loadSliders = async () => {
-      try {
-        setLoading(true);
-        // Cache bypass için timestamp ekle ve no-cache header'ları ekle
-        const response = await fetch(`/api/metod/sliders?t=${Date.now()}`, {
-          cache: 'no-store',
-          headers: {
-            'Cache-Control': 'no-cache, no-store, must-revalidate',
-            'Pragma': 'no-cache',
-          },
-        });
-        const data = await response.json();
-        console.log("🔍 API'den gelen slider verisi:", {
-          success: data.success,
-          count: Array.isArray(data.data) ? data.data.length : 0,
-          error: data.error,
-          errorCode: data.errorCode,
-          message: data.message,
-          allSliders: data.data,
-        });
-        
-        // Hata durumunu kontrol et
-        if (!data.success) {
-          console.error("❌ API hatası:", {
-            error: data.error,
-            errorCode: data.errorCode,
-            message: data.message,
-          });
-          setSlides([]);
-          setGlobalVideoUrl(null);
-          return;
-        }
-        
-        if (data.success && Array.isArray(data.data) && data.data.length > 0) {
-          // Sadece aktif slider'ları al ve sıralama yap
-          // MySQL'den gelen is_active değeri 0 veya 1 olabilir, boolean kontrolü yap
-          const activeSliders = data.data
-            .filter((s: SliderData & { is_active: boolean | number }) => {
-              const isActive = s.is_active === true || s.is_active === 1;
-              console.log(`  Slider ${s.id}: is_active=${s.is_active} (${typeof s.is_active}) -> ${isActive ? '✅ Aktif' : '❌ Pasif'}`);
-              return isActive;
-            })
-            .sort(
-              (a: SliderData & { sort_order: number }, b: SliderData & { sort_order: number }) =>
-                (a.sort_order || 0) - (b.sort_order || 0)
-            )
-            .map((s: SliderData) => ({
-              id: s.id,
-              img: s.image_url,
-              title: s.title,
-              subtitle: s.subtitle || "",
-              description: s.description || "",
-              color: s.color || "from-blue-600/50 via-blue-700/50 to-slate-900/60",
-              link: s.link || "#",
-            }));
-
-          console.log(`📊 Toplam ${data.data.length} slider'dan ${activeSliders.length} aktif slider bulundu`);
-          
-          if (activeSliders.length > 0) {
-            console.log("✅ Aktif slider'lar yüklendi:", activeSliders.length);
-            setSlides(activeSliders);
-          } else {
-            console.warn("⚠️ Aktif slider bulunamadı! Tüm slider'lar pasif olabilir.");
-            setSlides([]);
-          }
-
-          // İlk aktif slider'dan video URL'ini al (global video)
-          const activeSliderWithVideo = data.data.find(
-            (s: SliderData & { is_active: boolean | number }) => 
-              (s.is_active === true || s.is_active === 1) && s.video_url
-          );
-          if (activeSliderWithVideo) {
-            setGlobalVideoUrl(activeSliderWithVideo.video_url);
-          } else {
-            setGlobalVideoUrl(null);
-          }
-        } else {
-          // Slider yoksa boş array
-          console.warn("⚠️ API'den slider verisi gelmedi veya boş");
-          setSlides([]);
-          setGlobalVideoUrl(null);
-        }
-      } catch (error) {
-        console.error("Slider yükleme hatası:", error);
-        setSlides([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadSliders();
-    
-    // Admin panelinden güncelleme event'ini dinle (otomatik yenileme kaldırıldı)
+    // Admin panelinden güncelleme event'ini dinle
     const handleSliderUpdate = () => {
-      console.log("🔄 Slider güncelleme event'i alındı, slider'lar yeniden yükleniyor...");
-      loadSliders();
+      console.log("🔄 Slider güncelleme event'i alındı, sayfa yenileniyor...");
+      // Sayfayı yenile (server component tekrar çalışacak)
+      window.location.reload();
     };
     
     if (typeof window !== 'undefined') {

@@ -159,7 +159,7 @@ export default function SliderManager() {
       alert("❌ Lütfen bir görsel yükleyin!\n\nGörsel seçtikten sonra:\n1. 'Cloudinary'ye yükleniyor...' mesajını bekleyin\n2. '✅ Görsel başarıyla yüklendi!' mesajını görün\n3. Görsel önizlemesinin göründüğünü kontrol edin\n4. Sonra 'Ekle' butonuna basın");
       return;
     }
-    
+
     if (!currentImageUrl.startsWith('http')) {
       alert("❌ Görsel URL'i geçersiz! Lütfen görseli tekrar yükleyin.");
       return;
@@ -685,20 +685,20 @@ export default function SliderManager() {
                     </div>
                   )}
                   <div className="relative">
-                    <input
-                      type="file"
+                  <input
+                    type="file"
                       id="slider-image-input"
                       accept="image/jpeg,image/jpg,image/png,image/webp"
-                      onChange={handleImageUpload}
-                      disabled={uploading}
+                    onChange={handleImageUpload}
+                    disabled={uploading}
                       className="w-full px-4 py-3 border-2 border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-600 bg-white cursor-pointer hover:border-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                    />
-                    {uploading && (
+                  />
+                  {uploading && (
                       <div className="absolute top-3 right-4 flex items-center gap-2 text-sm text-blue-600 bg-white/90 px-2 py-1 rounded">
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
                         <span>Cloudinary'ye yükleniyor...</span>
                       </div>
-                    )}
+                  )}
                     {!imagePreview && !uploading && (
                       <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-xs text-yellow-800">
                         ⚠️ Lütfen bir görsel seçin. Görsel Cloudinary'ye yüklendikten sonra "Ekle" butonuna basabilirsiniz.
@@ -823,25 +823,25 @@ export default function SliderManager() {
             📋 Mevcut Slider&apos;lar ({sliders.length})
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {sliders
-              .sort((a, b) => a.sort_order - b.sort_order)
-              .map((slider) => (
-                <div
-                  key={slider.id}
-                  className={`bg-white rounded-xl border-2 ${
-                    slider.is_active
+          {sliders
+            .sort((a, b) => a.sort_order - b.sort_order)
+            .map((slider) => (
+              <div
+                key={slider.id}
+                className={`bg-white rounded-xl border-2 ${
+                  slider.is_active
                       ? "border-green-200 shadow-xl"
-                      : "border-slate-200 opacity-60"
+                    : "border-slate-200 opacity-60"
                   } overflow-hidden shadow-lg hover:shadow-2xl transition-all`}
-                >
-                  {/* Görsel */}
+              >
+                {/* Görsel */}
                   <div className="relative w-full h-64 bg-slate-100 group cursor-pointer">
                     {slider.image_url && slider.image_url.trim() !== '' ? (
                       <>
-                        <Image
-                          src={slider.image_url}
+                    <Image
+                      src={slider.image_url}
                           alt={slider.title || `Slider ${slider.id}`}
-                          fill
+                      fill
                           className="object-cover group-hover:scale-105 transition-transform duration-300"
                           sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                           unoptimized={true}
@@ -863,19 +863,19 @@ export default function SliderManager() {
                           </a>
                         </div>
                       </>
-                    ) : (
+                  ) : (
                       <div className="w-full h-full flex items-center justify-center text-slate-400 bg-slate-50">
                         <div className="text-center p-4">
                           <div className="text-4xl mb-2">🖼️</div>
                           <p className="text-sm font-bold">Görsel Yok</p>
                         </div>
-                      </div>
-                    )}
-                    {!slider.is_active && (
+                    </div>
+                  )}
+                  {!slider.is_active && (
                       <div className="absolute top-2 right-2 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold z-10 shadow-lg">
-                        Pasif
-                      </div>
-                    )}
+                      Pasif
+                    </div>
+                  )}
                     {slider.is_active && (
                       <div className="absolute top-2 right-2 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold z-10 shadow-lg">
                         Aktif
@@ -884,56 +884,56 @@ export default function SliderManager() {
                     <div className="absolute top-2 left-2 bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold z-10 shadow-lg">
                       #{slider.sort_order}
                     </div>
-                  </div>
+                </div>
 
-                  {/* İçerik */}
-                  <div className="p-6">
-                    <h3 className="text-lg font-black text-slate-900 mb-1">
+                {/* İçerik */}
+                <div className="p-6">
+                      <h3 className="text-lg font-black text-slate-900 mb-1">
                       {slider.title || `Slider #${slider.id}`}
-                    </h3>
+                      </h3>
                     <div className="mt-2 p-2 bg-slate-50 rounded text-xs border border-slate-200">
                       <p className="text-slate-500 font-mono truncate" title={slider.image_url}>
                         📷 {slider.image_url || "Görsel URL yok"}
                       </p>
-                    </div>
+                  </div>
 
-                    {/* Sıralama */}
+                  {/* Sıralama */}
                     <div className="mb-4 mt-4 flex items-center gap-2">
-                      <label className="text-xs font-bold text-slate-600">
-                        Sıralama:
-                      </label>
-                      <input
-                        type="number"
-                        value={slider.sort_order}
-                        onChange={(e) =>
-                          handleSortOrderChange(
-                            slider.id,
-                            parseInt(e.target.value) || 0
-                          )
-                        }
-                        className="w-20 px-2 py-1 border border-slate-300 rounded text-sm"
-                      />
-                    </div>
+                    <label className="text-xs font-bold text-slate-600">
+                      Sıralama:
+                    </label>
+                    <input
+                      type="number"
+                      value={slider.sort_order}
+                      onChange={(e) =>
+                        handleSortOrderChange(
+                          slider.id,
+                          parseInt(e.target.value) || 0
+                        )
+                      }
+                      className="w-20 px-2 py-1 border border-slate-300 rounded text-sm"
+                    />
+                  </div>
 
-                    {/* Butonlar */}
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => handleEdit(slider)}
-                        className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all"
-                      >
+                  {/* Butonlar */}
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleEdit(slider)}
+                      className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all"
+                    >
                         ✏️ Düzenle
-                      </button>
-                      <button
-                        onClick={() => handleDelete(slider.id)}
-                        className="flex-1 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all"
-                      >
+                    </button>
+                    <button
+                      onClick={() => handleDelete(slider.id)}
+                      className="flex-1 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all"
+                    >
                         🗑️ Sil
-                      </button>
+                    </button>
                     </div>
                   </div>
                 </div>
               ))}
-          </div>
+              </div>
         </div>
       )}
     </div>

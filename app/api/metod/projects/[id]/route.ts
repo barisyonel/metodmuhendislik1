@@ -104,21 +104,21 @@ export async function PUT(
       // images kolonu yoksa sadece image_url kullan
       const err = error as { code?: string; sqlMessage?: string };
       if (err.code === 'ER_BAD_FIELD_ERROR' || err.sqlMessage?.includes('images')) {
-        await query(
+    await query(
           "UPDATE projects SET title = ?, description = ?, image_url = ?, category = ?, client_name = ?, location = ?, project_date = ?, sort_order = ?, is_active = ? WHERE id = ?",
-          [
-            title,
-            description || "",
-            image_url,
-            category || "Genel",
-            client_name || null,
-            location || null,
-            project_date || null,
-            sort_order || 0,
-            is_active !== undefined ? (is_active ? 1 : 0) : 1,
-            id,
-          ]
-        );
+      [
+        title,
+        description || "",
+        image_url,
+        category || "Genel",
+        client_name || null,
+        location || null,
+        project_date || null,
+        sort_order || 0,
+        is_active !== undefined ? (is_active ? 1 : 0) : 1,
+        id,
+      ]
+    );
       } else {
         throw error;
       }

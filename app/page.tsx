@@ -6,6 +6,7 @@ import EKatalogButton from "./components/EKatalogButton";
 import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
+import { getProducts, getSliders } from "./lib/data";
 
 export const metadata: Metadata = {
   title: "Metod Mühendislik | Enerjinin Güvenli Yönetimi - Elektrik Pano, Marin Pano, Endüstriyel Çözümler",
@@ -28,7 +29,11 @@ export const metadata: Metadata = {
   },
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  // Server Component - Veritabanına direkt bağlanıyoruz, API route'a gerek yok!
+  const products = await getProducts(6); // İlk 6 ürünü al
+  const sliders = await getSliders();
+  
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -183,7 +188,7 @@ export default function HomePage() {
           className="relative w-full h-screen overflow-hidden"
           aria-label="Ana Hero Bölümü"
         >
-          <HeroSlider />
+          <HeroSlider initialSliders={sliders} />
         </section>
 
         {/* GÜVEN UNSURLARI - İSTATİSTİKLER */}
@@ -339,7 +344,7 @@ export default function HomePage() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-                <ProductsList />
+                <ProductsList initialProducts={products} />
               </div>
 
               {/* Tüm Ürünleri Gör Butonu */}

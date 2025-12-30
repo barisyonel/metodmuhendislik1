@@ -34,8 +34,9 @@ function getPool() {
       charset: 'utf8mb4',
       connectTimeout: 60000,
       // SSL ayarları (remote veritabanı için gerekebilir)
-      ssl: process.env.DB_SSL === 'true' ? {
-        rejectUnauthorized: false
+      // PlanetScale ve çoğu remote MySQL servisi SSL gerektirir
+      ssl: process.env.DB_SSL === 'true' || process.env.VERCEL === '1' ? {
+        rejectUnauthorized: process.env.DB_SSL_REJECT_UNAUTHORIZED !== 'false'
       } : undefined,
     });
     

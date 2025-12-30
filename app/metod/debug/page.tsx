@@ -191,6 +191,23 @@ export default function DebugPage() {
               </li>
               <li>
                 <strong>Production (Vercel):</strong> Remote bir MySQL veritabanı kullanın (PlanetScale, Railway, AWS RDS)
+                <ul className="list-disc list-inside ml-6 mt-2 space-y-1">
+                  <li>Vercel Dashboard → Settings → Environment Variables</li>
+                  <li>DB_HOST: Remote host adresi (localhost olamaz!)</li>
+                  <li>DB_USER, DB_PASSWORD, DB_NAME: Veritabanı bilgileri</li>
+                  <li>DB_SSL: true (çoğu remote DB için gerekli)</li>
+                </ul>
+              </li>
+              <li>
+                <strong>Environment Check:</strong>{" "}
+                <a
+                  href="/api/metod/check-env"
+                  target="_blank"
+                  className="text-blue-600 underline"
+                >
+                  /api/metod/check-env
+                </a>{" "}
+                endpoint&apos;ini kontrol edin
               </li>
               <li>
                 <strong>Test:</strong>{" "}
