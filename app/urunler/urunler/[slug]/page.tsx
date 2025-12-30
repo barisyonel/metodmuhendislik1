@@ -77,6 +77,35 @@ const defaultProducts: Record<string, Product> = {
 };
 
 // Slug veya ID'den ürünü getir
+// Double-encoded Türkçe karakterleri düzelt
+function fixTurkishEncoding(text: string | null | undefined): string {
+  if (!text) return "";
+  
+  try {
+    // Eğer text zaten doğru encode edilmişse direkt döndür
+    if (!text.includes('Ã') && !text.includes('Ä') && !text.includes('Å')) {
+      return text;
+    }
+    
+    // Double-encoded karakterleri düzelt
+    // Latin1 olarak yorumlanmış UTF-8 karakterlerini düzelt
+    return Buffer.from(text, 'latin1').toString('utf8');
+  } catch (error) {
+    // Hata durumunda orijinal text'i döndür
+    return text;
+  }
+}
+
+// Ürün verilerini düzelt
+function fixProductEncoding(product: Product): Product {
+  return {
+    ...product,
+    title: fixTurkishEncoding(product.title),
+    description: fixTurkishEncoding(product.description),
+    category: fixTurkishEncoding(product.category),
+  };
+}
+
 async function getProductBySlug(slug: string): Promise<Product | null> {
   // Önce varsayılan ürünlerde ara
   if (defaultProducts[slug]) {
@@ -99,7 +128,7 @@ async function getProductBySlug(slug: string): Promise<Product | null> {
         [id]
       );
       if (productsById && productsById.length > 0) {
-        return productsById[0];
+        return fixProductEncoding(productsById[0]);
       }
     }
 
@@ -110,7 +139,7 @@ async function getProductBySlug(slug: string): Promise<Product | null> {
     );
 
     if (products && products.length > 0) {
-      return products[0];
+      return fixProductEncoding(products[0]);
     }
 
     return null;
