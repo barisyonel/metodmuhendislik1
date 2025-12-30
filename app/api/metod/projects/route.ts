@@ -221,7 +221,7 @@ export async function POST(request: NextRequest) {
     
     // Veritabanı bağlantı hatası için özel mesaj
     if (err.code === 'ECONNREFUSED' || errorMessage.includes('ECONNREFUSED') || errorMessage.includes('connection')) {
-      errorMessage = "Veritabanı bağlantısı kurulamadı. Docker MySQL container'ının çalıştığından emin olun.";
+      errorMessage = "Veritabanı bağlantısı kurulamadı. Lütfen veritabanı sunucusunun çalıştığından ve environment variables'ların doğru ayarlandığından emin olun.";
     }
     
     // Tablo yoksa özel mesaj

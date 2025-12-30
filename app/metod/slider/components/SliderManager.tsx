@@ -238,7 +238,7 @@ export default function SliderManager({ initialSliders = [] }: { initialSliders?
       
       // Veritabanı bağlantı hatası için özel mesaj
       if (errorMsg.includes("ECONNREFUSED") || errorMsg.includes("connection") || errorMsg.includes("bağlantı")) {
-        errorMsg = "Veritabanı bağlantısı kurulamadı!\n\nLütfen:\n1. Docker'ın çalıştığından emin olun\n2. MySQL container'ının çalıştığını kontrol edin\n3. Tekrar deneyin";
+        errorMsg = "Veritabanı bağlantısı kurulamadı!\n\nLütfen:\n1. Veritabanı sunucusunun çalıştığından emin olun\n2. Environment variables'ların (.env.local) doğru ayarlandığını kontrol edin\n3. Veritabanı erişim izinlerini kontrol edin\n4. Tekrar deneyin";
       }
       
       alert(`❌ Hata: ${errorMsg}\n\nGörsel Cloudinary'ye yüklendi ancak veritabanına kaydedilemedi.`);

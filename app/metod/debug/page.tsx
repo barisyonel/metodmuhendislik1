@@ -181,10 +181,7 @@ export default function DebugPage() {
             </h2>
             <ul className="list-disc list-inside space-y-2 text-yellow-700">
               <li>
-                <strong>Local Development:</strong> Docker MySQL container&apos;ının çalıştığından emin olun:
-                <code className="block bg-yellow-100 p-2 rounded mt-1">
-                  docker-compose up -d
-                </code>
+                <strong>Local Development:</strong> Veritabanı sunucusunun çalıştığından ve .env.local dosyasının doğru ayarlandığından emin olun
               </li>
               <li>
                 <strong>Environment Variables:</strong> .env dosyasında DB_HOST, DB_USER, DB_PASSWORD, DB_NAME değerlerini kontrol edin

@@ -147,7 +147,7 @@ export async function POST(request: NextRequest) {
     let errorMessage = err.sqlMessage || err.message || "Hizmet oluşturulurken hata oluştu";
     
     if (err.code === 'ECONNREFUSED' || errorMessage.includes('ECONNREFUSED')) {
-      errorMessage = "Veritabanı bağlantısı kurulamadı. Docker MySQL container'ının çalıştığından emin olun.";
+      errorMessage = "Veritabanı bağlantısı kurulamadı. Lütfen veritabanı sunucusunun çalıştığından ve environment variables'ların doğru ayarlandığından emin olun.";
     }
     
     if (err.code === 'ER_NO_SUCH_TABLE' || errorMessage.includes("doesn't exist")) {
