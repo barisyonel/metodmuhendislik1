@@ -24,7 +24,14 @@ export async function GET(
       );
     }
     
-    return NextResponse.json({ success: true, data: products[0] });
+    return NextResponse.json(
+      { success: true, data: products[0] },
+      {
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+        },
+      }
+    );
   } catch (error: unknown) {
     console.error("Product GET error:", error);
     return NextResponse.json(
@@ -131,10 +138,17 @@ export async function PUT(
       }
     }
 
-    return NextResponse.json({
-      success: true,
-      message: "Ürün başarıyla güncellendi",
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Ürün başarıyla güncellendi",
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+        },
+      }
+    );
   } catch (error: unknown) {
     console.error("Product PUT error:", error);
     return NextResponse.json(
@@ -162,10 +176,17 @@ export async function DELETE(
     const { id } = await params;
     await query("DELETE FROM products WHERE id = ?", [id]);
 
-    return NextResponse.json({
-      success: true,
-      message: "Ürün başarıyla silindi",
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Ürün başarıyla silindi",
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+        },
+      }
+    );
   } catch (error: unknown) {
     console.error("Product DELETE error:", error);
     return NextResponse.json(

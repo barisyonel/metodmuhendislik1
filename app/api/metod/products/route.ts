@@ -56,7 +56,14 @@ export async function GET() {
     const products = await query<Product[]>(
       "SELECT * FROM products ORDER BY created_at DESC"
     );
-    return NextResponse.json({ success: true, data: products || [] });
+    return NextResponse.json(
+      { success: true, data: products || [] },
+      {
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+        },
+      }
+    );
   } catch (error: unknown) {
     const err = isDatabaseError(error) ? error : { message: String(error) };
     console.error("❌ Products GET error:", {
@@ -88,7 +95,12 @@ export async function GET() {
           sqlMessage: error.sqlMessage,
         } : undefined,
       },
-      { status: 500 }
+      {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+        },
+      }
     );
   }
 }
@@ -198,11 +210,18 @@ export async function POST(request: NextRequest) {
       connection.release();
     }
 
-    return NextResponse.json({
-      success: true,
-      message: "Ürün başarıyla eklendi",
-      data: { id: insertId },
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Ürün başarıyla eklendi",
+        data: { id: insertId },
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+        },
+      }
+    );
   } catch (error: unknown) {
     console.error("Products POST error:", error);
     return NextResponse.json(
@@ -307,10 +326,17 @@ export async function PUT(request: NextRequest) {
       }
     }
 
-    return NextResponse.json({
-      success: true,
-      message: "Ürün başarıyla güncellendi",
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Ürün başarıyla güncellendi",
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+        },
+      }
+    );
   } catch (error: unknown) {
     console.error("Products PUT error:", error);
     return NextResponse.json(
