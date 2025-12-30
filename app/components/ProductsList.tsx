@@ -13,6 +13,36 @@ interface Product {
   sort_order?: number;
 }
 
+// Double-encoded Türkçe karakterleri düzelt
+function fixTurkishEncoding(text: string | null | undefined): string {
+  if (!text) return "";
+  
+  try {
+    // Eğer text zaten doğru encode edilmişse direkt döndür
+    if (!text.includes('Ã') && !text.includes('Ä') && !text.includes('Å')) {
+      return text;
+    }
+    
+    // Double-encoded karakterleri düzelt
+    // Latin1 olarak yorumlanmış UTF-8 karakterlerini düzelt
+    return Buffer.from(text, 'latin1').toString('utf8');
+  } catch (error) {
+    // Hata durumunda orijinal text'i döndür
+    console.warn("Encoding düzeltme hatası:", error);
+    return text;
+  }
+}
+
+// Ürün verilerini düzelt
+function fixProductEncoding(product: Product): Product {
+  return {
+    ...product,
+    title: fixTurkishEncoding(product.title),
+    description: fixTurkishEncoding(product.description),
+    category: fixTurkishEncoding(product.category),
+  };
+}
+
 async function getProducts(): Promise<Product[]> {
   try {
     // Önce is_active ve sort_order ile sorgu dene
@@ -21,8 +51,10 @@ async function getProducts(): Promise<Product[]> {
         "SELECT * FROM products WHERE is_active = TRUE OR is_active = 1 ORDER BY sort_order ASC, created_at DESC LIMIT 6"
       );
       const productsData = Array.isArray(products) ? products : [];
-      console.log(`✅ ${productsData.length} aktif ürün yüklendi`);
-      return productsData;
+      // Türkçe karakterleri düzelt
+      const fixedProducts = productsData.map(fixProductEncoding);
+      console.log(`✅ ${fixedProducts.length} aktif ürün yüklendi`);
+      return fixedProducts;
     } catch (err: unknown) {
       // is_active kolonu yoksa basit sorgu dene
       const error = err as { code?: string; message?: string; sqlMessage?: string };
@@ -32,7 +64,9 @@ async function getProducts(): Promise<Product[]> {
           const products = await query<Product[]>(
             "SELECT * FROM products ORDER BY sort_order ASC, created_at DESC LIMIT 6"
           );
-          return Array.isArray(products) ? products : [];
+          const productsData = Array.isArray(products) ? products : [];
+          // Türkçe karakterleri düzelt
+          return productsData.map(fixProductEncoding);
         } catch (err2: unknown) {
           // sort_order da yoksa en basit sorgu
           const error2 = err2 as { code?: string; message?: string; sqlMessage?: string };
