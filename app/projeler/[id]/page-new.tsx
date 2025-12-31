@@ -28,15 +28,10 @@ export async function generateMetadata({
     };
   }
 
-  const baseUrl =
-    process.env.NEXT_PUBLIC_SITE_URL || "https://www.metodmuhendislik.com";
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.metodmuhendislik.com";
   const metaDescription = generateSEODescription(project.description, 160);
-  const keywords = generateSEOKeywords(
-    project.title,
-    project.category,
-    project.description,
-  );
-
+  const keywords = generateSEOKeywords(project.title, project.category, project.description);
+  
   // Görselleri parse et
   let projectImages: string[] = [];
   if (project.images) {
@@ -52,14 +47,10 @@ export async function generateMetadata({
   }
   if (projectImages.length === 0 && project.image_url) {
     projectImages = [project.image_url];
-  } else if (
-    projectImages.length > 0 &&
-    project.image_url &&
-    !projectImages.includes(project.image_url)
-  ) {
+  } else if (projectImages.length > 0 && project.image_url && !projectImages.includes(project.image_url)) {
     projectImages = [project.image_url, ...projectImages];
   }
-
+  
   const ogImage = generateOGImage(projectImages[0] || project.image_url);
   const canonicalUrl = generateCanonicalURL(`/projeler/${project.id}`, baseUrl);
 
@@ -134,15 +125,11 @@ export default async function ProjectDetailPage({
       projectImages = project.images;
     }
   }
-
+  
   // Eğer images yoksa ama image_url varsa, onu ekle
   if (projectImages.length === 0 && project.image_url) {
     projectImages = [project.image_url];
-  } else if (
-    projectImages.length > 0 &&
-    project.image_url &&
-    !projectImages.includes(project.image_url)
-  ) {
+  } else if (projectImages.length > 0 && project.image_url && !projectImages.includes(project.image_url)) {
     // Ana görseli başa ekle
     projectImages = [project.image_url, ...projectImages];
   }
@@ -203,10 +190,7 @@ export default async function ProjectDetailPage({
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
                 {/* Sol Taraf - Görsel Galeri */}
                 <div className="lg:col-span-2">
-                  <ProjectGallery
-                    images={projectImages}
-                    projectTitle={project.title}
-                  />
+                  <ProjectGallery images={projectImages} projectTitle={project.title} />
                 </div>
 
                 {/* Sağ Taraf - Proje Bilgileri */}
@@ -233,9 +217,7 @@ export default async function ProjectDetailPage({
                           <h3 className="text-sm font-bold text-slate-700 mb-2 uppercase tracking-wide">
                             Müşteri
                           </h3>
-                          <p className="text-slate-600">
-                            {project.client_name}
-                          </p>
+                          <p className="text-slate-600">{project.client_name}</p>
                         </div>
                       )}
 
@@ -254,14 +236,11 @@ export default async function ProjectDetailPage({
                             Tarih
                           </h3>
                           <p className="text-slate-600">
-                            {new Date(project.project_date).toLocaleDateString(
-                              "tr-TR",
-                              {
-                                year: "numeric",
-                                month: "long",
-                                day: "numeric",
-                              },
-                            )}
+                            {new Date(project.project_date).toLocaleDateString("tr-TR", {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            })}
                           </p>
                         </div>
                       )}
@@ -306,3 +285,4 @@ export default async function ProjectDetailPage({
     </>
   );
 }
+

@@ -103,7 +103,7 @@ export async function GET() {
 
     // Basit sorgu testi
     const [rows] = await connection.query('SELECT 1 as test, NOW() as current_time');
-    
+
     diagnostics.connectionTests.push({
       test: 'Database Connection',
       status: 'success',
@@ -113,9 +113,9 @@ export async function GET() {
 
     await connection.end();
   } catch (error: unknown) {
-    const err = error as { 
-      code?: string; 
-      message?: string; 
+    const err = error as {
+      code?: string;
+      message?: string;
       errno?: number;
       sqlState?: string;
       sqlMessage?: string;

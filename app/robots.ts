@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = 'https://www.metodmuhendislik.com';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.metodmuhendislik.com';
 
   return {
     rules: [
@@ -13,6 +13,10 @@ export default function robots(): MetadataRoute.Robots {
           '/api/',
           '/_next/',
           '/admin/',
+          '/backup/',
+          '/debug/',
+          '*.json',
+          '*.xml',
         ],
       },
       {
@@ -21,10 +25,32 @@ export default function robots(): MetadataRoute.Robots {
         disallow: [
           '/metod/',
           '/api/',
+          '/_next/',
+          '/admin/',
+          '/backup/',
+          '/debug/',
+        ],
+      },
+      {
+        userAgent: 'Googlebot-Image',
+        allow: '/',
+        disallow: [
+          '/metod/',
+          '/api/',
+        ],
+      },
+      {
+        userAgent: 'Bingbot',
+        allow: '/',
+        disallow: [
+          '/metod/',
+          '/api/',
+          '/_next/',
         ],
       },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,
+    host: baseUrl,
   };
 }
 

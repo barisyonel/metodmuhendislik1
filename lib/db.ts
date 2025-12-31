@@ -16,15 +16,15 @@ function getPool() {
     const dbUser = process.env.DB_USER || 'metodmuhendislik';
     const dbPassword = process.env.DB_PASSWORD || 'metod2024!';
     const dbName = process.env.DB_NAME || 'metodmuhendislik_db';
-    
+
     // Production'da localhost kullanımını engelle
-    if ((process.env.NODE_ENV === 'production' || process.env.VERCEL === '1') && 
+    if ((process.env.NODE_ENV === 'production' || process.env.VERCEL === '1') &&
         (dbHost === 'localhost' || dbHost === '127.0.0.1')) {
       console.error('❌ HATA: Vercel/Production ortamında localhost kullanılamaz!');
       console.error('Lütfen remote bir MySQL veritabanı kullanın (PlanetScale, Railway, AWS RDS, vb.)');
       console.error('DB_HOST environment variable\'ını remote host adresi ile güncelleyin.');
     }
-    
+
     // Development ortamında bağlantı bilgilerini logla (güvenlik için sadece development)
     if (process.env.NODE_ENV === 'development') {
       console.log('🔌 Veritabanı bağlantı bilgileri:');
@@ -34,11 +34,11 @@ function getPool() {
       console.log(`   Database: ${dbName}`);
       console.log(`   Password: ${dbPassword ? '***' : 'YOK'}`);
     }
-    
+
     // SSL ayarları
     // Environment variable'dan direkt oku (Vercel'de manuel ayarlanmalı)
     const useSSL = process.env.DB_SSL === 'true';
-    
+
     pool = mysql.createPool({
       host: dbHost,
       user: dbUser,
@@ -46,10 +46,13 @@ function getPool() {
       database: dbName,
       port: dbPort,
       waitForConnections: true,
-      connectionLimit: 10,
+      connectionLimit: process.env.NODE_ENV === 'production' ? 20 : 10, // Production'da daha fazla connection
       queueLimit: 0,
       charset: 'utf8mb4',
       connectTimeout: 60000,
+      idleTimeout: 300000, // 5 dakika idle timeout
+      enableKeepAlive: true,
+      keepAliveInitialDelay: 0,
       // SSL ayarları - Local development için undefined, production için true
       ...(useSSL ? {
         ssl: {
@@ -57,7 +60,7 @@ function getPool() {
         }
       } : {}),
     });
-    
+
     // Bağlantı kurulduğunda charset'i ayarla
     pool.on('connection', (connection: mysql.PoolConnection) => {
       connection.query("SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci");
@@ -79,10 +82,10 @@ export async function query<T = unknown>(sql: string, params?: unknown[]): Promi
     await pool.execute("SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci");
     await pool.execute("SET CHARACTER SET utf8mb4");
     await pool.execute("SET character_set_connection=utf8mb4");
-    
+
     // mysql2 execute metodu [rows, fields] tuple döner
     const [rows] = await pool.execute(sql, params || []) as [T, unknown[]];
-    
+
     // mysql2 returns [RowDataPacket[], FieldPacket[]]
     // We need to cast rows to T
     return rows;
@@ -93,24 +96,24 @@ export async function query<T = unknown>(sql: string, params?: unknown[]): Promi
     let errno: number | undefined;
     let sqlState: string | undefined;
     let sqlMessage: string | undefined;
-    
+
     if (error instanceof Error) {
       errorMessage = error.message || 'No error message provided';
-      
+
       // MySQL özel hata özelliklerini kontrol et
-      const mysqlError = error as Error & { 
-        code?: string; 
-        errno?: number; 
-        sqlState?: string; 
-        sqlMessage?: string; 
+      const mysqlError = error as Error & {
+        code?: string;
+        errno?: number;
+        sqlState?: string;
+        sqlMessage?: string;
         sql?: string;
       };
-      
+
       if (mysqlError.code) errorCode = mysqlError.code;
       if (mysqlError.errno !== undefined) errno = mysqlError.errno;
       if (mysqlError.sqlState) sqlState = mysqlError.sqlState;
       if (mysqlError.sqlMessage) sqlMessage = mysqlError.sqlMessage;
-      
+
       // Eğer message boşsa, code veya sqlMessage'dan birini kullan
       if (!errorMessage || errorMessage.trim() === '') {
         errorMessage = sqlMessage || errorCode || 'Database connection error';
@@ -118,13 +121,13 @@ export async function query<T = unknown>(sql: string, params?: unknown[]): Promi
     } else {
       errorMessage = String(error) || 'Non-Error object thrown';
     }
-    
+
     // Production ortamında ve bağlantı hatalarında daha az detaylı log
-    const isConnectionError = errorCode === 'ECONNREFUSED' || errorCode === 'ETIMEDOUT' || 
+    const isConnectionError = errorCode === 'ECONNREFUSED' || errorCode === 'ETIMEDOUT' ||
                               errorCode === 'ENOTFOUND' || errorCode === 'ER_ACCESS_DENIED_ERROR' ||
                               errno === -111 || errno === -61 || errno === 1045;
     const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
-    
+
     // Bağlantı hataları (hem production hem development için)
     if (isConnectionError) {
       // Bağlantı hatalarını throttle ile logla - spam'i önle
@@ -183,7 +186,7 @@ export async function query<T = unknown>(sql: string, params?: unknown[]): Promi
         console.error('❌ Database query error:', errorCode, errorMessage);
       }
     }
-    
+
     throw error;
   }
 }
@@ -208,7 +211,7 @@ export async function verifyAdmin(username: string, password: string): Promise<b
       'SELECT * FROM admin_users WHERE username = ? AND is_active = TRUE',
       [username]
     ) as [Array<AdminUser>, unknown];
-    
+
     if (!Array.isArray(rows) || rows.length === 0) {
       return false;
     }

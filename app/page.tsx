@@ -191,45 +191,129 @@ export default async function HomePage() {
           <HeroSlider initialSliders={sliders} />
         </section>
 
-        {/* GÜVEN UNSURLARI - İSTATİSTİKLER */}
+        {/* HAKKIMIZDA ÖZET BÖLÜMÜ */}
         <section
-          className="py-16 md:py-24 bg-gradient-to-br from-slate-50 via-white to-blue-50 border-b border-slate-200"
-          aria-label="Güven Unsurları"
+          className="py-20 md:py-28 bg-white"
+          aria-label="Hakkımızda"
         >
           <div className="container mx-auto px-6">
             <div className="max-w-7xl mx-auto">
               <div className="text-center mb-12">
                 <span className="inline-block text-blue-600 font-black text-xs tracking-[0.4em] uppercase mb-4 px-4 py-1.5 bg-blue-100 rounded-full">
-                  Enerjinin Güvenli Yönetimi
+                  Hakkımızda
                 </span>
-                <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 mb-4">
-                  Güvenli, Verimli ve <span className="text-blue-600">Sürdürülebilir</span>
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 mb-6">
+                  Metod <span className="text-blue-600">Mühendislik</span>
                 </h2>
-                <p className="text-slate-600 text-lg max-w-2xl mx-auto">
-                  Modern dünyanın en temel ihtiyacı olan enerjinin güvenli yönetimi için 20+ yıllık deneyimimizle yanınızdayız.
-                </p>
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-                {stats.map((stat, i) => (
-                  <div
-                    key={i}
-                    className="group relative bg-white rounded-xl p-6 md:p-8 border border-slate-200/60 hover:border-blue-300 hover:shadow-modern-lg transition-all duration-500 hover:-translate-y-2 animate-fade-in"
-                    style={{ animationDelay: `${i * 100}ms` }}
+              <div className="max-w-4xl mx-auto">
+                <p className="text-slate-700 text-lg md:text-xl leading-relaxed mb-6 text-center">
+                  Modern dünyanın en temel ihtiyacı olan enerjinin, güvenli, verimli ve sürdürülebilir bir şekilde yönetilmesi, mühendislik sanatının en kritik alanlarından biridir.
+                </p>
+                <p className="text-slate-600 text-base md:text-lg leading-relaxed mb-8 text-center">
+                  Elektrik pano sektöründe 20+ yılı aşkın deneyimimiz, uzman kadromuz ve teknolojiye uyumlu üretim anlayışımızla sektörün saygın ve güvenilir markalarından biri haline geldik. Kaliteden asla ödün vermeyen, dürüst ve ilkeli hizmet anlayışımızla; mevcut konumumuzu korumak ve daha da ileriye taşımak en temel hedeflerimiz arasında yer almaktadır. Bu doğrultuda geleceğe emin adımlarla ilerlemeye devam ediyoruz.
+                </p>
+                <div className="text-center">
+                  <Link
+                    href="/kurumsal/hakkimizda"
+                    className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-bold text-lg transition-colors group"
                   >
-                    <div className="absolute top-3 right-3 text-3xl md:text-4xl opacity-5 group-hover:opacity-10 transition-opacity duration-500">
-                      {stat.icon}
+                    Devamı
+                    <svg
+                      className="w-5 h-5 group-hover:translate-x-1 transition-transform"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* İSTATİSTİKLER VE HAKKIMIZDA - ÖZYILMAZLAR TARZI */}
+        <section
+          className="py-20 md:py-32 bg-gradient-to-br from-slate-50 via-white to-blue-50"
+          aria-label="Hakkımızda ve İstatistikler"
+        >
+          <div className="container mx-auto px-6">
+            <div className="max-w-7xl mx-auto">
+              <div className="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
+                {/* Sol Taraf - Metin ve Görsel */}
+                <div className="space-y-8">
+                  {/* Metin Bloğu */}
+                  <div>
+                    <p className="text-slate-800 text-xl md:text-2xl leading-relaxed font-medium">
+                      Uzun yıllara dayanan sektör tecrübesi, uzman kadrosu ve teknolojiye uyumlu yapısıyla <span className="font-bold text-slate-900">elektrik pano sektöründe saygın bir konuma sahiptir.</span>
+                    </p>
+                  </div>
+                  
+                  {/* Üretim Görseli */}
+                  <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+                    <Image
+                      src="/elektrıkpano.png"
+                      alt="Metod Mühendislik Üretim Tesisi - Elektrik Pano Üretimi"
+                      width={800}
+                      height={600}
+                      className="w-full h-auto object-cover"
+                      priority
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/20 to-transparent"></div>
+                  </div>
+                </div>
+
+                {/* Sağ Taraf - Büyük İstatistikler */}
+                <div className="flex flex-col gap-8 md:gap-12">
+                  {/* 20+ Yıllık Deneyim */}
+                  <div className="text-center md:text-left">
+                    <div className="text-6xl md:text-7xl lg:text-8xl font-black text-slate-900 mb-3 leading-none">
+                      20+
                     </div>
-                    <div className="relative z-10">
-                      <div className="text-4xl md:text-5xl lg:text-6xl font-black bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform duration-300">
-                        {stat.number}
+                    <div className="text-lg md:text-xl text-slate-600 font-medium uppercase tracking-wide">
+                      Yıllık Deneyim
+                    </div>
+                    <p className="text-sm text-slate-500 mt-2">Sıfır hata prensibi ile kalite</p>
+                  </div>
+
+                  {/* 2000m² Üretim Alanı */}
+                  <div className="text-center md:text-left">
+                    <div className="text-6xl md:text-7xl lg:text-8xl font-black text-slate-900 mb-3 leading-none">
+                      2000m²
+                    </div>
+                    <div className="text-lg md:text-xl text-slate-600 font-medium uppercase tracking-wide">
+                      Üretim Alanı
+                    </div>
+                    <p className="text-sm text-slate-500 mt-2">Endüstri 4.0 standartları</p>
+                  </div>
+
+                  {/* Diğer İstatistikler - Daha Küçük */}
+                  <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-200">
+                    <div className="text-center md:text-left">
+                      <div className="text-3xl md:text-4xl font-black text-blue-600 mb-1">
+                        12
                       </div>
-                      <h3 className="text-xs md:text-sm font-bold text-slate-900 mb-1.5 uppercase tracking-wide">
-                        {stat.label}
-                      </h3>
-                      <p className="text-xs text-slate-500 leading-relaxed">{stat.description}</p>
+                      <div className="text-sm text-slate-600 font-medium">
+                        Ülkeye İhracat
+                      </div>
+                    </div>
+                    <div className="text-center md:text-left">
+                      <div className="text-3xl md:text-4xl font-black text-blue-600 mb-1">
+                        ISO
+                      </div>
+                      <div className="text-sm text-slate-600 font-medium">
+                        9001 Sertifikalı
+                      </div>
                     </div>
                   </div>
-                ))}
+                </div>
               </div>
             </div>
           </div>
@@ -436,6 +520,113 @@ export default async function HomePage() {
                   className="inline-flex items-center justify-center gap-3 bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white px-8 py-4 rounded-xl font-bold hover:bg-white/20 transition-all"
                 >
                   Hakkımızda
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* BLOG ÖNİZLEME BÖLÜMÜ */}
+        <section
+          className="py-20 md:py-32 bg-gradient-to-br from-slate-50 to-blue-50"
+          aria-label="Blog"
+        >
+          <div className="container mx-auto px-6">
+            <div className="max-w-7xl mx-auto">
+              <div className="text-center mb-12">
+                <span className="inline-block text-blue-600 font-black text-xs tracking-[0.4em] uppercase mb-4 px-4 py-1.5 bg-blue-100 rounded-full">
+                  Blog
+                </span>
+                <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 mb-6">
+                  Haber ve <span className="text-blue-600">Değerlendirmeler</span>
+                </h2>
+                <p className="text-lg md:text-xl text-slate-600 max-w-3xl mx-auto">
+                  Elektrik pano ve endüstriyel üretim sektöründeki en son atılımları, yenilikleri ve güncellemeleri paylaşıyoruz.
+                </p>
+              </div>
+
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12">
+                {[
+                  {
+                    title: "İstanbul'da Elektrik Pano Üretimi ve Montaj Hizmetleri",
+                    description: "İstanbul'un tüm ilçelerinde elektrik pano üretimi, montaj, bakım ve onarım hizmetleri. Sıvaüstü, sıvaaltı, dahili ve marin pano çözümleri.",
+                    category: "İstanbul İlçeleri",
+                    link: "/blog/istanbul",
+                    icon: "🏙️",
+                  },
+                  {
+                    title: "Gebze ve Kocaeli Bölgesi Endüstriyel Üretim Çözümleri",
+                    description: "Gebze, İzmit ve Kocaeli bölgesinde elektrik pano, kaynak hizmetleri ve endüstriyel üretim çözümleri. Hızlı teslimat ve kaliteli hizmet.",
+                    category: "Gebze & Kocaeli",
+                    link: "/blog/gebze-kocaeli",
+                    icon: "🏭",
+                  },
+                  {
+                    title: "Marmara Bölgesi Endüstriyel Üretim ve Hizmetler",
+                    description: "Bursa, Balıkesir, Sakarya ve diğer Marmara illerinde elektrik pano üretimi, kaynak ve endüstriyel üretim hizmetleri.",
+                    category: "Diğer Marmara",
+                    link: "/blog/diger-marmara",
+                    icon: "📍",
+                  },
+                ].map((blog, i) => (
+                  <Link
+                    key={i}
+                    href={blog.link}
+                    className="group bg-white rounded-xl p-6 border-2 border-slate-200 hover:border-blue-400 shadow-lg hover:shadow-xl transition-all duration-500 hover:-translate-y-2"
+                  >
+                    <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                      {blog.icon}
+                    </div>
+                    <div className="mb-3">
+                      <span className="inline-block px-3 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full">
+                        {blog.category}
+                      </span>
+                    </div>
+                    <h3 className="text-xl font-black text-slate-900 mb-3 group-hover:text-blue-600 transition-colors line-clamp-2">
+                      {blog.title}
+                    </h3>
+                    <p className="text-slate-600 text-sm leading-relaxed mb-4 line-clamp-3">
+                      {blog.description}
+                    </p>
+                    <div className="flex items-center text-blue-600 font-semibold text-sm group-hover:gap-2 transition-all">
+                      <span>Devamını Oku</span>
+                      <svg
+                        className="w-4 h-4 transform group-hover:translate-x-1 transition-transform"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M9 5l7 7-7 7"
+                        />
+                      </svg>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+
+              <div className="text-center">
+                <Link
+                  href="/blog"
+                  className="inline-flex items-center gap-3 bg-blue-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/30 hover:scale-105"
+                >
+                  Tüm Blog Yazılarını Görüntüle
                   <svg
                     className="w-5 h-5"
                     fill="none"

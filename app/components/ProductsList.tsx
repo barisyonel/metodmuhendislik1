@@ -117,7 +117,7 @@ export default function ProductsList({ initialProducts = [] }: { initialProducts
 
   return (
     <>
-      {products.map((product: Product) => {
+      {products.map((product: Product, index: number) => {
         // Link varsa onu kullan, yoksa ID ile oluştur
         const productUrl = product.link 
           ? (product.link.startsWith('/') ? product.link : `/${product.link}`)
@@ -133,6 +133,10 @@ export default function ProductsList({ initialProducts = [] }: { initialProducts
           key={product.id}
           className="group relative overflow-hidden rounded-2xl bg-white border-2 border-slate-200 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 flex flex-col h-full"
         >
+          {/* Ürün Numarası Badge */}
+          <div className="absolute top-4 left-4 z-20 bg-blue-600 text-white w-12 h-12 rounded-full flex items-center justify-center font-black text-lg shadow-lg group-hover:scale-110 transition-transform">
+            {String(index + 1).padStart(2, '0')}
+          </div>
           {/* Ürün Görseli - Sabit Yükseklik */}
           <div className="relative w-full h-80 bg-gray-50 overflow-hidden flex items-center justify-center">
             {productImages.length > 0 ? (

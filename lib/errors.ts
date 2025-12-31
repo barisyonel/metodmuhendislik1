@@ -70,6 +70,15 @@ export class DatabaseError extends AppError {
 export function handleApiError(error: unknown): { status: number; message: string; code?: string; details?: unknown } {
   // AppError instance ise direkt kullan
   if (error instanceof AppError) {
+    // ValidationError ise fields'ı details içine koy
+    if (error instanceof ValidationError && error.fields) {
+      return {
+        status: error.statusCode,
+        message: error.message,
+        code: error.code,
+        details: { fields: error.fields },
+      };
+    }
     return {
       status: error.statusCode,
       message: error.message,
