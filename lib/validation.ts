@@ -1,16 +1,30 @@
 import { z } from "zod";
 
+// URL veya boş string validasyonu için helper
+const urlOrEmpty = z.string().refine(
+  (val) => {
+    if (!val || val.trim() === "") return true;
+    try {
+      new URL(val);
+      return true;
+    } catch {
+      return false;
+    }
+  },
+  { message: "Geçerli bir URL giriniz veya boş bırakın" }
+);
+
 // Ürün validasyon şeması
 export const productSchema = z.object({
   title: z.string().min(3, "Başlık en az 3 karakter olmalıdır").max(200, "Başlık en fazla 200 karakter olabilir"),
   description: z.string().min(10, "Açıklama en az 10 karakter olmalıdır").max(2000, "Açıklama en fazla 2000 karakter olabilir"),
-  image: z.string().url("Geçerli bir URL giriniz").optional().or(z.literal("")),
+  image: urlOrEmpty.optional(),
   images: z.union([
-    z.array(z.string().url("Geçerli bir URL giriniz")),
+    z.array(urlOrEmpty),
     z.string(), // JSON string olarak da gelebilir
   ]).optional(),
   category: z.string().max(100, "Kategori en fazla 100 karakter olabilir").optional(),
-  link: z.string().url("Geçerli bir URL giriniz").optional().or(z.literal("")),
+  link: urlOrEmpty.optional(),
   is_active: z.union([z.boolean(), z.number(), z.literal(0), z.literal(1)]).optional(),
   sort_order: z.number().int("Sıralama numarası tam sayı olmalıdır").min(0, "Sıralama numarası 0'dan küçük olamaz").optional(),
 });

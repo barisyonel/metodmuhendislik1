@@ -29,7 +29,7 @@ export default function SliderManager({ initialSliders = [] }: { initialSliders?
     sort_order: 0,
     is_active: true,
   });
-  
+
   // Video yönetimi state'leri
   const [uploadingVideo, setUploadingVideo] = useState(false);
   const [savingVideo, setSavingVideo] = useState(false);
@@ -61,7 +61,7 @@ export default function SliderManager({ initialSliders = [] }: { initialSliders?
         const slidersData = Array.isArray(data.data) ? data.data : [];
         console.log("✅ Slider'lar yenilendi:", slidersData.length);
         setSliders(slidersData);
-        
+
         // Mevcut video URL'ini bul (ilk aktif slider'dan)
         const activeSliderWithVideo = slidersData.find(
           (s: Slider) => {
@@ -76,7 +76,7 @@ export default function SliderManager({ initialSliders = [] }: { initialSliders?
           setCurrentVideoUrl(null);
           setVideoPreview("");
         }
-        
+
         // Veritabanı bağlantı uyarısı varsa göster
         if (data.warning) {
           console.warn("⚠️", data.warning);
@@ -127,19 +127,19 @@ export default function SliderManager({ initialSliders = [] }: { initialSliders?
 
       const data = await response.json();
       console.log("Upload response:", data);
-      
+
       if (data.success && data.url) {
         const imageUrl = data.url;
         console.log("✅ Görsel URL'i alındı:", imageUrl);
-        
+
         // State'i güncelle - hem formData hem de imagePreview
         const updatedFormData = { ...formData, image_url: imageUrl };
         setFormData(updatedFormData);
         setImagePreview(imageUrl);
-        
+
         console.log("✅ State güncellendi - image_url:", imageUrl);
         console.log("✅ State güncellendi - formData:", updatedFormData);
-        
+
         alert("✅ Görsel başarıyla Cloudinary'ye yüklendi! Artık 'Ekle' butonuna basabilirsiniz.");
       } else {
         const errorMsg = data.message || "Görsel yüklenirken bir hata oluştu";
@@ -166,7 +166,7 @@ export default function SliderManager({ initialSliders = [] }: { initialSliders?
     console.log("  - imagePreview:", imagePreview);
     console.log("  - formData.image_url:", formData.image_url);
     console.log("  - currentImageUrl:", currentImageUrl);
-    
+
     if (!currentImageUrl || currentImageUrl.trim() === '') {
       alert("❌ Lütfen bir görsel yükleyin!\n\nGörsel seçtikten sonra:\n1. 'Cloudinary'ye yükleniyor...' mesajını bekleyin\n2. '✅ Görsel başarıyla yüklendi!' mesajını görün\n3. Görsel önizlemesinin göründüğünü kontrol edin\n4. Sonra 'Ekle' butonuna basın");
       return;
@@ -190,7 +190,7 @@ export default function SliderManager({ initialSliders = [] }: { initialSliders?
         alert("❌ Görsel URL'i bulunamadı! Lütfen görseli tekrar yükleyin.");
         return;
       }
-      
+
       const submitData = {
         title: editingSlider?.title || "Slider",
         subtitle: editingSlider?.subtitle || "",
@@ -212,8 +212,8 @@ export default function SliderManager({ initialSliders = [] }: { initialSliders?
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ 
-          message: `HTTP ${response.status}: ${response.statusText}` 
+        const errorData = await response.json().catch(() => ({
+          message: `HTTP ${response.status}: ${response.statusText}`
         }));
         throw new Error(errorData.message || "Sunucu hatası");
       }
@@ -224,7 +224,7 @@ export default function SliderManager({ initialSliders = [] }: { initialSliders?
         resetForm();
         const message = editingSlider ? "✅ Slider başarıyla güncellendi!" : "✅ Slider başarıyla eklendi!";
         alert(message + "\n\nNot: Arayüzdeki slider'lar otomatik olarak güncellenecektir (5 saniye içinde).");
-        
+
         // Frontend'i tetiklemek için window'a event gönder (eğer aynı tab'daysa)
         if (typeof window !== 'undefined') {
           window.dispatchEvent(new Event('slider-updated'));
@@ -235,12 +235,12 @@ export default function SliderManager({ initialSliders = [] }: { initialSliders?
     } catch (error) {
       console.error("Slider kaydetme hatası:", error);
       let errorMsg = error instanceof Error ? error.message : "Bir hata oluştu!";
-      
+
       // Veritabanı bağlantı hatası için özel mesaj
       if (errorMsg.includes("ECONNREFUSED") || errorMsg.includes("connection") || errorMsg.includes("bağlantı")) {
         errorMsg = "Veritabanı bağlantısı kurulamadı!\n\nLütfen:\n1. Veritabanı sunucusunun çalıştığından emin olun\n2. Environment variables'ların (.env.local) doğru ayarlandığını kontrol edin\n3. Veritabanı erişim izinlerini kontrol edin\n4. Tekrar deneyin";
       }
-      
+
       alert(`❌ Hata: ${errorMsg}\n\nGörsel Cloudinary'ye yüklendi ancak veritabanına kaydedilemedi.`);
     } finally {
       setSaving(false);
@@ -349,7 +349,7 @@ export default function SliderManager({ initialSliders = [] }: { initialSliders?
 
       const data = await response.json();
       console.log("Video upload response:", data);
-      
+
       if (data.success && data.url) {
         const videoUrl = data.url;
         setVideoPreview(videoUrl);
@@ -379,7 +379,7 @@ export default function SliderManager({ initialSliders = [] }: { initialSliders?
 
     // Aktif slider'ları bul
     const activeSliders = sliders.filter((s) => s.is_active === true || s.is_active === 1);
-    
+
     if (activeSliders.length === 0) {
       alert("❌ Aktif slider bulunamadı! Önce en az bir slider'ı aktif yapın.");
       return;
@@ -406,12 +406,12 @@ export default function SliderManager({ initialSliders = [] }: { initialSliders?
       if (allSuccess) {
         await loadSliders();
         setCurrentVideoUrl(finalVideoUrl);
-        
+
         // Frontend'i tetikle
         if (typeof window !== 'undefined') {
           window.dispatchEvent(new Event('slider-updated'));
         }
-        
+
         alert(`✅ Video başarıyla ${activeSliders.length} aktif slider'a kaydedildi!\n\nArayüzdeki slider'lar otomatik olarak güncellenecektir.`);
       } else {
         throw new Error("Bazı slider'lar güncellenemedi");
@@ -433,7 +433,7 @@ export default function SliderManager({ initialSliders = [] }: { initialSliders?
 
     // Aktif slider'ları bul
     const activeSliders = sliders.filter((s) => s.is_active === true || s.is_active === 1);
-    
+
     if (activeSliders.length === 0) {
       alert("❌ Aktif slider bulunamadı!");
       return;
@@ -461,12 +461,12 @@ export default function SliderManager({ initialSliders = [] }: { initialSliders?
         await loadSliders();
         setVideoPreview("");
         setCurrentVideoUrl(null);
-        
+
         // Frontend'i tetikle
         if (typeof window !== 'undefined') {
           window.dispatchEvent(new Event('slider-updated'));
         }
-        
+
         alert(`✅ Video başarıyla ${activeSliders.length} aktif slider'dan silindi!`);
       } else {
         throw new Error("Bazı slider'lar güncellenemedi");
@@ -539,7 +539,7 @@ export default function SliderManager({ initialSliders = [] }: { initialSliders?
             <label className="block text-sm font-bold text-slate-700 mb-3">
               <span className="text-red-500">*</span> Yeni Video Yükle (10-15 saniye önerilir)
             </label>
-            
+
             {videoPreview && videoPreview.trim() !== '' ? (
               <div className="mb-4">
                 <div className="relative w-full rounded-lg overflow-hidden border-2 border-green-400 shadow-lg bg-slate-100">

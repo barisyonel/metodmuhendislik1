@@ -52,9 +52,28 @@ export default function HeroSlider({ initialSliders = [] }: { initialSliders?: S
   const [globalVideoUrl] = useState<string | null>(() => {
     // İlk aktif slider'dan video URL'ini al
     const activeSliderWithVideo = initialSliders.find(
-      (s) => (s.is_active === true || s.is_active === 1) && s.video_url
+      (s) => {
+        const isActive = s.is_active === true || s.is_active === 1;
+        const hasVideo = s.video_url && typeof s.video_url === 'string' && s.video_url.trim() !== '';
+        return isActive && hasVideo;
+      }
     );
-    return activeSliderWithVideo?.video_url || null;
+    const videoUrl = activeSliderWithVideo?.video_url || null;
+    
+    // Debug için console.log (geliştirme ortamında)
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🎥 Video URL kontrolü:', {
+        totalSliders: initialSliders.length,
+        activeSliders: initialSliders.filter(s => s.is_active === true || s.is_active === 1).length,
+        foundVideoUrl: videoUrl,
+        activeSliderWithVideo: activeSliderWithVideo ? {
+          id: activeSliderWithVideo.id,
+          video_url: activeSliderWithVideo.video_url
+        } : null
+      });
+    }
+    
+    return videoUrl;
   });
 
   useEffect(() => {
@@ -91,15 +110,24 @@ export default function HeroSlider({ initialSliders = [] }: { initialSliders?: S
   return (
     <div className="h-screen w-full relative">
       {/* Video - Slider'ın sağ alt köşesinde sabit (absolute pozisyon) */}
-      {globalVideoUrl && (
-        <div className="absolute bottom-6 right-6 z-50 w-64 md:w-80 lg:w-96 rounded-lg overflow-hidden shadow-2xl border-2 border-white/20 backdrop-blur-sm">
+      {globalVideoUrl && globalVideoUrl.trim() !== '' && (
+        <div className="absolute bottom-6 right-6 z-[100] w-64 md:w-80 lg:w-96 rounded-lg overflow-hidden shadow-2xl border-2 border-white/20 backdrop-blur-sm bg-black/20">
           <video
             src={globalVideoUrl}
             autoPlay
             loop
             muted
             playsInline
+            controls={false}
             className="w-full h-auto"
+            onError={(e) => {
+              console.error('❌ Video yükleme hatası:', globalVideoUrl, e);
+            }}
+            onLoadedData={() => {
+              if (process.env.NODE_ENV === 'development') {
+                console.log('✅ Video başarıyla yüklendi:', globalVideoUrl);
+              }
+            }}
           >
             Tarayıcınız video oynatmayı desteklemiyor.
           </video>

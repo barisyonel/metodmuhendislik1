@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 
 interface Product {
@@ -14,7 +14,11 @@ interface Product {
   sort_order?: number;
 }
 
-export default function ProductManager({ initialProducts = [] }: { initialProducts?: Product[] }) {
+export default function ProductManager({
+  initialProducts = [],
+}: {
+  initialProducts?: Product[];
+}) {
   // ✅ Server Component'ten gelen verileri kullan, API route'a gerek yok!
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [loading, setLoading] = useState(false);
@@ -25,6 +29,9 @@ export default function ProductManager({ initialProducts = [] }: { initialProduc
   const [saving, setSaving] = useState(false);
   const [imagePreview, setImagePreview] = useState<string>("");
   const [productImages, setProductImages] = useState<string[]>([]);
+  const [validationErrors, setValidationErrors] = useState<
+    Record<string, string>
+  >({});
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -40,7 +47,7 @@ export default function ProductManager({ initialProducts = [] }: { initialProduc
     try {
       setLoading(true);
       const response = await fetch(`/api/metod/products?t=${Date.now()}`, {
-        cache: 'no-store',
+        cache: "no-store",
       });
       const data = await response.json();
       if (data.success) {
@@ -83,22 +90,27 @@ export default function ProductManager({ initialProducts = [] }: { initialProduc
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ message: "Sunucu hatası" }));
-        throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
+        const errorData = await response
+          .json()
+          .catch(() => ({ message: "Sunucu hatası" }));
+        throw new Error(
+          errorData.message ||
+            `HTTP ${response.status}: ${response.statusText}`,
+        );
       }
 
       const data = await response.json();
       console.log("Upload response:", data);
-      
+
       if (data.success && data.url) {
         const imageUrl = data.url;
         setFormData((prev) => ({ ...prev, image: imageUrl }));
         setImagePreview(imageUrl);
         // Ana görseli images array'inin başına ekle (eğer yoksa)
-        setProductImages(prev => {
+        setProductImages((prev) => {
           if (prev.includes(imageUrl)) {
             // Zaten varsa başa taşı
-            return [imageUrl, ...prev.filter(img => img !== imageUrl)];
+            return [imageUrl, ...prev.filter((img) => img !== imageUrl)];
           } else {
             // Yoksa başa ekle
             return [imageUrl, ...prev];
@@ -112,7 +124,10 @@ export default function ProductManager({ initialProducts = [] }: { initialProduc
       }
     } catch (error) {
       console.error("Upload error:", error);
-      const errorMsg = error instanceof Error ? error.message : "Görsel yüklenirken bir hata oluştu";
+      const errorMsg =
+        error instanceof Error
+          ? error.message
+          : "Görsel yüklenirken bir hata oluştu";
       alert(`Hata: ${errorMsg}`);
     } finally {
       setUploading(false);
@@ -121,21 +136,25 @@ export default function ProductManager({ initialProducts = [] }: { initialProduc
   };
 
   // Birden fazla görsel yükleme
-  const handleMultipleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleMultipleImageUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
     // Maksimum 6 görsel kontrolü
     const currentImageCount = productImages.length;
     const maxImages = 6;
-    
+
     if (currentImageCount >= maxImages) {
-      alert(`⚠️ Maksimum ${maxImages} görsel ekleyebilirsiniz!\n\nŞu anda ${currentImageCount} görsel var.`);
+      alert(
+        `⚠️ Maksimum ${maxImages} görsel ekleyebilirsiniz!\n\nŞu anda ${currentImageCount} görsel var.`,
+      );
       e.target.value = "";
       return;
     }
 
-    const validFiles = Array.from(files).filter(file => {
+    const validFiles = Array.from(files).filter((file) => {
       if (!file.type.startsWith("image/")) {
         alert(`${file.name} bir görsel dosyası değil!`);
         return false;
@@ -153,7 +172,9 @@ export default function ProductManager({ initialProducts = [] }: { initialProduc
     const totalAfterUpload = currentImageCount + validFiles.length;
     if (totalAfterUpload > maxImages) {
       const allowedCount = maxImages - currentImageCount;
-      alert(`⚠️ Maksimum ${maxImages} görsel ekleyebilirsiniz!\n\nŞu anda ${currentImageCount} görsel var. Sadece ${allowedCount} görsel daha ekleyebilirsiniz.`);
+      alert(
+        `⚠️ Maksimum ${maxImages} görsel ekleyebilirsiniz!\n\nŞu anda ${currentImageCount} görsel var. Sadece ${allowedCount} görsel daha ekleyebilirsiniz.`,
+      );
       e.target.value = "";
       return;
     }
@@ -162,7 +183,7 @@ export default function ProductManager({ initialProducts = [] }: { initialProduc
     for (let i = 0; i < validFiles.length; i++) {
       const file = validFiles[i];
       setUploadingIndex(i);
-      
+
       try {
         const uploadFormData = new FormData();
         uploadFormData.append("file", file);
@@ -173,50 +194,65 @@ export default function ProductManager({ initialProducts = [] }: { initialProduc
         });
 
         if (!response.ok) {
-          const errorData = await response.json().catch(() => ({ message: "Sunucu hatası" }));
-          throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
+          const errorData = await response
+            .json()
+            .catch(() => ({ message: "Sunucu hatası" }));
+          throw new Error(
+            errorData.message ||
+              `HTTP ${response.status}: ${response.statusText}`,
+          );
         }
 
         const data = await response.json();
-        
+
         if (data.success && data.url) {
           const imageUrl = data.url;
-          console.log(`✅ Görsel ${i + 1}/${validFiles.length} yüklendi:`, imageUrl);
-          
+          console.log(
+            `✅ Görsel ${i + 1}/${validFiles.length} yüklendi:`,
+            imageUrl,
+          );
+
           // Yeni görseli ekle (duplicate kontrolü ile)
-          setProductImages(prev => {
+          setProductImages((prev) => {
             if (prev.includes(imageUrl)) {
               console.log("⚠️ Görsel zaten mevcut, atlanıyor:", imageUrl);
               return prev;
             }
             const newImages = [...prev, imageUrl];
             const maxImages = 6;
-            console.log(`📸 Görsel eklendi. Toplam görsel sayısı: ${newImages.length}/${maxImages}`);
-            
+            console.log(
+              `📸 Görsel eklendi. Toplam görsel sayısı: ${newImages.length}/${maxImages}`,
+            );
+
             // Maksimum 6 görsel kontrolü
             if (newImages.length > maxImages) {
               alert(`⚠️ Maksimum ${maxImages} görsel ekleyebilirsiniz!`);
               return prev;
             }
-            
+
             return newImages;
           });
-          
+
           // İlk görsel ana görsel değilse, ana görseli ayarla
           if (i === 0 && !imagePreview) {
-            console.log("⭐ İlk görsel ana görsel olarak ayarlanıyor:", imageUrl);
+            console.log(
+              "⭐ İlk görsel ana görsel olarak ayarlanıyor:",
+              imageUrl,
+            );
             setImagePreview(imageUrl);
-            setFormData(prev => ({ ...prev, image: imageUrl }));
+            setFormData((prev) => ({ ...prev, image: imageUrl }));
           }
         } else {
-          alert(`❌ ${file.name} yüklenirken hata: ${data.message || "Bilinmeyen hata"}`);
+          alert(
+            `❌ ${file.name} yüklenirken hata: ${data.message || "Bilinmeyen hata"}`,
+          );
         }
       } catch (error) {
         console.error(`Upload error for ${file.name}:`, error);
         alert(`❌ ${file.name} yüklenirken hata oluştu`);
       }
     }
-    
+
     setUploadingIndex(null);
     e.target.value = "";
     if (validFiles.length > 0) {
@@ -229,24 +265,24 @@ export default function ProductManager({ initialProducts = [] }: { initialProduc
     const removedImage = productImages[index];
     const newImages = productImages.filter((_, i) => i !== index);
     setProductImages(newImages);
-    
+
     // Eğer silinen görsel ana görselse, ilk görseli ana görsel yap
     if (removedImage === imagePreview && newImages.length > 0) {
       setImagePreview(newImages[0]);
-      setFormData(prev => ({ ...prev, image: newImages[0] }));
+      setFormData((prev) => ({ ...prev, image: newImages[0] }));
     } else if (newImages.length === 0) {
       setImagePreview("");
-      setFormData(prev => ({ ...prev, image: "" }));
+      setFormData((prev) => ({ ...prev, image: "" }));
     }
   };
 
   // Ana görsel seçme
   const handleSetMainImage = (imageUrl: string) => {
     setImagePreview(imageUrl);
-    setFormData(prev => ({ ...prev, image: imageUrl }));
+    setFormData((prev) => ({ ...prev, image: imageUrl }));
     // Görseli başa taşı
-    setProductImages(prev => {
-      const filtered = prev.filter(img => img !== imageUrl);
+    setProductImages((prev) => {
+      const filtered = prev.filter((img) => img !== imageUrl);
       return [imageUrl, ...filtered];
     });
   };
@@ -255,13 +291,31 @@ export default function ProductManager({ initialProducts = [] }: { initialProduc
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Validasyon hatalarını temizle
+    setValidationErrors({});
+
     const finalImageUrl = imagePreview || formData.image;
-    if (!finalImageUrl || finalImageUrl.trim() === '' || !finalImageUrl.startsWith('http')) {
-      alert("❌ Lütfen geçerli bir ana görsel yükleyin (URL 'http' ile başlamalıdır)!");
+    if (
+      !finalImageUrl ||
+      finalImageUrl.trim() === "" ||
+      !finalImageUrl.startsWith("http")
+    ) {
+      setValidationErrors({
+        image:
+          "Lütfen geçerli bir ana görsel yükleyin (URL 'http' ile başlamalıdır)",
+      });
+      alert(
+        "❌ Lütfen geçerli bir ana görsel yükleyin (URL 'http' ile başlamalıdır)!",
+      );
       return;
     }
 
     if (!formData.title.trim() || !formData.description.trim()) {
+      const errors: Record<string, string> = {};
+      if (!formData.title.trim()) errors.title = "Başlık zorunludur";
+      if (!formData.description.trim())
+        errors.description = "Açıklama zorunludur";
+      setValidationErrors(errors);
       alert("❌ Başlık ve açıklama zorunludur!");
       return;
     }
@@ -275,12 +329,12 @@ export default function ProductManager({ initialProducts = [] }: { initialProduc
 
       // Görselleri hazırla - İLK GÖRSEL KAPAK FOTOĞRAFI OLACAK
       let allImages: string[] = [];
-      
+
       // productImages array'inden başla
       if (productImages.length > 0) {
         allImages = [...productImages];
       }
-      
+
       // Kapak fotoğrafını (ana görsel) başa ekle (eğer yoksa)
       // İlk görsel her zaman kapak fotoğrafı olacak
       if (finalImageUrl.trim()) {
@@ -289,21 +343,26 @@ export default function ProductManager({ initialProducts = [] }: { initialProduc
           allImages = [finalImageUrl.trim(), ...allImages];
         } else {
           // Kapak fotoğrafı zaten varsa, başa taşı
-          allImages = [finalImageUrl.trim(), ...allImages.filter(img => img !== finalImageUrl.trim())];
+          allImages = [
+            finalImageUrl.trim(),
+            ...allImages.filter((img) => img !== finalImageUrl.trim()),
+          ];
         }
       }
-      
+
       // Eğer hiç görsel yoksa, en azından kapak fotoğrafını ekle
       if (allImages.length === 0 && finalImageUrl.trim()) {
         allImages = [finalImageUrl.trim()];
       }
-      
+
       // Maksimum 6 görsel kontrolü
       if (allImages.length > 6) {
-        alert(`⚠️ Maksimum 6 görsel ekleyebilirsiniz! İlk 6 görsel kaydedilecek.`);
+        alert(
+          `⚠️ Maksimum 6 görsel ekleyebilirsiniz! İlk 6 görsel kaydedilecek.`,
+        );
         allImages = allImages.slice(0, 6);
       }
-      
+
       console.log("📸 Kaydedilecek görseller:", {
         total: allImages.length,
         kapakFotoğrafı: allImages[0] || "Yok",
@@ -333,10 +392,29 @@ export default function ProductManager({ initialProducts = [] }: { initialProduc
         body: JSON.stringify(submitData),
       });
 
+      // Validasyon hatalarını saklamak için değişken
+      let validationErrorsToShow: Record<string, string> = {};
+
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ 
-          message: `HTTP ${response.status}: ${response.statusText}` 
+        const errorData = await response.json().catch(() => ({
+          message: `HTTP ${response.status}: ${response.statusText}`,
         }));
+
+        // Validasyon hatalarını kontrol et
+        if (errorData.details && errorData.details.fields) {
+          validationErrorsToShow = errorData.details.fields;
+          setValidationErrors(errorData.details.fields);
+        }
+
+        // Validasyon hatası varsa özel hata fırlat
+        if (Object.keys(validationErrorsToShow).length > 0) {
+          const validationError = new Error("Validasyon hatası") as Error & {
+            validationErrors: Record<string, string>;
+          };
+          validationError.validationErrors = validationErrorsToShow;
+          throw validationError;
+        }
+
         throw new Error(errorData.message || "Sunucu hatası");
       }
 
@@ -348,53 +426,96 @@ export default function ProductManager({ initialProducts = [] }: { initialProduc
         data: data.data,
         imagesCount: data.data?.imagesCount,
         images: data.data?.images,
+        details: data.details,
       });
-      
+
       if (data.success) {
+        // Başarılı ise validasyon hatalarını temizle
+        setValidationErrors({});
         console.log("✅ Ürün başarıyla kaydedildi!");
         console.log("📸 Gönderilen görsel sayısı:", allImages.length);
-        console.log("📸 API'den dönen görsel sayısı:", data.data?.imagesCount || 0);
-        
+        console.log(
+          "📸 API'den dönen görsel sayısı:",
+          data.data?.imagesCount || 0,
+        );
+
         // Kısa bir bekleme (veritabanı güncellemesi için)
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
         // Ürünleri yeniden yükle
         await loadProducts();
-        
+
         // Yüklenen ürünü kontrol et
         if (editingProduct) {
-          const updatedProduct = products.find(p => p.id === editingProduct.id);
+          const updatedProduct = products.find(
+            (p) => p.id === editingProduct.id,
+          );
           if (updatedProduct) {
             console.log("🔄 Güncellenen ürün:", updatedProduct);
             console.log("🔄 Ürün görselleri:", updatedProduct.images);
           }
         }
-        
+
         // Formu sıfırla
         resetForm();
-        
+
         // Başarı mesajı
         const savedImagesCount = data.data?.imagesCount || allImages.length;
-        const message = editingProduct 
+        const message = editingProduct
           ? `✅ Ürün başarıyla güncellendi!\n\n📸 ${savedImagesCount} görsel kaydedildi.\n\nSayfa yenilenecek...`
           : `✅ Ürün başarıyla eklendi!\n\n📸 ${savedImagesCount} görsel kaydedildi.\n\nSayfa yenilenecek...`;
         alert(message);
-        
+
         // Frontend'i tetikle ve sayfayı yenile
-        if (typeof window !== 'undefined') {
+        if (typeof window !== "undefined") {
           setTimeout(() => {
-            window.dispatchEvent(new Event('product-updated'));
+            window.dispatchEvent(new Event("product-updated"));
             console.log("🔄 Frontend güncelleme eventi gönderildi");
             // Sayfayı yenile (görsellerin görünmesi için)
             window.location.reload();
           }, 1500);
         }
       } else {
-        throw new Error(data.message || "Bilinmeyen hata");
+        // Validasyon hatalarını kontrol et
+        if (data.details && data.details.fields) {
+          const validationErrorsToShow = data.details.fields;
+          setValidationErrors(validationErrorsToShow);
+          const errorFields = Object.entries(validationErrorsToShow)
+            .map(([field, message]) => `${field}: ${message}`)
+            .join("\n");
+          alert(
+            `❌ Validasyon Hatası!\n\nLütfen aşağıdaki alanları kontrol edin:\n\n${errorFields}`,
+          );
+          return; // Validasyon hatası gösterildi, fonksiyondan çık
+        } else {
+          throw new Error(data.message || "Bilinmeyen hata");
+        }
       }
     } catch (error) {
       console.error("Ürün kaydetme hatası:", error);
-      const errorMsg = error instanceof Error ? error.message : "Bir hata oluştu!";
+
+      // Validasyon hatası kontrolü
+      if (error && typeof error === "object" && "validationErrors" in error) {
+        const validationErrorsToShow = (error as Error & {
+          validationErrors: Record<string, string>;
+        }).validationErrors;
+        if (
+          validationErrorsToShow &&
+          Object.keys(validationErrorsToShow).length > 0
+        ) {
+          const errorFields = Object.entries(validationErrorsToShow)
+            .map(([field, message]) => `${field}: ${message}`)
+            .join("\n");
+          alert(
+            `❌ Validasyon Hatası!\n\nLütfen aşağıdaki alanları kontrol edin:\n\n${errorFields}`,
+          );
+          return; // Validasyon hatası gösterildi, alert gösterilmesin
+        }
+      }
+
+      // Genel hata mesajı
+      const errorMsg =
+        error instanceof Error ? error.message : "Bir hata oluştu!";
       alert(`❌ Hata: ${errorMsg}`);
     } finally {
       setSaving(false);
@@ -409,24 +530,27 @@ export default function ProductManager({ initialProducts = [] }: { initialProduc
 
     try {
       setLoading(true);
-      const response = await fetch(`/api/metod/products/${id}?t=${Date.now()}`, {
-        method: "DELETE",
-        cache: 'no-store',
-      });
+      const response = await fetch(
+        `/api/metod/products/${id}?t=${Date.now()}`,
+        {
+          method: "DELETE",
+          cache: "no-store",
+        },
+      );
 
       const data = await response.json();
       if (data.success) {
         // Önce state'ten kaldır (anında görünürlük için)
-        setProducts(prev => prev.filter(p => p.id !== id));
-        
+        setProducts((prev) => prev.filter((p) => p.id !== id));
+
         // Sonra veritabanından yeniden yükle
         await loadProducts();
-        
+
         alert("✅ Ürün silindi!");
-        
+
         // Frontend'i tetikle ve sayfayı yenile
-        if (typeof window !== 'undefined') {
-          window.dispatchEvent(new Event('product-updated'));
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new Event("product-updated"));
           // Sayfayı yenile (tüm sayfalarda güncelleme için)
           setTimeout(() => {
             window.location.reload();
@@ -446,6 +570,7 @@ export default function ProductManager({ initialProducts = [] }: { initialProduc
   // Düzenleme için formu aç
   const handleEdit = (product: Product) => {
     setEditingProduct(product);
+    setValidationErrors({});
     setFormData({
       title: product.title || "",
       description: product.description || "",
@@ -456,40 +581,50 @@ export default function ProductManager({ initialProducts = [] }: { initialProduc
       is_active: product.is_active === true || product.is_active === 1,
     });
     setImagePreview(product.image || "");
-    
+
     // Görselleri parse et
     let images: string[] = [];
-    
+
     // Önce images JSON kolonunu parse et
     if (product.images) {
       try {
-        const parsed = typeof product.images === 'string' 
-          ? JSON.parse(product.images) 
-          : product.images;
+        const parsed =
+          typeof product.images === "string"
+            ? JSON.parse(product.images)
+            : product.images;
         if (Array.isArray(parsed) && parsed.length > 0) {
           images = parsed;
-          console.log(`📸 Ürün ${product.id} - ${parsed.length} görsel parse edildi:`, parsed);
+          console.log(
+            `📸 Ürün ${product.id} - ${parsed.length} görsel parse edildi:`,
+            parsed,
+          );
         }
       } catch (e) {
         console.error("Images parse error:", e, "Raw images:", product.images);
       }
     }
-    
+
     // Ana görseli ekle (eğer yoksa başa ekle, varsa başa taşı)
     if (product.image) {
       if (!images.includes(product.image)) {
         images = [product.image, ...images];
       } else {
-        images = [product.image, ...images.filter(img => img !== product.image)];
+        images = [
+          product.image,
+          ...images.filter((img) => img !== product.image),
+        ];
       }
     }
-    
+
     // Eğer hiç görsel yoksa ve sadece product.image varsa, onu kullan
     if (images.length === 0 && product.image) {
       images = [product.image];
     }
-    
-    console.log(`✅ Ürün ${product.id} - Toplam ${images.length} görsel yüklendi:`, images);
+
+    console.log(
+      `✅ Ürün ${product.id} - Toplam ${images.length} görsel yüklendi:`,
+      images,
+    );
     setProductImages(images);
     setShowForm(true);
   };
@@ -508,6 +643,7 @@ export default function ProductManager({ initialProducts = [] }: { initialProduc
     setImagePreview("");
     setProductImages([]);
     setEditingProduct(null);
+    setValidationErrors({});
     setShowForm(false);
   };
 
@@ -584,11 +720,26 @@ export default function ProductManager({ initialProducts = [] }: { initialProduc
                 <input
                   type="text"
                   value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full px-4 py-3 border-2 border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  onChange={(e) => {
+                    setFormData({ ...formData, title: e.target.value });
+                    // Validasyon hatasını temizle
+                    if (validationErrors.title) {
+                      setValidationErrors({ ...validationErrors, title: "" });
+                    }
+                  }}
+                  className={`w-full px-4 py-3 border-2 rounded-lg focus:ring-2 focus:ring-blue-500 transition-colors ${
+                    validationErrors.title
+                      ? "border-red-500 focus:border-red-500"
+                      : "border-slate-300 focus:border-blue-500"
+                  }`}
                   placeholder="Örn: Elektrik Pano Sistemleri"
                   required
                 />
+                {validationErrors.title && (
+                  <p className="mt-1 text-sm text-red-600 font-medium">
+                    {validationErrors.title}
+                  </p>
+                )}
               </div>
 
               {/* Açıklama */}
@@ -598,21 +749,53 @@ export default function ProductManager({ initialProducts = [] }: { initialProduc
                 </label>
                 <textarea
                   value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full px-4 py-3 border-2 border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  onChange={(e) => {
+                    setFormData({ ...formData, description: e.target.value });
+                    // Validasyon hatasını temizle
+                    if (validationErrors.description) {
+                      setValidationErrors({
+                        ...validationErrors,
+                        description: "",
+                      });
+                    }
+                  }}
+                  className={`w-full px-4 py-3 border-2 rounded-lg focus:ring-2 focus:ring-blue-500 transition-colors ${
+                    validationErrors.description
+                      ? "border-red-500 focus:border-red-500"
+                      : "border-slate-300 focus:border-blue-500"
+                  }`}
                   placeholder="Ürün açıklaması..."
                   rows={4}
                   required
                 />
+                {validationErrors.description && (
+                  <p className="mt-1 text-sm text-red-600 font-medium">
+                    {validationErrors.description}
+                  </p>
+                )}
               </div>
 
               {/* Ana Görsel Yükleme */}
-              <div className="bg-blue-50 p-4 rounded-lg border-2 border-blue-200">
+              <div
+                className={`bg-blue-50 p-4 rounded-lg border-2 ${
+                  validationErrors.image
+                    ? "border-red-300 bg-red-50"
+                    : "border-blue-200"
+                }`}
+              >
                 <label className="block text-sm font-bold text-slate-700 mb-3">
-                  <span className="text-red-500">*</span> Ana Görsel (Zorunlu - Kartlarda görünecek)
+                  <span className="text-red-500">*</span> Ana Görsel (Zorunlu -
+                  Kartlarda görünecek)
                 </label>
+                {validationErrors.image && (
+                  <div className="mb-3 p-3 bg-red-100 border border-red-300 rounded-lg">
+                    <p className="text-sm text-red-700 font-medium">
+                      {validationErrors.image}
+                    </p>
+                  </div>
+                )}
                 <div className="space-y-3">
-                  {imagePreview && imagePreview.trim() !== '' ? (
+                  {imagePreview && imagePreview.trim() !== "" ? (
                     <div className="relative w-full h-64 rounded-lg overflow-hidden border-2 border-green-400 shadow-lg bg-slate-100">
                       <Image
                         src={imagePreview}
@@ -628,8 +811,12 @@ export default function ProductManager({ initialProducts = [] }: { initialProduc
                   ) : (
                     <div className="relative w-full h-48 rounded-lg border-2 border-dashed border-slate-300 bg-slate-50 flex items-center justify-center">
                       <div className="text-center">
-                        <p className="text-slate-400 text-sm mb-2">Ana görsel önizlemesi</p>
-                        <p className="text-slate-300 text-xs">Ana görsel yüklendikten sonra burada görünecek</p>
+                        <p className="text-slate-400 text-sm mb-2">
+                          Ana görsel önizlemesi
+                        </p>
+                        <p className="text-slate-300 text-xs">
+                          Ana görsel yüklendikten sonra burada görünecek
+                        </p>
                       </div>
                     </div>
                   )}
@@ -655,7 +842,8 @@ export default function ProductManager({ initialProducts = [] }: { initialProduc
               {/* Ek Görseller (Galeri) */}
               <div className="bg-purple-50 p-4 rounded-lg border-2 border-purple-200">
                 <label className="block text-sm font-bold text-slate-700 mb-3">
-                  📸 Ek Görseller (Ürün detay sayfasında galeri olarak görünecek)
+                  📸 Ek Görseller (Ürün detay sayfasında galeri olarak
+                  görünecek)
                 </label>
                 <div className="space-y-4">
                   {/* Görsel Sayısı Bilgisi */}
@@ -663,14 +851,17 @@ export default function ProductManager({ initialProducts = [] }: { initialProduc
                     <p className="text-sm font-bold text-purple-700">
                       📸 {productImages.length} / 6 görsel yüklü
                       {productImages.length >= 6 && (
-                        <span className="ml-2 text-red-600">(Maksimum limit)</span>
+                        <span className="ml-2 text-red-600">
+                          (Maksimum limit)
+                        </span>
                       )}
                     </p>
                     <p className="text-xs text-purple-600 mt-1">
-                      💡 İlk görsel kapak fotoğrafı olarak ürün kartlarında görünecek
+                      💡 İlk görsel kapak fotoğrafı olarak ürün kartlarında
+                      görünecek
                     </p>
                   </div>
-                  
+
                   {/* Mevcut Görseller */}
                   {productImages.length > 0 && (
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
@@ -745,17 +936,22 @@ export default function ProductManager({ initialProducts = [] }: { initialProduc
                     )}
                     <div className="mt-2 space-y-1">
                       <p className="text-xs text-slate-500">
-                        💡 Birden fazla görsel seçebilirsiniz (Ctrl/Cmd + tıklama ile çoklu seçim).
+                        💡 Birden fazla görsel seçebilirsiniz (Ctrl/Cmd +
+                        tıklama ile çoklu seçim).
                       </p>
                       <p className="text-xs text-slate-500">
-                        ⭐ Ana görseli (kapak fotoğrafı) değiştirmek için görselin üzerine gelip &quot;Kapak Yap&quot; butonuna tıklayın.
+                        ⭐ Ana görseli (kapak fotoğrafı) değiştirmek için
+                        görselin üzerine gelip &quot;Kapak Yap&quot; butonuna
+                        tıklayın.
                       </p>
                       <p className="text-xs text-slate-500">
-                        📌 Maksimum 6 görsel ekleyebilirsiniz. İlk görsel ürün kartlarında kapak fotoğrafı olarak görünecek.
+                        📌 Maksimum 6 görsel ekleyebilirsiniz. İlk görsel ürün
+                        kartlarında kapak fotoğrafı olarak görünecek.
                       </p>
                       {productImages.length > 0 && (
                         <p className="text-xs font-bold text-purple-600">
-                          ✅ {productImages.length} görsel hazır - Ürünü kaydedin!
+                          ✅ {productImages.length} görsel hazır - Ürünü
+                          kaydedin!
                         </p>
                       )}
                     </div>
@@ -771,7 +967,9 @@ export default function ProductManager({ initialProducts = [] }: { initialProduc
                 <input
                   type="text"
                   value={formData.category}
-                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, category: e.target.value })
+                  }
                   className="w-full px-4 py-3 border-2 border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                   placeholder="Örn: Elektrik Panoları"
                 />
@@ -785,7 +983,9 @@ export default function ProductManager({ initialProducts = [] }: { initialProduc
                 <input
                   type="text"
                   value={formData.link}
-                  onChange={(e) => setFormData({ ...formData, link: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, link: e.target.value })
+                  }
                   className="w-full px-4 py-3 border-2 border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                   placeholder="/urunler/urunler/elektrik-pano-sistemleri"
                 />
@@ -836,7 +1036,9 @@ export default function ProductManager({ initialProducts = [] }: { initialProduc
               <div className="flex gap-3 pt-4 border-t border-slate-200">
                 <button
                   type="submit"
-                  disabled={saving || uploading || (!imagePreview && !formData.image)}
+                  disabled={
+                    saving || uploading || (!imagePreview && !formData.image)
+                  }
                   className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg font-bold transition-all flex items-center justify-center gap-2"
                 >
                   {saving ? (
@@ -868,8 +1070,12 @@ export default function ProductManager({ initialProducts = [] }: { initialProduc
       {products.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-xl border-2 border-dashed border-slate-300">
           <div className="text-6xl mb-4">📦</div>
-          <p className="text-slate-500 text-lg font-bold mb-2">Henüz ürün eklenmemiş</p>
-          <p className="text-slate-400 text-sm mb-4">İlk ürününüzü ekleyerek başlayın</p>
+          <p className="text-slate-500 text-lg font-bold mb-2">
+            Henüz ürün eklenmemiş
+          </p>
+          <p className="text-slate-400 text-sm mb-4">
+            İlk ürününüzü ekleyerek başlayın
+          </p>
           <button
             onClick={() => {
               resetForm();
@@ -907,20 +1113,27 @@ export default function ProductManager({ initialProducts = [] }: { initialProduc
                       }
                       if (product.images) {
                         try {
-                          const parsed = typeof product.images === 'string' 
-                            ? JSON.parse(product.images) 
-                            : product.images;
+                          const parsed =
+                            typeof product.images === "string"
+                              ? JSON.parse(product.images)
+                              : product.images;
                           if (Array.isArray(parsed) && parsed.length > 0) {
                             productImagesList = parsed;
-                            if (product.image && !productImagesList.includes(product.image)) {
-                              productImagesList = [product.image, ...productImagesList];
+                            if (
+                              product.image &&
+                              !productImagesList.includes(product.image)
+                            ) {
+                              productImagesList = [
+                                product.image,
+                                ...productImagesList,
+                              ];
                             }
                           }
                         } catch {
                           // Parse hatası - görmezden gel
                         }
                       }
-                      
+
                       if (productImagesList.length > 0) {
                         return (
                           <>
@@ -963,7 +1176,7 @@ export default function ProductManager({ initialProducts = [] }: { initialProduc
                       </div>
                     ) : null}
                     <div className="absolute top-2 left-2 bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold z-10 shadow-lg">
-                      #{(product.sort_order || 0)}
+                      #{product.sort_order || 0}
                     </div>
                   </div>
 
@@ -994,7 +1207,7 @@ export default function ProductManager({ initialProducts = [] }: { initialProduc
                         onChange={(e) =>
                           handleSortOrderChange(
                             product.id,
-                            parseInt(e.target.value) || 0
+                            parseInt(e.target.value) || 0,
                           )
                         }
                         className="w-20 px-2 py-1 border border-slate-300 rounded text-sm"

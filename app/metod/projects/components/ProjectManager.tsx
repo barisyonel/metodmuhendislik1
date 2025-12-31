@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 
 interface Project {
@@ -92,19 +92,19 @@ export default function ProjectManager({ initialProjects = [] }: { initialProjec
 
       const data = await response.json();
       console.log("Upload response:", data);
-      
+
       if (data.success && data.url) {
         const imageUrl = data.url;
         setFormData((prev) => ({ ...prev, image_url: imageUrl }));
         setImagePreview(imageUrl);
-        
+
         // Eğer imageList boşsa, ana görseli ekle
         if (imageList.length === 0) {
           setImageList([imageUrl]);
         } else if (!imageList.includes(imageUrl)) {
           setImageList([imageUrl, ...imageList]);
         }
-        
+
         alert("✅ Görsel başarıyla Cloudinary'ye yüklendi!");
       } else {
         const errorMsg = data.message || "Görsel yüklenirken bir hata oluştu";
@@ -152,7 +152,7 @@ export default function ProjectManager({ initialProjects = [] }: { initialProjec
       }
 
       const data = await response.json();
-      
+
       if (data.success && data.url) {
         const imageUrl = data.url;
         if (!imageList.includes(imageUrl)) {
@@ -211,9 +211,9 @@ export default function ProjectManager({ initialProjects = [] }: { initialProjec
       const method = editingProject ? "PUT" : "POST";
 
       // imageList'i düzenle - ana görseli içermeli
-      const finalImageList = imageList.length > 0 
-        ? imageList.includes(finalImageUrl) 
-          ? imageList 
+      const finalImageList = imageList.length > 0
+        ? imageList.includes(finalImageUrl)
+          ? imageList
           : [finalImageUrl, ...imageList]
         : [finalImageUrl];
 
@@ -252,8 +252,8 @@ export default function ProjectManager({ initialProjects = [] }: { initialProjec
         try {
           errorData = await response.json();
         } catch {
-          errorData = { 
-            message: `HTTP ${response.status}: ${response.statusText}` 
+          errorData = {
+            message: `HTTP ${response.status}: ${response.statusText}`
           };
         }
         console.error("❌ API hatası:", {
@@ -261,24 +261,24 @@ export default function ProjectManager({ initialProjects = [] }: { initialProjec
           statusText: response.statusText,
           errorData: errorData,
         });
-        
+
         const errorMessage = errorData.message || `Sunucu hatası: ${response.status} ${response.statusText}`;
         throw new Error(errorMessage);
       }
 
       const data = await response.json();
       console.log("📥 API yanıt verisi:", data);
-      
+
       if (data.success) {
         console.log("✅ Proje başarıyla kaydedildi!");
         await loadProjects();
         resetForm();
-        
-        const message = editingProject 
+
+        const message = editingProject
           ? "✅ Proje başarıyla güncellendi!\n\nSayfa yenilenecek..."
           : "✅ Proje başarıyla eklendi!\n\nSayfa yenilenecek...";
         alert(message);
-        
+
         // Frontend'i tetikle ve sayfayı yenile
         if (typeof window !== 'undefined') {
           setTimeout(() => {
@@ -320,12 +320,12 @@ export default function ProjectManager({ initialProjects = [] }: { initialProjec
       if (data.success) {
         // Önce state'ten kaldır (anında görünürlük için)
         setProjects(prev => prev.filter(p => p.id !== id));
-        
+
         // Sonra veritabanından yeniden yükle
         await loadProjects();
-        
+
         alert("✅ Proje silindi!");
-        
+
         // Frontend'i tetikle ve sayfayı yenile
         if (typeof window !== 'undefined') {
           window.dispatchEvent(new Event('project-updated'));
@@ -360,7 +360,7 @@ export default function ProjectManager({ initialProjects = [] }: { initialProjec
       is_active: project.is_active === true || project.is_active === 1,
     });
     setImagePreview(project.image_url || "");
-    
+
     // images kolonunu parse et
     let parsedImages: string[] = [];
     if (project.images) {
@@ -379,7 +379,7 @@ export default function ProjectManager({ initialProjects = [] }: { initialProjec
       parsedImages = [project.image_url];
     }
     setImageList(parsedImages);
-    
+
     setShowForm(true);
   };
 

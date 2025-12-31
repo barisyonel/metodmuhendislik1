@@ -2,9 +2,10 @@ import { redirect } from "next/navigation";
 import { isAuthenticated } from "@/lib/auth";
 import { getAllProducts } from "@/app/lib/data";
 import ProductManager from "./components/ProductManager";
+import AdminLayout from "../components/AdminLayout";
 
 // Force dynamic rendering because we use cookies for authentication
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function AdminProductsPage() {
@@ -18,32 +19,16 @@ export default async function AdminProductsPage() {
   const products = await getAllProducts();
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="bg-white border-b border-slate-200 shadow-sm">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <a href="/metod" className="text-blue-600 hover:text-blue-700">
-                ← Dashboard&apos;a Dön
-              </a>
-              <div className="h-6 w-px bg-slate-300"></div>
-              <div>
-                <h1 className="text-2xl font-black text-slate-900">
-                  Ürün Yönetimi
-                </h1>
-                <p className="text-sm text-slate-600">
-                  Anasayfadaki ürünleri yönetin
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <main className="container mx-auto px-6 py-8">
-        <ProductManager initialProducts={products} />
-      </main>
-    </div>
+    <AdminLayout>
+      <div className="mb-6">
+        <h1 className="text-3xl font-black text-slate-900 mb-2">
+          Ürün Yönetimi
+        </h1>
+        <p className="text-slate-600">
+          Anasayfadaki ürünleri ekleyin, düzenleyin ve yönetin
+        </p>
+      </div>
+      <ProductManager initialProducts={products} />
+    </AdminLayout>
   );
 }
-
