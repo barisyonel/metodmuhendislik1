@@ -159,6 +159,78 @@ export default function ElektrikPanoUretimiPage() {
                   </div>
                 </div>
               </div>
+
+              {/* Hızlı Linkler Bölümü */}
+              <div className="mt-12 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8 border-2 border-blue-200">
+                <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-6">
+                  Daha Fazla Bilgi
+                </h2>
+                <p className="text-slate-700 text-lg mb-6">
+                  Elektrik panoları hakkında detaylı bilgilere ulaşmak için aşağıdaki sayfaları ziyaret edebilirsiniz:
+                </p>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <Link
+                    href="/hizmetler/elektrik-pano-uretime/kullanim-alanlari"
+                    className="bg-white hover:bg-blue-50 border-2 border-blue-200 hover:border-blue-400 rounded-xl p-4 transition-all hover:shadow-lg hover:-translate-y-1"
+                  >
+                    <div className="text-3xl mb-2">📍</div>
+                    <h3 className="font-black text-slate-900 mb-2">Kullanım Alanları</h3>
+                    <p className="text-slate-600 text-sm">
+                      Sektörlere göre elektrik pano kullanım alanları ve çözümler
+                    </p>
+                  </Link>
+                  <Link
+                    href="/hizmetler/elektrik-pano-uretime/teknik-ozellikler"
+                    className="bg-white hover:bg-blue-50 border-2 border-blue-200 hover:border-blue-400 rounded-xl p-4 transition-all hover:shadow-lg hover:-translate-y-1"
+                  >
+                    <div className="text-3xl mb-2">🔧</div>
+                    <h3 className="font-black text-slate-900 mb-2">Teknik Özellikler</h3>
+                    <p className="text-slate-600 text-sm">
+                      Standartlar, IP sınıfları ve teknik parametreler
+                    </p>
+                  </Link>
+                  <Link
+                    href="/hizmetler/elektrik-pano-uretime/uretim-sureci"
+                    className="bg-white hover:bg-blue-50 border-2 border-blue-200 hover:border-blue-400 rounded-xl p-4 transition-all hover:shadow-lg hover:-translate-y-1"
+                  >
+                    <div className="text-3xl mb-2">⚙️</div>
+                    <h3 className="font-black text-slate-900 mb-2">Üretim Süreci</h3>
+                    <p className="text-slate-600 text-sm">
+                      Adım adım üretim süreci ve kalite kontrol
+                    </p>
+                  </Link>
+                  <Link
+                    href="/hizmetler/elektrik-pano-uretime/adp-ana-dagitim-panosu"
+                    className="bg-white hover:bg-blue-50 border-2 border-blue-200 hover:border-blue-400 rounded-xl p-4 transition-all hover:shadow-lg hover:-translate-y-1"
+                  >
+                    <div className="text-3xl mb-2">⚡</div>
+                    <h3 className="font-black text-slate-900 mb-2">ADP Panosu</h3>
+                    <p className="text-slate-600 text-sm">
+                      Ana Dağıtım Panosu özellikleri ve kullanımı
+                    </p>
+                  </Link>
+                  <Link
+                    href="/hizmetler/elektrik-pano-uretime/mcc-motor-kontrol-merkezi"
+                    className="bg-white hover:bg-blue-50 border-2 border-blue-200 hover:border-blue-400 rounded-xl p-4 transition-all hover:shadow-lg hover:-translate-y-1"
+                  >
+                    <div className="text-3xl mb-2">🔌</div>
+                    <h3 className="font-black text-slate-900 mb-2">MCC Panosu</h3>
+                    <p className="text-slate-600 text-sm">
+                      Motor Kontrol Merkezi detayları
+                    </p>
+                  </Link>
+                  <Link
+                    href="/hizmetler/elektrik-pano-uretime/sss"
+                    className="bg-white hover:bg-blue-50 border-2 border-blue-200 hover:border-blue-400 rounded-xl p-4 transition-all hover:shadow-lg hover:-translate-y-1"
+                  >
+                    <div className="text-3xl mb-2">❓</div>
+                    <h3 className="font-black text-slate-900 mb-2">Sık Sorulan Sorular</h3>
+                    <p className="text-slate-600 text-sm">
+                      Elektrik pano hakkında merak edilenler
+                    </p>
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
         </section>

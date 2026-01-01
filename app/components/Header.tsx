@@ -109,6 +109,8 @@ export default function Header({ initialServices = [] }: { initialServices?: Ser
     { name: "Hakkımızda", href: "/kurumsal/hakkimizda" },
     { name: "Kalite Politikamız", href: "/kurumsal/kalite-politikamiz" },
     { name: "Kalite Belgelerimiz", href: "/kurumsal/kalite-belgelerimiz" },
+    { name: "Sürdürülebilirlik", href: "/kurumsal/surdurulebilirlik" },
+    { name: "Ar-Ge", href: "/kurumsal/arge" },
   ];
 
   const isActive = (href: string) => pathname === href;
@@ -165,7 +167,7 @@ export default function Header({ initialServices = [] }: { initialServices?: Ser
         style={{ top: isScrolled ? "0" : "40px" }}
       >
         <div className="container mx-auto px-4 md:px-6">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between relative">
             {/* LOGO */}
             <Link
               href="/"
@@ -187,12 +189,13 @@ export default function Header({ initialServices = [] }: { initialServices?: Ser
 
             {/* MASAÜSTÜ NAVİGASYON - ORTALANMIŞ */}
             <nav
-              className="hidden lg:flex items-center gap-3 absolute left-1/2 -translate-x-1/2"
+              className="hidden lg:flex items-center gap-1.5 xl:gap-3 absolute left-1/2 -translate-x-1/2 ml-12 xl:ml-0"
+              style={{ minWidth: 'max-content' }}
               aria-label="Ana Navigasyon"
             >
               <Link
                 href="/"
-                className={`relative px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
+                className={`relative px-3 xl:px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 whitespace-nowrap ${
                   isActive("/")
                     ? "text-blue-600 bg-blue-50"
                     : "text-slate-700 hover:text-blue-600 hover:bg-slate-50"
@@ -232,7 +235,7 @@ export default function Header({ initialServices = [] }: { initialServices?: Ser
                       setClickedMenu("h");
                     }
                   }}
-                  className={`relative px-5 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 transition-all duration-200 ${
+                  className={`relative px-3 xl:px-5 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-1.5 xl:gap-2 transition-all duration-200 whitespace-nowrap ${
                     activeMenu === "h" || pathname?.startsWith("/hizmetler")
                       ? "text-blue-600 bg-blue-50"
                       : "text-slate-700 hover:text-blue-600 hover:bg-slate-50"
@@ -324,7 +327,7 @@ export default function Header({ initialServices = [] }: { initialServices?: Ser
 
               <Link
                 href="/projeler"
-                className={`relative px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
+                className={`relative px-3 xl:px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 whitespace-nowrap ${
                   isActive("/projeler") || pathname?.startsWith("/projeler")
                     ? "text-blue-600 bg-blue-50"
                     : "text-slate-700 hover:text-blue-600 hover:bg-slate-50"
@@ -335,7 +338,7 @@ export default function Header({ initialServices = [] }: { initialServices?: Ser
 
               <Link
                 href="/urunler"
-                className={`relative px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
+                className={`relative px-3 xl:px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 whitespace-nowrap ${
                   isActive("/urunler") || pathname?.startsWith("/urunler")
                     ? "text-blue-600 bg-blue-50"
                     : "text-slate-700 hover:text-blue-600 hover:bg-slate-50"
@@ -346,7 +349,7 @@ export default function Header({ initialServices = [] }: { initialServices?: Ser
 
               <Link
                 href="/iletisim"
-                className={`relative px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
+                className={`relative px-3 xl:px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 whitespace-nowrap ${
                   isActive("/iletisim") || pathname?.startsWith("/iletisim")
                     ? "text-blue-600 bg-blue-50"
                     : "text-slate-700 hover:text-blue-600 hover:bg-slate-50"
@@ -385,7 +388,7 @@ export default function Header({ initialServices = [] }: { initialServices?: Ser
                       setClickedMenu("k");
                     }
                   }}
-                  className={`relative px-5 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 transition-all duration-200 ${
+                  className={`relative px-3 xl:px-5 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-1.5 xl:gap-2 transition-all duration-200 whitespace-nowrap ${
                     activeMenu === "k" || pathname?.startsWith("/kurumsal")
                       ? "text-blue-600 bg-blue-50"
                       : "text-slate-700 hover:text-blue-600 hover:bg-slate-50"

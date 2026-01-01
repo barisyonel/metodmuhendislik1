@@ -184,6 +184,18 @@ export default function Footer({ initialServices = [] }: { initialServices?: Ser
                     <span>Hakkımızda</span>
                   </Link>
                 </li>
+                <li>
+                  <Link href="/kurumsal/surdurulebilirlik" className="text-slate-300 hover:text-white transition-colors text-base font-semibold flex items-center gap-2 group">
+                    <span className="w-2 h-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:scale-125"></span>
+                    <span>Sürdürülebilirlik</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/kurumsal/arge" className="text-slate-300 hover:text-white transition-colors text-base font-semibold flex items-center gap-2 group">
+                    <span className="w-2 h-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:scale-125"></span>
+                    <span>Ar-Ge</span>
+                  </Link>
+                </li>
               </ul>
             </div>
 
@@ -343,6 +355,18 @@ export default function Footer({ initialServices = [] }: { initialServices?: Ser
                   className="text-slate-400 hover:text-white transition-colors text-sm"
                 >
                   Kalite Politikamız
+                </Link>
+                <Link
+                  href="/kurumsal/surdurulebilirlik"
+                  className="text-slate-400 hover:text-white transition-colors text-sm"
+                >
+                  Sürdürülebilirlik
+                </Link>
+                <Link
+                  href="/kurumsal/arge"
+                  className="text-slate-400 hover:text-white transition-colors text-sm"
+                >
+                  Ar-Ge
                 </Link>
               </div>
             </div>
