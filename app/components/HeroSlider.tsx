@@ -60,26 +60,19 @@ export default function HeroSlider({ initialSliders = [] }: { initialSliders?: S
     );
     const videoUrl = activeSliderWithVideo?.video_url || null;
     
-    // Debug için console.log (geliştirme ortamında)
-    if (process.env.NODE_ENV === 'development') {
-      console.log('🎥 Video URL kontrolü:', {
-        totalSliders: initialSliders.length,
-        activeSliders: initialSliders.filter(s => s.is_active === true || s.is_active === 1).length,
-        foundVideoUrl: videoUrl,
-        activeSliderWithVideo: activeSliderWithVideo ? {
-          id: activeSliderWithVideo.id,
-          video_url: activeSliderWithVideo.video_url
-        } : null
-      });
-    }
     
     return videoUrl;
+  });
+
+  // Client-side hydration kontrolü - useEffect yerine useState initializer kullan
+  const [isMounted] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return true;
   });
 
   useEffect(() => {
     // Admin panelinden güncelleme event'ini dinle
     const handleSliderUpdate = () => {
-      console.log("🔄 Slider güncelleme event'i alındı, sayfa yenileniyor...");
       // Sayfayı yenile (server component tekrar çalışacak)
       window.location.reload();
     };
@@ -110,7 +103,8 @@ export default function HeroSlider({ initialSliders = [] }: { initialSliders?: S
   return (
     <div className="h-screen w-full relative">
       {/* Video - Slider'ın sağ alt köşesinde sabit (absolute pozisyon) */}
-      {globalVideoUrl && globalVideoUrl.trim() !== '' && (
+      {/* Sadece client-side'da render et (hydration hatasını önlemek için) */}
+      {isMounted && globalVideoUrl && globalVideoUrl.trim() !== '' && (
         <div className="absolute bottom-6 right-6 z-[100] w-64 md:w-80 lg:w-96 rounded-lg overflow-hidden shadow-2xl border-2 border-white/20 backdrop-blur-sm bg-black/20">
           <video
             src={globalVideoUrl}
@@ -120,12 +114,13 @@ export default function HeroSlider({ initialSliders = [] }: { initialSliders?: S
             playsInline
             controls={false}
             className="w-full h-auto"
+            suppressHydrationWarning
             onError={(e) => {
-              console.error('❌ Video yükleme hatası:', globalVideoUrl, e);
+              // Video yükleme hatası - sessizce handle et
             }}
             onLoadedData={() => {
               if (process.env.NODE_ENV === 'development') {
-                console.log('✅ Video başarıyla yüklendi:', globalVideoUrl);
+                // Video başarıyla yüklendi
               }
             }}
           >

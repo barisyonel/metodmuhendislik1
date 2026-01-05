@@ -30,7 +30,7 @@ function fixTurkishEncoding(text: string | null | undefined): string {
     return Buffer.from(text, 'latin1').toString('utf8');
   } catch (error) {
     // Hata durumunda orijinal text'i döndür
-    console.warn("Encoding düzeltme hatası:", error);
+    // Encoding düzeltme hatası - orijinal text'i döndür
     return text;
   }
 }
@@ -55,7 +55,6 @@ export default function ProductsList({ initialProducts = [] }: { initialProducts
   useEffect(() => {
     // Admin panelinden güncelleme event'ini dinle
     const handleProductUpdate = () => {
-      console.log("🔄 Ürün güncelleme eventi alındı, sayfa yenileniyor...");
       // Sayfayı yenile (server component tekrar çalışacak)
       window.location.reload();
     };
@@ -83,7 +82,7 @@ export default function ProductsList({ initialProducts = [] }: { initialProducts
           images.push(...validImages);
         }
       } catch (e) {
-        console.error("Images parse error:", e, "Raw images:", product.images);
+        // Parse hatası - görmezden gel
       }
     }
     
@@ -133,38 +132,22 @@ export default function ProductsList({ initialProducts = [] }: { initialProducts
           key={product.id}
           className="group relative overflow-hidden rounded-2xl bg-white border-2 border-slate-200 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 flex flex-col h-full"
         >
-          {/* Ürün Numarası Badge */}
-          <div className="absolute top-4 left-4 z-20 bg-blue-600 text-white w-12 h-12 rounded-full flex items-center justify-center font-black text-lg shadow-lg group-hover:scale-110 transition-transform">
-            {String(index + 1).padStart(2, '0')}
-          </div>
           {/* Ürün Görseli - Sabit Yükseklik */}
-          <div className="relative w-full h-80 bg-gray-50 overflow-hidden flex items-center justify-center">
+          <div className="relative w-full h-[420px] bg-gray-50 overflow-hidden">
             {productImages.length > 0 ? (
               <>
                 {/* Ana görsel */}
                 <Image
                   src={productImages[0]}
                   alt={product.title}
-                  width={600}
-                  height={400}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  fill
+                  className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-700"
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
-                {/* Hover'da ikinci görsel (eğer varsa) */}
-                {hasMultipleImages && productImages[1] && (
-                  <Image
-                    src={productImages[1]}
-                    alt={`${product.title} - Görsel 2`}
-                    width={600}
-                    height={400}
-                    className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  />
-                )}
                 {/* Görsel sayacı badge */}
                 {hasMultipleImages && (
-                  <div className="absolute top-3 right-3 bg-black/60 text-white px-3 py-1 rounded-full text-xs font-bold z-10 backdrop-blur-sm">
-                    📸 {productImages.length}
+                  <div className="absolute top-3 right-3 bg-black/70 text-white px-2.5 py-1 rounded-lg text-xs font-semibold z-10 backdrop-blur-sm shadow-md">
+                    {productImages.length} görsel
                   </div>
                 )}
               </>
@@ -173,8 +156,12 @@ export default function ProductsList({ initialProducts = [] }: { initialProducts
                 <span className="text-gray-400 text-sm">Görsel yükleniyor...</span>
               </div>
             )}
-            {/* Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            {/* Overlay - İncele yazısı */}
+            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center z-20">
+              <span className="text-white text-xl font-bold px-6 py-3 bg-blue-600 rounded-lg shadow-lg transform group-hover:scale-105 transition-transform">
+                İncele
+              </span>
+            </div>
             {/* Kategori Badge */}
             {product.category && (
               <div className="absolute top-4 left-4 z-10">

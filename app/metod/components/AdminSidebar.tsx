@@ -101,24 +101,23 @@ export default function AdminSidebar() {
       {/* Sidebar */}
       <aside
         className={`
-          fixed top-0 left-0 h-full w-72 bg-white border-r border-slate-200 z-40
+          fixed top-0 left-0 h-full w-64 bg-white border-r border-slate-200 z-40
           transform transition-transform duration-300 ease-in-out
           ${isMobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
         `}
       >
         {/* Sidebar Header */}
-        <div className="h-20 border-b border-slate-200 flex items-center justify-between px-6">
+        <div className="h-16 border-b border-slate-200 flex items-center justify-between px-4">
           <Link
             href="/metod"
-            className="flex items-center gap-3 group"
+            className="flex items-center gap-2 group"
             onClick={() => setIsMobileOpen(false)}
           >
-            <div className="bg-gradient-to-br from-blue-600 to-blue-700 p-2.5 rounded-xl group-hover:scale-110 transition-transform">
-              <span className="text-white text-xl font-black">M</span>
+            <div className="bg-blue-600 p-2 rounded-lg group-hover:bg-blue-700 transition-colors">
+              <span className="text-white text-lg font-bold">M</span>
             </div>
             <div>
-              <h2 className="text-lg font-black text-slate-900">Admin Panel</h2>
-              <p className="text-xs text-slate-500">Metod Mühendislik</p>
+              <h2 className="text-base font-bold text-slate-900">Admin Panel</h2>
             </div>
           </Link>
           <button
@@ -143,7 +142,7 @@ export default function AdminSidebar() {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto p-4 space-y-2">
+        <nav className="flex-1 overflow-y-auto p-3 space-y-1">
           {navItems.map((item) => {
             const active = isActive(item.href);
             return (
@@ -152,44 +151,30 @@ export default function AdminSidebar() {
                 href={item.href}
                 onClick={() => setIsMobileOpen(false)}
                 className={`
-                  group flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200
+                  flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-150
                   ${
                     active
-                      ? "bg-gradient-to-r " +
-                        item.color +
-                        " text-white shadow-lg shadow-blue-500/20"
-                      : "text-slate-700 hover:bg-slate-50"
+                      ? "bg-blue-600 text-white font-medium"
+                      : "text-slate-700 hover:bg-slate-100"
                   }
                 `}
               >
-                <span className="text-2xl">{item.icon}</span>
-                <div className="flex-1 min-w-0">
-                  <div className="font-semibold text-sm">{item.title}</div>
-                  {item.description && (
-                    <div
-                      className={`text-xs ${
-                        active ? "text-white/80" : "text-slate-500"
-                      }`}
-                    >
-                      {item.description}
-                    </div>
-                  )}
-                </div>
-                {active && <div className="w-2 h-2 bg-white rounded-full" />}
+                <span className="text-lg">{item.icon}</span>
+                <span className="text-sm">{item.title}</span>
               </Link>
             );
           })}
         </nav>
 
         {/* Sidebar Footer */}
-        <div className="p-4 border-t border-slate-200">
+        <div className="p-3 border-t border-slate-200">
           <Link
             href="/"
             target="_blank"
-            className="flex items-center gap-3 px-4 py-2 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors text-sm font-medium"
+            className="flex items-center gap-2 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors text-sm"
           >
             <svg
-              className="w-5 h-5"
+              className="w-4 h-4"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"

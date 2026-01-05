@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     default: "Metod Mühendislik | Endüstriyel Üretim ve Mühendislik Çözümleri",
     template: "%s | Metod Mühendislik"
   },
-  description: "CNC lazer kesim, CNC büküm, metal kaynak, elektrik pano, marin pano ve mühendislik çözümleri. Endüstriyel üretimde kalite ve güvenin adresi. 20+ yıllık deneyim ile hizmetinizdeyiz.",
+  description: "CNC lazer kesim, CNC büküm, metal kaynak, elektrik pano, marin pano ve mühendislik çözümleri. Endüstriyel üretimde kalite ve güvenin adresi. 10+ yıllık deneyim ile hizmetinizdeyiz.",
   keywords: ["CNC lazer kesim", "CNC büküm", "kaynak", "metal kaynak", "elektrik pano", "marin pano", "endüstriyel üretim", "mühendislik çözümleri", "çelik konstrüksiyon", "elektrostatik toz boya"],
   authors: [{ name: "Metod Mühendislik" }],
   creator: "Metod Mühendislik",

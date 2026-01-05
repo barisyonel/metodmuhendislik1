@@ -10,7 +10,7 @@ export const revalidate = 0;
 export const metadata: Metadata = {
   title: "Hizmetlerimiz | CNC Lazer Kesim, Büküm, Kaynak, Elektrik Pano ve Çelik Konstrüksiyon | Metod Mühendislik",
   description:
-    "CNC lazer kesim, CNC büküm, metal kaynak, elektrostatik toz boya, mağaza raf sistemleri, çelik konstrüksiyon, elektrik pano ve marin pano üretimi hizmetlerimiz. İstanbul'da profesyonel endüstriyel üretim çözümleri. 20+ yıllık deneyim.",
+    "CNC lazer kesim, CNC büküm, metal kaynak, elektrostatik toz boya, mağaza raf sistemleri, çelik konstrüksiyon, elektrik pano ve marin pano üretimi hizmetlerimiz. İstanbul'da profesyonel endüstriyel üretim çözümleri. 10+ yıllık deneyim.",
   keywords:
     "CNC lazer kesim, CNC büküm, kaynak, metal kaynak, elektrostatik toz boya, mağaza raf, çelik konstrüksiyon, elektrik pano, marin pano, elektrik pano üretimi, İstanbul, endüstriyel üretim, Metod Mühendislik",
   openGraph: {
@@ -51,7 +51,7 @@ const fallbackServices = [
     name: "Elektrik Pano Üretimi",
     href: "/hizmetler/elektrik-pano-uretime",
     icon: "⚡",
-    description: "20+ yıllık deneyimimizle elektrik pano ve marin pano üretiminde sektörün öncü firması. Sıvaüstü, sıvaaltı, dahili ve marin pano üretimi.",
+    description: "10+ yıllık deneyimimizle elektrik pano ve marin pano üretiminde sektörün öncü firması. Sıvaüstü, sıvaaltı, dahili ve marin pano üretimi.",
     sort_order: 1,
     is_active: true,
   },
@@ -117,7 +117,7 @@ export default async function HizmetlerPage() {
 
   // İstatistikler
   const stats = [
-    { number: "20+", label: "Yıllık Deneyim", icon: "📅" },
+    { number: "10+", label: "Yıllık Deneyim", icon: "📅" },
     { number: "1000+", label: "Tamamlanan Proje", icon: "✅" },
     { number: "500+", label: "Mutlu Müşteri", icon: "😊" },
     { number: "7", label: "Hizmet Alanı", icon: "⚡" },
@@ -149,7 +149,7 @@ export default async function HizmetlerPage() {
               
               {/* Alt Başlık */}
               <p className="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto leading-relaxed mb-8">
-                20+ yıllık deneyimimizle profesyonel çözümler sunuyoruz. 
+                10+ yıllık deneyimimizle profesyonel çözümler sunuyoruz. 
                 <span className="block mt-2 text-white font-semibold">
                   CNC lazer kesimden elektrik pano üretimine kadar geniş hizmet yelpazemiz.
                 </span>
@@ -270,7 +270,7 @@ export default async function HizmetlerPage() {
                   {
                     icon: "⭐",
                     title: "Kaliteli İşçilik",
-                    description: "20+ yıllık deneyimimizle en yüksek kalite standartlarında üretim",
+                    description: "10+ yıllık deneyimimizle en yüksek kalite standartlarında üretim",
                   },
                   {
                     icon: "⚡",
@@ -360,7 +360,7 @@ export default async function HizmetlerPage() {
                 </h2>
                 <div className="space-y-6 text-slate-700 leading-relaxed">
                   <p className="text-lg">
-                    Metod Mühendislik olarak, 20+ yıllık deneyimimizle endüstriyel üretim sektöründe 
+                    Metod Mühendislik olarak, 10+ yıllık deneyimimizle endüstriyel üretim sektöründe 
                     öncü bir firma olarak hizmet vermekteyiz. İstanbul merkezli olarak Türkiye genelinde 
                     hizmet veren firmamız, CNC lazer kesim, CNC büküm, metal kaynak, elektrostatik toz boya, 
                     mağaza raf sistemleri, çelik konstrüksiyon ve elektrik pano üretimi alanlarında 

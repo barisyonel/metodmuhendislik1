@@ -42,7 +42,7 @@ export default function KalitePolitikasi() {
                 <p className="text-slate-700 leading-relaxed mb-4">
                   Metod Mühendislik olarak, kaliteyi sadece ürün ve hizmetlerimizde değil,
                   tüm iş süreçlerimizde ve müşteri ilişkilerimizde temel değer olarak
-                  görüyoruz. 20+ yıllık deneyimimizle, endüstriyel üretim sektöründe
+                  görüyoruz. 10+ yıllık deneyimimizle, endüstriyel üretim sektöründe
                   kalitenin öncüsü olmaya devam ediyoruz.
                 </p>
                 <p className="text-slate-700 leading-relaxed">

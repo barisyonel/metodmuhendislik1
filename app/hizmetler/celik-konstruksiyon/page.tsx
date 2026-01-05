@@ -21,7 +21,7 @@ export default function CelikKonstruksiyonPage() {
           {/* Arka Plan Görseli */}
           <div className="absolute inset-0 z-0">
             <Image
-              src="/Çelik Konstruksiyon.png"
+              src="/Çelik Konstrüksiyon.png"
               alt="Çelik Konstrüksiyon - Metod Mühendislik"
               fill
               className="object-cover opacity-20"
@@ -50,7 +50,7 @@ export default function CelikKonstruksiyonPage() {
               <div className="mb-12 rounded-2xl overflow-hidden shadow-2xl">
                 <div className="relative h-96 w-full">
                   <Image
-                    src="/Çelik Konstruksiyon.png"
+                    src="/Çelik Konstrüksiyon.png"
                     alt="Çelik Konstrüksiyon - Metod Mühendislik"
                     fill
                     className="object-cover"

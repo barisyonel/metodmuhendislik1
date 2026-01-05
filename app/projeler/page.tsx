@@ -7,7 +7,7 @@ import { query } from "@/lib/db";
 export const metadata: Metadata = {
   title: "Projelerimiz | Gemiler için Elektrik Panoları ve Endüstriyel Çözümler",
   description:
-    "Metod Mühendislik'in tamamladığı projeler: Marin pano (gemi elektrik panoları), sıvaüstü panolar, sıvaaltı panolar, endüstriyel elektrik panoları. 20+ yıllık deneyimle gerçekleştirdiğimiz başarılı projeler.",
+    "Metod Mühendislik'in tamamladığı projeler: Marin pano (gemi elektrik panoları), sıvaüstü panolar, sıvaaltı panolar, endüstriyel elektrik panoları. 10+ yıllık deneyimle gerçekleştirdiğimiz başarılı projeler.",
   keywords:
     "gemi elektrik panoları, marin pano, denizcilik elektrik panoları, gemi pano üretimi, endüstriyel projeler, elektrik pano projeleri, tamamlanan projeler, Metod Mühendislik projeleri",
 };
@@ -62,7 +62,7 @@ export default async function ProjelerPage() {
                 Projelerimiz
               </h1>
               <p className="text-xl md:text-2xl text-blue-100 max-w-2xl mx-auto">
-                20+ yıllık deneyimimizle gerçekleştirdiğimiz elektrik pano ve endüstriyel üretim projeleri.
+                10+ yıllık deneyimimizle gerçekleştirdiğimiz elektrik pano ve endüstriyel üretim projeleri.
               </p>
             </div>
           </div>

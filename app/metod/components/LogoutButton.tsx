@@ -32,11 +32,11 @@ export default function LogoutButton() {
     <button
       onClick={handleLogout}
       disabled={loading}
-      className="flex items-center gap-2 bg-red-600 hover:bg-red-700 disabled:bg-red-400 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg font-semibold transition-all shadow-sm hover:shadow-md"
+      className="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 disabled:bg-slate-100 disabled:cursor-not-allowed text-slate-700 px-3 py-2 rounded-lg text-sm transition-colors"
     >
       {loading ? (
         <>
-          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+          <div className="w-4 h-4 border-2 border-slate-300 border-t-slate-600 rounded-full animate-spin" />
           <span>Çıkış yapılıyor...</span>
         </>
       ) : (
@@ -54,7 +54,7 @@ export default function LogoutButton() {
               d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
             />
           </svg>
-          <span>Çıkış Yap</span>
+          <span>Çıkış</span>
         </>
       )}
     </button>

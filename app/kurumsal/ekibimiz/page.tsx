@@ -5,13 +5,13 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Ekibimiz | Metod Mühendislik - Uzman Ekip ve Deneyimli Profesyoneller",
   description:
-    "Metod Mühendislik&apos;in deneyimli ekibi: Uzman mühendisler, teknik ekip ve yönetim kadrosu. 20+ yıllık sektör deneyimi ile kaliteli hizmet sunuyoruz.",
+    "Metod Mühendislik&apos;in deneyimli ekibi: Uzman mühendisler, teknik ekip ve yönetim kadrosu. 10+ yıllık sektör deneyimi ile kaliteli hizmet sunuyoruz.",
   keywords:
     "Metod Mühendislik ekibi, uzman mühendisler, teknik ekip, elektrik pano uzmanları, endüstriyel üretim ekibi",
   openGraph: {
     title: "Ekibimiz | Metod Mühendislik",
     description:
-      "20+ yıllık deneyimle elektrik pano ve endüstriyel üretim alanında uzman ekibimizle tanışın.",
+      "10+ yıllık deneyimle elektrik pano ve endüstriyel üretim alanında uzman ekibimizle tanışın.",
     type: "website",
     locale: "tr_TR",
   },
@@ -24,7 +24,7 @@ const teamMembers = [
     name: "Yönetim Ekibi",
     position: "Genel Müdürlük",
     description:
-      "20+ yıllık sektör deneyimi ile şirketin stratejik yönetimi ve gelişimi konusunda liderlik yapmaktadır.",
+      "10+ yıllık sektör deneyimi ile şirketin stratejik yönetimi ve gelişimi konusunda liderlik yapmaktadır.",
     icon: "👔",
   },
   {
@@ -88,7 +88,7 @@ export default function Ekibimiz() {
                 Ekibimiz
               </h1>
               <p className="text-xl text-blue-100 leading-relaxed">
-                20+ yıllık deneyime sahip, uzman ve deneyimli ekibimizle tanışın. 
+                10+ yıllık deneyime sahip, uzman ve deneyimli ekibimizle tanışın. 
                 Her birimiz, kaliteli hizmet sunmak için çalışıyoruz.
               </p>
             </div>
@@ -197,7 +197,7 @@ export default function Ekibimiz() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-12 max-w-6xl mx-auto">
               {[
                 {
-                  number: "20+",
+                  number: "10+",
                   label: "Yıllık Deneyim",
                   icon: "⭐",
                 },

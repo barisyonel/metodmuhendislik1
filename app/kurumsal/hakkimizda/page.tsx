@@ -6,13 +6,13 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Hakkımızda | Metod Mühendislik - Elektrik Pano Üretimi ve Endüstriyel Çözümler",
   description:
-    "Metod Mühendislik, 20+ yıllık deneyimiyle İstanbul Tuzla&apos;daki modern tesisimizde elektrik pano üretimi, marin pano, CNC lazer kesim ve endüstriyel üretim hizmetleri sunmaktadır. ISO 9001 kalite sertifikası ile güvenilir çözüm ortağınız.",
+    "Metod Mühendislik, 10+ yıllık deneyimiyle İstanbul Tuzla&apos;daki modern tesisimizde elektrik pano üretimi, marin pano, CNC lazer kesim ve endüstriyel üretim hizmetleri sunmaktadır. ISO 9001 kalite sertifikası ile güvenilir çözüm ortağınız.",
   keywords:
-    "Metod Mühendislik, hakkımızda, şirket tarihçesi, İstanbul elektrik pano, Tuzla üretim tesisi, ISO 9001, endüstriyel üretim, 20 yıllık deneyim",
+    "Metod Mühendislik, hakkımızda, şirket tarihçesi, İstanbul elektrik pano, Tuzla üretim tesisi, ISO 9001, endüstriyel üretim, 10 yıllık deneyim",
   openGraph: {
     title: "Hakkımızda | Metod Mühendislik",
     description:
-      "20+ yıllık deneyimle İstanbul&apos;da elektrik pano ve endüstriyel üretim çözümleri sunan Metod Mühendislik hakkında bilgi edinin.",
+      "10+ yıllık deneyimle İstanbul&apos;da elektrik pano ve endüstriyel üretim çözümleri sunan Metod Mühendislik hakkında bilgi edinin.",
     type: "website",
     locale: "tr_TR",
   },
@@ -52,7 +52,7 @@ export default function Hakkimizda() {
                   Biz Kimiz
                 </h2>
                 <p className="text-xl font-medium text-slate-900 leading-relaxed mb-6">
-                  Modern dünyanın en temel ihtiyacı olan enerjinin, güvenli, verimli ve sürdürülebilir bir şekilde yönetilmesi, mühendislik sanatının en kritik alanlarından biridir. <strong>Metod Mühendislik</strong> olarak bizler, 20+ yıllık deneyimimizle, enerjinin olduğu her yerde güveni ve kaliteyi inşa etmek amacıyla faaliyet gösteriyoruz.
+                  Modern dünyanın en temel ihtiyacı olan enerjinin, güvenli, verimli ve sürdürülebilir bir şekilde yönetilmesi, mühendislik sanatının en kritik alanlarından biridir. <strong>Metod Mühendislik</strong> olarak bizler, 10+ yıllık deneyimimizle, enerjinin olduğu her yerde güveni ve kaliteyi inşa etmek amacıyla faaliyet gösteriyoruz.
                 </p>
                 <p className="text-slate-700 text-lg leading-relaxed mb-6">
                   Kurulduğumuz ilk günden bu yana, sadece bir pano üreticisi olmayı değil, aynı zamanda elektrik taahhüt ve enerji yönetimi sektöründe güvenilir bir çözüm ortağı olmayı hedefledik. Bugün geldiğimiz noktada, akademik seviyedeki uzman teknik kadromuz, sahadaki dinamikleri bilen deneyimli satış ekibimiz ve endüstri 4.0 standartlarına uyumlu güçlü altyapımız ile sektörümüzde hak ettiğimiz lider konumu korumanın gururunu yaşıyoruz.
@@ -78,7 +78,7 @@ export default function Hakkimizda() {
                     10+ yıllık deneyimimiz, elektrik pano üretimi konusunda hizmet vermek ve sektöre mühendislik tabanlı, kalite odaklı bir yaklaşım getirmek amacıyla kurulan şirketimizin, geçen süre zarfında istikrarlı bir büyüme grafiği çizdiğinin en somut kanıtıdır.
                   </p>
                   <p className="text-slate-700 text-lg leading-relaxed mb-4">
-                    Kuruluşumuzun ilk yıllarında yerel projelere odaklanarak kazandığımız saha tecrübesi, sonraki yıllarda bizi uluslararası arenaya taşıyan en büyük gücümüz olmuştur. &quot;20+ yıllık tecrübe&quot; söylemimiz, sadece geçen zamanı değil, bu zaman dilimine sığdırılan yüzlerce başarılı projeyi, çözülen binlerce teknik sorunu ve kazanılan sayısız müşteri memnuniyetini ifade eder.
+                    Kuruluşumuzun ilk yıllarında yerel projelere odaklanarak kazandığımız saha tecrübesi, sonraki yıllarda bizi uluslararası arenaya taşıyan en büyük gücümüz olmuştur. &quot;10+ yıllık tecrübe&quot; söylemimiz, sadece geçen zamanı değil, bu zaman dilimine sığdırılan yüzlerce başarılı projeyi, çözülen binlerce teknik sorunu ve kazanılan sayısız müşteri memnuniyetini ifade eder.
                   </p>
                   <p className="text-slate-700 text-lg leading-relaxed">
                     Bugün <strong>Metod Mühendislik</strong>; sadece metal ve kablodan oluşan sistemler üretmemekte, aynı zamanda geçmişten gelen tecrübesini bugünün teknolojisiyle harmanlayarak geleceğin enerji altyapılarını kurmaktadır. Yerli üretim bandımızdan çıkan her ürün, Türk mühendisliğinin ve işçiliğinin kalitesini dünyaya taşıyan birer elçi niteliğindedir.
@@ -246,7 +246,7 @@ export default function Hakkimizda() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                 {[
                   {
-                    number: "20+",
+                    number: "10+",
                     label: "Yıllık Deneyim",
                     description: "Sektörde lider konum",
                     icon: "⭐",
@@ -289,6 +289,64 @@ export default function Hakkimizda() {
                 <p className="text-slate-700 text-lg leading-relaxed text-center">
                   Zengin ürün yelpazesi, dinamik iş gücü ve yüksek kapasiteli yerli üretim bandımız sayesinde, senede ortalama <strong>50+ büyük ölçekli proje</strong> tamamlamaktayız. Her bir proje; dizayn, projelendirme, elektro montaj ve satış sonrası destek hizmeti dahil olmak üzere anahtar teslim (turn-key) mantığıyla yönetilmektedir.
                 </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Referans Firmalarımız */}
+        <section className="py-20 bg-white">
+          <div className="container mx-auto px-6">
+            <div className="max-w-7xl mx-auto">
+              <div className="text-center mb-12">
+                <span className="inline-block text-blue-600 font-black text-xs tracking-[0.4em] uppercase mb-4 px-4 py-1.5 bg-blue-100 rounded-full">
+                  Güvenilir İş Ortaklarımız
+                </span>
+                <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-6">
+                  Referans <span className="text-blue-600">Firmalarımız</span>
+                </h2>
+                <p className="text-lg md:text-xl text-slate-600 max-w-3xl mx-auto">
+                  Sektörün önde gelen firmalarıyla gerçekleştirdiğimiz başarılı işbirlikleri ve memnun müşterilerimiz.
+                </p>
+              </div>
+
+              {/* Referans Firmalar Grid */}
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                {[
+                  "TÜBİTAK",
+                  "Armelsan",
+                  "HTL",
+                  "Timfog",
+                  "Berrmak",
+                  "Marsis",
+                  "Bladeco",
+                  "Bronswerk",
+                  "Koal",
+                  "Markal",
+                  "Hürmarin",
+                  "Teknowel",
+                  "Baykon",
+                  "Gesan",
+                  "Goga Marin",
+                  "Hakan Otomasyon",
+                  "Moduler Makina",
+                  "Seal",
+                  "Etili Seramik",
+                  "Yalçın",
+                  "Atıksan",
+                  "CMS",
+                  "Wiesmarin",
+                  "Yelken Pano",
+                ].map((firma, index) => (
+                  <div
+                    key={index}
+                    className="bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl p-6 border-2 border-slate-200 hover:border-blue-400 hover:shadow-lg transition-all duration-300 text-center group"
+                  >
+                    <div className="text-slate-900 font-bold text-sm md:text-base group-hover:text-blue-600 transition-colors">
+                      {firma}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -416,7 +474,7 @@ export default function Hakkimizda() {
                  Sonuç
               </h2>
               <p className="text-xl text-blue-100 leading-relaxed mb-6">
-                <strong>Metod Mühendislik</strong>; 20+ yıllık deneyimi, uluslararası sertifikaları, güçlü mühendislik altyapısı ve %100 müşteri memnuniyeti odaklı çalışma prensibiyle, enerjinizin en güvenilir bekçisidir.
+                <strong>Metod Mühendislik</strong>; 10+ yıllık deneyimi, uluslararası sertifikaları, güçlü mühendislik altyapısı ve %100 müşteri memnuniyeti odaklı çalışma prensibiyle, enerjinizin en güvenilir bekçisidir.
               </p>
               <p className="text-lg text-blue-200 leading-relaxed mb-8">
                 Rusya&apos;nın soğuğundan Afrika&apos;nın sıcağına, İsviçre&apos;nin hassas standartlarından Papua Yeni Gine&apos;nin zorlu sahalarına kadar; elektriğin olduğu her yerde biz varız.

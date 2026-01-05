@@ -5,40 +5,108 @@ import Image from "next/image";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Elektrik Pano Üretimi | Metod Mühendislik",
+  title: "Elektrik Pano Üretimi İstanbul | Sıvaüstü, Sıvaaltı, Marin Pano | Metod Mühendislik",
   description:
-    "Elektrik pano üretimi. İstanbul'da sıvaüstü, sıvaaltı ve dahili pano üretimi. Güvenli ve verimli enerji dağıtım çözümleri için profesyonel hizmet.",
+    "İstanbul Tuzla'da elektrik pano üretimi. Sıvaüstü, sıvaaltı, dahili ve marin pano üretimi. IEC 61439 standartlarında, ISO 9001 sertifikalı elektrik panosu üretimi. 10+ yıllık deneyim, 12 ülkeye ihracat. Ücretsiz keşif ve teknik destek.",
   keywords:
-    "elektrik pano, marin pano, pano üretimi, elektrik panosu, enerji dağıtım, denizcilik pano, İstanbul",
+    "elektrik pano, elektrik panosu, pano üretimi, elektrik pano üretimi, sıvaüstü pano, sıvaaltı pano, dahili pano, marin pano, denizcilik pano, elektrik pano İstanbul, elektrik pano Tuzla, elektrik pano İTOSB, IEC 61439, ISO 9001, enerji dağıtım panosu, ana dağıtım panosu, ADP pano, MCC pano, kompanzasyon pano, otomasyon pano, DDC pano, UPS pano",
+  openGraph: {
+    title: "Elektrik Pano Üretimi İstanbul | Metod Mühendislik",
+    description:
+      "İstanbul Tuzla'da profesyonel elektrik pano üretimi. Sıvaüstü, sıvaaltı, dahili ve marin pano. IEC standartlarında, ISO 9001 sertifikalı. 10+ yıllık deneyim.",
+    type: "website",
+    locale: "tr_TR",
+    url: "https://www.metodmuhendislik.com/hizmetler/elektrik-pano-uretime",
+    siteName: "Metod Mühendislik",
+    images: [
+      {
+        url: "/elektrıkpano.png",
+        width: 1200,
+        height: 630,
+        alt: "Elektrik Pano Üretimi - Metod Mühendislik",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Elektrik Pano Üretimi İstanbul | Metod Mühendislik",
+    description: "İstanbul Tuzla'da profesyonel elektrik pano üretimi. IEC standartlarında, ISO 9001 sertifikalı.",
+    images: ["/elektrıkpano.png"],
+  },
+  alternates: {
+    canonical: "https://www.metodmuhendislik.com/hizmetler/elektrik-pano-uretime",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 export default function ElektrikPanoUretimiPage() {
+  // Breadcrumb Schema
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Ana Sayfa",
+        "item": "https://www.metodmuhendislik.com",
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Hizmetler",
+        "item": "https://www.metodmuhendislik.com/hizmetler",
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Elektrik Pano Üretimi",
+        "item": "https://www.metodmuhendislik.com/hizmetler/elektrik-pano-uretime",
+      },
+    ],
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbSchema),
+        }}
+      />
       <Header />
       <main className="bg-white min-h-screen pt-24 md:pt-28">
         <section className="relative bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white py-20 md:py-32 overflow-hidden">
           {/* Arka Plan Görseli */}
           <div className="absolute inset-0 z-0">
-            <Image
-              src="/elektrıkpano.png"
-              alt="Elektrik Pano Üretimi - Metod Mühendislik"
-              fill
-              className="object-cover opacity-20"
-              priority
-              quality={90}
-            />
+                  <Image
+                    src="/elektrıkpano.png"
+                    alt="Elektrik Pano Üretimi İstanbul - Sıvaüstü, Sıvaaltı, Dahili ve Marin Pano Üretimi - Metod Mühendislik"
+                    fill
+                    className="object-cover opacity-20"
+                    priority
+                    quality={90}
+                  />
             <div className="absolute inset-0 bg-gradient-to-br from-slate-900/90 via-blue-900/80 to-slate-900/90"></div>
           </div>
           <div className="container mx-auto px-6 relative z-10">
             <div className="max-w-4xl">
               <div className="text-6xl mb-6">⚡</div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-black mb-6 leading-tight">
-                Elektrik Pano Üretimi
+                Elektrik Pano Üretimi İstanbul | Profesyonel Pano Üretimi
               </h1>
               <p className="text-xl md:text-2xl text-blue-200 leading-relaxed">
-                Müşteri ihtiyaçlarına özel elektrik pano üretimi. Güvenli ve
-                verimli enerji dağıtım çözümleri.
+                İstanbul Tuzla'da müşteri ihtiyaçlarına özel elektrik pano üretimi. Sıvaüstü, sıvaaltı, dahili ve marin pano üretimi. IEC standartlarında, ISO 9001 sertifikalı. Güvenli ve verimli enerji dağıtım çözümleri.
               </p>
             </div>
           </div>
@@ -52,7 +120,7 @@ export default function ElektrikPanoUretimiPage() {
                 <div className="relative h-96 w-full">
                   <Image
                     src="/elektrıkpano.png"
-                    alt="Elektrik Pano Üretimi - Metod Mühendislik"
+                    alt="Elektrik Pano Üretimi İstanbul - Endüstriyel Elektrik Panosu Üretim Tesisi - Metod Mühendislik Tuzla"
                     fill
                     className="object-cover"
                     quality={90}
@@ -60,44 +128,81 @@ export default function ElektrikPanoUretimiPage() {
                 </div>
               </div>
 
+              {/* Schema.org Service Markup */}
+              <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                  __html: JSON.stringify({
+                    "@context": "https://schema.org",
+                    "@type": "Service",
+                    "serviceType": "Elektrik Pano Üretimi",
+                    "provider": {
+                      "@type": "Organization",
+                      "name": "Metod Mühendislik",
+                      "url": "https://www.metodmuhendislik.com",
+                      "logo": "https://www.metodmuhendislik.com/logo.png",
+                      "address": {
+                        "@type": "PostalAddress",
+                        "streetAddress": "İTOSB SANAYİ BÖLGESİ 3. YOL NO:21",
+                        "addressLocality": "TEPEÖREN - AKFİRAT TUZLA",
+                        "addressRegion": "İSTANBUL",
+                        "addressCountry": "TR",
+                      },
+                      "telephone": "+90-216-759-56-75",
+                      "email": "info@metodmuhendislik.com",
+                    },
+                    "areaServed": {
+                      "@type": "City",
+                      "name": "İstanbul",
+                    },
+                    "description":
+                      "İstanbul Tuzla'da profesyonel elektrik pano üretimi. Sıvaüstü, sıvaaltı, dahili ve marin pano üretimi. IEC 61439 standartlarında, ISO 9001 sertifikalı.",
+                    "offers": {
+                      "@type": "Offer",
+                      "description": "Elektrik Pano Üretimi Hizmeti",
+                    },
+                  }),
+                }}
+              />
+
               <div className="mb-12">
                 <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-6">
                   Elektrik Pano Üretimi ve Enerji Dağıtım Çözümleri
                 </h2>
                 <p className="text-slate-700 text-lg leading-relaxed mb-6">
-                  Elektrik pano üretimi, endüstriyel ve ticari yapılarda güvenli
+                  <strong>Elektrik pano üretimi</strong>, endüstriyel ve ticari yapılarda güvenli
                   enerji dağıtımı için kritik öneme sahiptir. Metod Mühendislik
-                  olarak, müşteri ihtiyaçlarına özel tasarım ve üretim çözümleri
-                  sunmaktayız.
+                  olarak, İstanbul Tuzla'da müşteri ihtiyaçlarına özel tasarım ve üretim çözümleri
+                  sunmaktayız. <strong>Elektrik pano</strong> üretimimizde IEC 61439 standartlarına uygun olarak çalışmakta ve ISO 9001 kalite yönetim sistemi ile sertifikalı hizmet vermekteyiz.
                 </p>
                 <p className="text-slate-700 text-lg leading-relaxed mb-6">
-                  Sıvaüstü elektrik pano, sıvaaltı elektrik pano, dahili
-                  elektrik pano, marin pano ve özel tip elektrik panolar
-                  üretmekteyiz. Elektrik pano ve marin pano üretimimizde,
+                  <strong>Sıvaüstü elektrik pano</strong>, <strong>sıvaaltı elektrik pano</strong>, <strong>dahili
+                  elektrik pano</strong>, <strong>marin pano</strong> ve özel tip <strong>elektrik panolar</strong>
+                  üretmekteyiz. <strong>Elektrik pano</strong> ve <strong>marin pano</strong> üretimimizde,
                   uluslararası standartlara uygun olarak çalışmakta ve kalite
-                  kontrol testlerinden geçirmekteyiz.
+                  kontrol testlerinden geçirmekteyiz. İstanbul, Tuzla ve İTOSB bölgesinde <strong>elektrik pano üretimi</strong> konusunda 10+ yıllık deneyime sahibiz.
                 </p>
               </div>
 
               <div className="mb-12">
                 <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-6">
-                  Pano Tipleri ve Üretim Süreçleri
+                  Elektrik Pano Tipleri ve Üretim Süreçleri
                 </h2>
                 <p className="text-slate-700 text-lg leading-relaxed mb-6">
                   Her projede, müşteri gereksinimlerini analiz ederek, en uygun
-                  teknik çözümleri sunmaktayız. Elektrik pano ve marin pano
+                  teknik çözümleri sunmaktayız. <strong>Elektrik pano</strong> ve <strong>marin pano</strong>
                   üretim hizmetlerimiz, fabrika binaları, ticari yapılar, konut
                   projeleri, endüstriyel tesisler ve denizcilik uygulamalarında
-                  yaygın olarak kullanılmaktadır.
+                  yaygın olarak kullanılmaktadır. İstanbul ve çevresinde <strong>elektrik pano üretimi</strong> konusunda uzman ekibimiz ile hizmet vermekteyiz.
                 </p>
                 <p className="text-slate-700 text-lg leading-relaxed mb-6">
-                  Elektrik pano ve marin pano üretimimizde, CNC lazer kesim ile
+                  <strong>Elektrik pano</strong> ve <strong>marin pano</strong> üretimimizde, CNC lazer kesim ile
                   gövde üretimi, CNC büküm ile şekillendirme ve metal kaynak
                   işlemleri ile birleştirme gerçekleştirilmektedir. Özellikle
-                  marin pano üretiminde, deniz ortamına dayanıklı paslanmaz
+                  <strong>marin pano</strong> üretiminde, deniz ortamına dayanıklı paslanmaz
                   çelik ve özel koruma sistemleri kullanılmaktadır. Yüzey
                   işlemleri için elektrostatik toz boya uygulanmakta ve montaj
-                  aşamasında elektrik ekipmanları yerleştirilmektedir.
+                  aşamasında elektrik ekipmanları yerleştirilmektedir. Tüm <strong>elektrik pano</strong> üretimimiz IEC 61439 standartlarına uygundur.
                 </p>
               </div>
 
@@ -106,31 +211,31 @@ export default function ElektrikPanoUretimiPage() {
                   Kalite Kontrol ve Güvenlik Standartları
                 </h2>
                 <p className="text-slate-700 text-lg leading-relaxed mb-6">
-                  Elektrik pano üretimimizde, uluslararası elektrik
-                  standartlarına uygun olarak çalışmakta ve kalite kontrol
-                  testlerinden geçirmekteyiz. Her pano, elektriksel testlerden
+                  <strong>Elektrik pano</strong> üretimimizde, uluslararası elektrik
+                  standartlarına (IEC 61439) uygun olarak çalışmakta ve kalite kontrol
+                  testlerinden geçirmekteyiz. Her <strong>elektrik pano</strong>, elektriksel testlerden
                   geçirilmekte ve güvenlik sertifikaları ile teslim
-                  edilmektedir.
+                  edilmektedir. ISO 9001 kalite yönetim sistemi ile sertifikalı <strong>elektrik pano üretimi</strong> hizmetimiz, İstanbul Tuzla'daki tesisimizde gerçekleştirilmektedir.
                 </p>
                 <p className="text-slate-700 text-lg leading-relaxed mb-6">
-                  Müşteri memnuniyeti ve güvenlik, elektrik pano üretimimizde en
+                  Müşteri memnuniyeti ve güvenlik, <strong>elektrik pano</strong> üretimimizde en
                   öncelikli konulardır. Uzman ekibimiz, her projede müşteri
                   gereksinimlerini analiz ederek, en uygun teknik çözümleri
-                  sunmaktadır.
+                  sunmaktadır. İstanbul ve çevresinde <strong>elektrik pano</strong> ihtiyacı olan tüm müşterilerimize profesyonel hizmet sunmaktayız.
                 </p>
               </div>
 
               <div className="mt-12 bg-slate-50 rounded-2xl p-8">
                 <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-8">
-                  Teknik Özellikler
+                  Elektrik Pano Teknik Özellikleri
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="flex justify-between items-center border-b border-slate-200 pb-4">
                     <span className="font-bold text-slate-900 uppercase text-sm tracking-wider">
-                      Pano Tipleri
+                      Elektrik Pano Tipleri
                     </span>
                     <span className="text-blue-600 font-semibold text-lg">
-                      Sıvaüstü, Sıvaaltı, Dahili
+                      Sıvaüstü, Sıvaaltı, Dahili, Marin
                     </span>
                   </div>
                   <div className="flex justify-between items-center border-b border-slate-200 pb-4">
@@ -138,7 +243,23 @@ export default function ElektrikPanoUretimiPage() {
                       Standartlar
                     </span>
                     <span className="text-blue-600 font-semibold text-lg">
-                      Uluslararası Elektrik Standartları
+                      IEC 61439, ISO 9001
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center border-b border-slate-200 pb-4">
+                    <span className="font-bold text-slate-900 uppercase text-sm tracking-wider">
+                      Lokasyon
+                    </span>
+                    <span className="text-blue-600 font-semibold text-lg">
+                      İstanbul Tuzla, İTOSB
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center border-b border-slate-200 pb-4">
+                    <span className="font-bold text-slate-900 uppercase text-sm tracking-wider">
+                      Deneyim
+                    </span>
+                    <span className="text-blue-600 font-semibold text-lg">
+                      10+ Yıl, 12 Ülkeye İhracat
                     </span>
                   </div>
                   <div className="flex justify-between items-center border-b border-slate-200 pb-4">
@@ -146,7 +267,7 @@ export default function ElektrikPanoUretimiPage() {
                       Kalite Kontrol
                     </span>
                     <span className="text-blue-600 font-semibold text-lg">
-                      Elektriksel Testler
+                      Elektriksel Testler, Sertifikalı
                     </span>
                   </div>
                   <div className="flex justify-between items-center border-b border-slate-200 pb-4">
@@ -154,7 +275,7 @@ export default function ElektrikPanoUretimiPage() {
                       Güvenlik
                     </span>
                     <span className="text-blue-600 font-semibold text-lg">
-                      Sertifikalı Üretim
+                      CE, TSE Standartları
                     </span>
                   </div>
                 </div>

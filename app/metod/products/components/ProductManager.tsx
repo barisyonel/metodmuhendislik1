@@ -142,9 +142,9 @@ export default function ProductManager({
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
-    // Maksimum 6 görsel kontrolü
+    // Maksimum 9 görsel kontrolü
     const currentImageCount = productImages.length;
-    const maxImages = 6;
+    const maxImages = 9;
 
     if (currentImageCount >= maxImages) {
       alert(
@@ -219,12 +219,12 @@ export default function ProductManager({
               return prev;
             }
             const newImages = [...prev, imageUrl];
-            const maxImages = 6;
+            const maxImages = 9;
             console.log(
               `📸 Görsel eklendi. Toplam görsel sayısı: ${newImages.length}/${maxImages}`,
             );
 
-            // Maksimum 6 görsel kontrolü
+            // Maksimum 9 görsel kontrolü
             if (newImages.length > maxImages) {
               alert(`⚠️ Maksimum ${maxImages} görsel ekleyebilirsiniz!`);
               return prev;
@@ -842,23 +842,21 @@ export default function ProductManager({
               {/* Ek Görseller (Galeri) */}
               <div className="bg-purple-50 p-4 rounded-lg border-2 border-purple-200">
                 <label className="block text-sm font-bold text-slate-700 mb-3">
-                  📸 Ek Görseller (Ürün detay sayfasında galeri olarak
-                  görünecek)
+                  Ek Görseller (Ürün detay sayfasında galeri olarak görünecek)
                 </label>
                 <div className="space-y-4">
                   {/* Görsel Sayısı Bilgisi */}
                   <div className="mb-2 p-2 bg-purple-100 rounded-lg">
                     <p className="text-sm font-bold text-purple-700">
-                      📸 {productImages.length} / 6 görsel yüklü
-                      {productImages.length >= 6 && (
+                      {productImages.length} / 9 görsel yüklü
+                      {productImages.length >= 9 && (
                         <span className="ml-2 text-red-600">
                           (Maksimum limit)
                         </span>
                       )}
                     </p>
                     <p className="text-xs text-purple-600 mt-1">
-                      💡 İlk görsel kapak fotoğrafı olarak ürün kartlarında
-                      görünecek
+                      İlk görsel kapak fotoğrafı olarak ürün kartlarında görünecek
                     </p>
                   </div>
 
@@ -883,13 +881,8 @@ export default function ProductManager({
                             unoptimized={true}
                           />
                           {img === imagePreview && (
-                            <div className="absolute top-1 left-1 bg-green-500 text-white px-2 py-1 rounded text-xs font-bold z-10">
-                              📸 Kapak
-                            </div>
-                          )}
-                          {index === 0 && img !== imagePreview && (
-                            <div className="absolute top-1 right-1 bg-blue-500 text-white px-2 py-1 rounded text-xs font-bold z-10">
-                              1️⃣
+                            <div className="absolute top-2 left-2 bg-green-500 text-white px-2 py-1 rounded text-xs font-semibold z-10 shadow-md">
+                              Ana Görsel
                             </div>
                           )}
                           <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
@@ -897,10 +890,10 @@ export default function ProductManager({
                               <button
                                 type="button"
                                 onClick={() => handleSetMainImage(img)}
-                                className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs font-bold"
+                                className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded text-xs font-semibold"
                                 title="Kapak fotoğrafı yap"
                               >
-                                📸 Kapak Yap
+                                Ana Görsel Yap
                               </button>
                             )}
                             <button
@@ -945,7 +938,7 @@ export default function ProductManager({
                         tıklayın.
                       </p>
                       <p className="text-xs text-slate-500">
-                        📌 Maksimum 6 görsel ekleyebilirsiniz. İlk görsel ürün
+                        Maksimum 9 görsel ekleyebilirsiniz. İlk görsel ürün
                         kartlarında kapak fotoğrafı olarak görünecek.
                       </p>
                       {productImages.length > 0 && (
@@ -1147,9 +1140,8 @@ export default function ProductManager({
                             />
                             {/* Görsel sayacı badge */}
                             {productImagesList.length > 1 && (
-                              <div className="absolute top-2 left-2 bg-black/70 text-white px-3 py-1 rounded-full text-xs font-bold z-10 backdrop-blur-sm flex items-center gap-1">
-                                <span>📸</span>
-                                <span>{productImagesList.length}</span>
+                              <div className="absolute top-2 right-2 bg-black/70 text-white px-2.5 py-1 rounded-lg text-xs font-semibold z-10 backdrop-blur-sm shadow-md">
+                                {productImagesList.length} görsel
                               </div>
                             )}
                           </>
@@ -1166,18 +1158,15 @@ export default function ProductManager({
                       }
                     })()}
                     {product.is_active !== true && product.is_active !== 1 && (
-                      <div className="absolute top-2 right-2 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold z-10 shadow-lg">
+                      <div className="absolute top-2 right-2 bg-red-500 text-white px-2.5 py-1 rounded-lg text-xs font-semibold z-10 shadow-md">
                         Pasif
                       </div>
                     )}
                     {product.is_active === true || product.is_active === 1 ? (
-                      <div className="absolute top-2 right-2 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold z-10 shadow-lg">
+                      <div className="absolute top-2 right-2 bg-green-500 text-white px-2.5 py-1 rounded-lg text-xs font-semibold z-10 shadow-md">
                         Aktif
                       </div>
                     ) : null}
-                    <div className="absolute top-2 left-2 bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold z-10 shadow-lg">
-                      #{product.sort_order || 0}
-                    </div>
                   </div>
 
                   {/* İçerik */}

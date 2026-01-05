@@ -1,16 +1,20 @@
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
+import Image from "next/image";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Kalite Belgelerimiz | Metod Mühendislik - ISO Sertifikaları",
+  title: "Kalite Belgelerimiz ve Sertifikalarımız | Metod Mühendislik - Elektrik Pano Sertifikaları",
   description:
-    "Metod Mühendislik kalite belgeleri ve sertifikaları. ISO 9001, ISO 14001, ISO 45001 kalite yönetim sistemi sertifikaları ve tip test belgelerimiz.",
-  keywords: "ISO 9001, ISO 14001, ISO 45001, kalite belgeleri, sertifikalar, tip test belgesi, kalite yönetim sistemi",
+    "Metod Mühendislik kalite belgeleri ve sertifikaları. ISO 9001, ISO 14001, ISO 45001 kalite yönetim sistemi sertifikaları, TESTLA IP68/IP66/IP55 elektrik pano sertifikaları, TÜRK LOYDU tip onay belgeleri ve IEC 61439 standartlarına uygun üretim belgelerimiz.",
+  keywords:
+    "elektrik pano sertifikaları, ISO 9001, ISO 14001, ISO 45001, kalite belgeleri, sertifikalar, tip test belgesi, kalite yönetim sistemi, TESTLA sertifikası, IP68 pano, IP66 pano, IP55 pano, TÜRK LOYDU sertifikası, IEC 61439, elektrik pano kalite belgesi, marin pano sertifikası, sızdırmaz pano sertifikası",
   openGraph: {
-    title: "Kalite Belgelerimiz | Metod Mühendislik",
-    description: "ISO standartlarına uygun kalite belgeleri ve sertifikalarımızı inceleyin.",
+    title: "Kalite Belgelerimiz ve Sertifikalarımız | Metod Mühendislik",
+    description:
+      "ISO standartlarına uygun kalite belgeleri, TESTLA elektrik pano sertifikaları ve TÜRK LOYDU tip onay belgelerimizi inceleyin.",
     type: "website",
+    locale: "tr_TR",
   },
 };
 
@@ -76,71 +80,188 @@ export default function KaliteBelgeleri() {
           </div>
         </section>
 
-        {/* Kalite Belgeleri Grid */}
+        {/* Sertifika Görselleri Bölümü */}
         <section className="py-12 md:py-20">
           <div className="container mx-auto px-6">
             <div className="max-w-6xl mx-auto">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-                {kaliteBelgeleri.map((belge) => {
-                  const renkClass = {
-                    blue: "from-blue-50 to-blue-100 border-blue-200 text-blue-700",
-                    green: "from-green-50 to-green-100 border-green-200 text-green-700",
-                    orange: "from-orange-50 to-orange-100 border-orange-200 text-orange-700",
-                    purple: "from-purple-50 to-purple-100 border-purple-200 text-purple-700",
-                  }[belge.renk];
-
-                  const renkIcon = {
-                    blue: "bg-blue-600",
-                    green: "bg-green-600",
-                    orange: "bg-orange-600",
-                    purple: "bg-purple-600",
-                  }[belge.renk];
-
-                  return (
-                    <div
-                      key={belge.id}
-                      className={`bg-gradient-to-br ${renkClass} p-8 rounded-2xl border-2 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1`}
-                    >
-                      <div className="flex items-start gap-4 mb-4">
-                        <div className={`${renkIcon} text-white w-16 h-16 rounded-xl flex items-center justify-center text-2xl font-bold shrink-0`}>
-                          {belge.icon}
-                        </div>
-                        <div className="flex-1">
-                          <h3 className="text-2xl font-black text-slate-900 mb-2">
-                            {belge.adi}
-                          </h3>
-                          <p className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
-                            {belge.aciklama}
-                          </p>
-                        </div>
-                      </div>
-                      <p className="text-slate-700 leading-relaxed mb-6">
-                        {belge.icerik}
-                      </p>
-                      <div className="flex gap-3">
-                        <button
-                          className="px-6 py-3 bg-white border-2 border-slate-300 text-slate-700 rounded-xl font-semibold hover:bg-slate-50 hover:border-slate-400 transition-all flex items-center gap-2"
-                          aria-label={`${belge.adi} belgesini görüntüle`}
-                        >
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                          </svg>
-                          Görüntüle
-                        </button>
-                        <button
-                          className="px-6 py-3 bg-white border-2 border-slate-300 text-slate-700 rounded-xl font-semibold hover:bg-slate-50 hover:border-slate-400 transition-all flex items-center gap-2"
-                          aria-label={`${belge.adi} belgesini indir`}
-                        >
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                          </svg>
-                          İndir
-                        </button>
-                      </div>
+              {/* Sertifika Görselleri Bölümü */}
+              <div className="mb-12">
+                <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-8 text-center">
+                  Sertifika Belgelerimiz
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* TESTLA IP68 Sertifikası */}
+                  <div className="bg-white rounded-xl p-6 border-2 border-slate-200 hover:border-blue-300 hover:shadow-lg transition-all">
+                    <h3 className="text-xl font-black text-slate-900 mb-4">
+                      TESTLA IP68 Sertifikası
+                    </h3>
+                    <p className="text-slate-600 mb-4 text-sm">
+                      Marin Panel Marka SP Model Sızdırmaz Pano - TS EN 62208 Standardı
+                    </p>
+                    <div className="relative w-full h-96 rounded-lg overflow-hidden border-2 border-slate-200">
+                      <Image
+                        src="/sertfikalar/sertfika1.jpeg"
+                        alt="TESTLA IP68 Sertifikası - Sızdırmaz Pano"
+                        fill
+                        className="object-contain"
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                      />
                     </div>
-                  );
-                })}
+                  </div>
+
+                  {/* TESTLA IP66 Sertifikası */}
+                  <div className="bg-white rounded-xl p-6 border-2 border-slate-200 hover:border-blue-300 hover:shadow-lg transition-all">
+                    <h3 className="text-xl font-black text-slate-900 mb-4">
+                      TESTLA IP66 Sertifikası
+                    </h3>
+                    <p className="text-slate-600 mb-4 text-sm">
+                      Marin Panel Marka DP Model Duvar Tipi Pano - TS EN 62208 Standardı
+                    </p>
+                    <div className="relative w-full h-96 rounded-lg overflow-hidden border-2 border-slate-200">
+                      <Image
+                        src="/sertfikalar/sertfika2.jpeg"
+                        alt="TESTLA IP66 Sertifikası - Duvar Tipi Pano"
+                        fill
+                        className="object-contain"
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                      />
+                    </div>
+                  </div>
+
+                  {/* TESTLA IP55 Sertifikası */}
+                  <div className="bg-white rounded-xl p-6 border-2 border-slate-200 hover:border-blue-300 hover:shadow-lg transition-all">
+                    <h3 className="text-xl font-black text-slate-900 mb-4">
+                      TESTLA IP55 Sertifikası
+                    </h3>
+                    <p className="text-slate-600 mb-4 text-sm">
+                      Marin Panel Marka DT Model Dikili Tip Modüler Pano - TS EN IEC 61439 Standardı
+                    </p>
+                    <div className="relative w-full h-96 rounded-lg overflow-hidden border-2 border-slate-200">
+                      <Image
+                        src="/sertfikalar/sertfika3.jpeg"
+                        alt="TESTLA IP55 Sertifikası - Dikili Tip Modüler Pano"
+                        fill
+                        className="object-contain"
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                      />
+                    </div>
+                  </div>
+
+                  {/* TÜRK LOYDU Type Approval Certificate */}
+                  <div className="bg-white rounded-xl p-6 border-2 border-slate-200 hover:border-blue-300 hover:shadow-lg transition-all">
+                    <h3 className="text-xl font-black text-slate-900 mb-4">
+                      TÜRK LOYDU Tip Onay Sertifikası
+                    </h3>
+                    <p className="text-slate-600 mb-4 text-sm">
+                      Marin Panel Switchboards / Groups - Type Approval Certificate (2022-2027)
+                    </p>
+                    <div className="relative w-full h-96 rounded-lg overflow-hidden border-2 border-slate-200">
+                      <Image
+                        src="/sertfikalar/serfika.jpeg"
+                        alt="TÜRK LOYDU Tip Onay Sertifikası"
+                        fill
+                        className="object-contain"
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Kalite Belgeleri Grid - Butonlar Kaldırıldı */}
+              <div className="mt-16 mb-12">
+                <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-8 text-center">
+                  Kalite Yönetim Sistemlerimiz
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {kaliteBelgeleri.map((belge) => {
+                    const renkClass = {
+                      blue: "from-blue-50 to-blue-100 border-blue-200 text-blue-700",
+                      green: "from-green-50 to-green-100 border-green-200 text-green-700",
+                      orange: "from-orange-50 to-orange-100 border-orange-200 text-orange-700",
+                      purple: "from-purple-50 to-purple-100 border-purple-200 text-purple-700",
+                    }[belge.renk];
+
+                    const renkIcon = {
+                      blue: "bg-blue-600",
+                      green: "bg-green-600",
+                      orange: "bg-orange-600",
+                      purple: "bg-purple-600",
+                    }[belge.renk];
+
+                    return (
+                      <div
+                        key={belge.id}
+                        className={`bg-gradient-to-br ${renkClass} p-8 rounded-2xl border-2 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1`}
+                      >
+                        <div className="flex items-start gap-4 mb-4">
+                          <div className={`${renkIcon} text-white w-16 h-16 rounded-xl flex items-center justify-center text-2xl font-bold shrink-0`}>
+                            {belge.icon}
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="text-2xl font-black text-slate-900 mb-2">
+                              {belge.adi}
+                            </h3>
+                            <p className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
+                              {belge.aciklama}
+                            </p>
+                          </div>
+                        </div>
+                        <p className="text-slate-700 leading-relaxed">
+                          {belge.icerik}
+                        </p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* SEO İçerik Bölümü - Elektrik Pano Odaklı */}
+              <div className="mb-12 bg-gradient-to-br from-slate-50 to-blue-50 rounded-2xl p-8 md:p-10 border-2 border-slate-200">
+                <h2 className="text-2xl md:text-3xl font-black text-slate-900 mb-6">
+                  Elektrik Pano Sertifikaları ve Kalite Standartları
+                </h2>
+                <div className="prose prose-lg max-w-none text-slate-700 space-y-4 leading-relaxed">
+                  <p>
+                    <strong>Metod Mühendislik</strong> olarak, ürettiğimiz <strong>elektrik panoları</strong> için 
+                    uluslararası standartlara uygunluk belgelerine sahibiz. <strong>TESTLA Elektrik Laboratuvarları</strong> 
+                    tarafından test edilen ve sertifikalandırılan <strong>IP68, IP66 ve IP55</strong> koruma sınıfına sahip 
+                    <strong>elektrik panolarımız</strong>, <strong>TS EN 62208</strong> ve <strong>TS EN IEC 61439</strong> 
+                    standartlarına tam uyumludur.
+                  </p>
+                  <p>
+                    <strong>Marin panolar</strong>, <strong>sıvaüstü panolar</strong>, <strong>sıvaaltı panolar</strong>, 
+                    <strong>dahili panolar</strong> ve <strong>modüler panolar</strong> için sahip olduğumuz sertifikalar, 
+                    ürünlerimizin farklı ortam koşullarında güvenli ve verimli çalışmasını garanti eder. 
+                    <strong>TÜRK LOYDU</strong> tarafından verilen <strong>Tip Onay Sertifikamız</strong>, 
+                    ürünlerimizin denizcilik sektöründe kullanım için uygunluğunu belgeler.
+                  </p>
+                  <p>
+                    <strong>IEC 61439-1/2</strong> standartlarına uygun üretilen <strong>elektrik panolarımız</strong>, 
+                    <strong>ISO 9001:2015</strong> Kalite Yönetim Sistemi, <strong>ISO 14001:2015</strong> Çevre Yönetim 
+                    Sistemi ve <strong>ISO 45001:2018</strong> İş Sağlığı ve Güvenliği Yönetim Sistemi sertifikalarımız 
+                    ile desteklenmektedir. Bu kapsamlı sertifikasyon yapısı, müşterilerimize en yüksek kalitede 
+                    <strong>elektrik pano çözümleri</strong> sunmamızı sağlar.
+                  </p>
+                  <div className="grid md:grid-cols-2 gap-4 mt-6">
+                    <div className="bg-white rounded-lg p-4 border border-blue-200">
+                      <h3 className="font-black text-slate-900 mb-2">IP Koruma Sınıfları</h3>
+                      <ul className="text-sm space-y-1 text-slate-700">
+                        <li>• <strong>IP68:</strong> Sızdırmaz pano - Suya tam dayanıklı</li>
+                        <li>• <strong>IP66:</strong> Duvar tipi pano - Toz ve su sıçramasına dayanıklı</li>
+                        <li>• <strong>IP55:</strong> Modüler pano - Toz ve su sıçramasına korumalı</li>
+                      </ul>
+                    </div>
+                    <div className="bg-white rounded-lg p-4 border border-blue-200">
+                      <h3 className="font-black text-slate-900 mb-2">Standartlar ve Belgeler</h3>
+                      <ul className="text-sm space-y-1 text-slate-700">
+                        <li>• <strong>TS EN 62208:</strong> Boş pano standartı</li>
+                        <li>• <strong>TS EN IEC 61439:</strong> Alçak gerilim pano standartı</li>
+                        <li>• <strong>TÜRK LOYDU:</strong> Denizcilik tip onay belgesi</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {/* Bilgilendirme Bölümü */}

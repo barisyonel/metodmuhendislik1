@@ -22,7 +22,7 @@ export default function CNCLazerKesimPage() {
           {/* Arka Plan Görseli */}
           <div className="absolute inset-0 z-0">
             <Image
-              src="/metod.png"
+              src="/sertfikalar/cnclazer.png"
               alt="CNC Lazer Kesim - Metod Mühendislik"
               fill
               className="object-cover opacity-20"
@@ -48,6 +48,19 @@ export default function CNCLazerKesimPage() {
         <section className="py-20 md:py-32 bg-white">
           <div className="container mx-auto px-6">
             <div className="max-w-4xl mx-auto">
+              {/* Görsel */}
+              <div className="mb-12 rounded-2xl overflow-hidden shadow-2xl">
+                <div className="relative h-96 w-full">
+                  <Image
+                    src="/sertfikalar/cnclazer.png"
+                    alt="CNC Lazer Kesim - Metod Mühendislik"
+                    fill
+                    className="object-cover"
+                    quality={90}
+                  />
+                </div>
+              </div>
+
               <div className="mb-12">
                 <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-6">
                   CNC Lazer Kesim Teknolojisi ve Avantajları
@@ -129,8 +142,19 @@ export default function CNCLazerKesimPage() {
         </section>
 
         {/* CTA BÖLÜMÜ */}
-        <section className="py-20 md:py-32 bg-gradient-to-r from-blue-600 to-blue-700 text-white">
-          <div className="container mx-auto px-6 text-center">
+        <section className="relative py-20 md:py-32 bg-gradient-to-r from-blue-600 to-blue-700 text-white overflow-hidden">
+          {/* Arka Plan Görseli */}
+          <div className="absolute inset-0 z-0">
+            <Image
+              src="/metod.png"
+              alt="Metod Mühendislik"
+              fill
+              className="object-cover opacity-10"
+              quality={90}
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-600/90 to-blue-700/90"></div>
+          </div>
+          <div className="container mx-auto px-6 text-center relative z-10">
             <h2 className="text-4xl md:text-5xl font-black mb-6 tracking-tight">
               CNC Lazer Kesim HİZMETİ İÇİN TEKLİF ALIN
             </h2>

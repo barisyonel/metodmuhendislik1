@@ -93,8 +93,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     {
       url: `${baseUrl}/hizmetler/elektrik-pano-uretime`,
       lastModified,
-      changeFrequency: "weekly",
-      priority: 0.9,
+      changeFrequency: "daily",
+      priority: 1.0, // Elektrik pano için en yüksek öncelik
     },
     {
       url: `${baseUrl}/hizmetler/cnc-lazer-kesim`,

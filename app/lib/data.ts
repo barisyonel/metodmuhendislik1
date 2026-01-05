@@ -175,7 +175,7 @@ export async function getServices(): Promise<Service[]> {
 }
 
 // ============================================
-// ADMIN PANEL İÇİN FONKSİYONLAR (Tüm veriler - aktif/pasif)
+// PROJELER İÇİN FONKSİYONLAR
 // ============================================
 
 interface Project {
@@ -191,6 +191,44 @@ interface Project {
   sort_order: number;
   is_active: boolean | number;
 }
+
+// Projeleri veritabanından direkt çek (Server Component için)
+export async function getProjects(limit?: number): Promise<Project[]> {
+  try {
+    const limitClause = limit ? `LIMIT ${limit}` : '';
+    const projects = await query<Project[]>(
+      `SELECT * FROM projects WHERE (is_active = TRUE OR is_active = 1) ORDER BY sort_order ASC, id DESC ${limitClause}`
+    );
+    const projectsData = Array.isArray(projects) ? projects : [];
+    
+    if (projectsData.length === 0) {
+      console.warn("⚠️ Veritabanında aktif proje bulunamadı");
+      return [];
+    }
+    
+    console.log(`✅ ${projectsData.length} proje başarıyla yüklendi`);
+    
+    return projectsData.map(project => ({
+      ...project,
+      title: fixTurkishEncoding(project.title),
+      description: fixTurkishEncoding(project.description),
+      category: fixTurkishEncoding(project.category),
+    }));
+  } catch (error: unknown) {
+    const err = error as { code?: string; message?: string; errno?: number };
+    console.error("❌ Projeler yüklenirken hata:", {
+      code: err.code,
+      message: err.message,
+      errno: err.errno,
+    });
+    
+    return [];
+  }
+}
+
+// ============================================
+// ADMIN PANEL İÇİN FONKSİYONLAR (Tüm veriler - aktif/pasif)
+// ============================================
 
 // Admin panel için: Tüm ürünleri çek (aktif/pasif)
 export async function getAllProducts(): Promise<Product[]> {

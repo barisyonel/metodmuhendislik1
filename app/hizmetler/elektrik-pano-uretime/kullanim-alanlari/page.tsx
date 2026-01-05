@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Elektrik Pano Kullanım Alanları | Metod Mühendislik",
     description:
-      "Elektrik panolarının kullanıldığı tüm sektörler için özel çözümler. 20+ yıllık deneyimle sektörel ihtiyaçlara uygun pano üretimi.",
+      "Elektrik panolarının kullanıldığı tüm sektörler için özel çözümler. 10+ yıllık deneyimle sektörel ihtiyaçlara uygun pano üretimi.",
     type: "website",
     locale: "tr_TR",
   },
@@ -285,7 +285,7 @@ export default function KullanimAlanlariPage() {
               </h1>
               <p className="text-xl md:text-2xl text-blue-200 leading-relaxed">
                 Elektrik panolarımız, enerjinin dağıtıldığı ve kontrol edildiği
-                her alanda güvenilir çözümler sunar. 20+ yıllık deneyimimizle sektörel ihtiyaçlara özel çözümler üretiyoruz.
+                her alanda güvenilir çözümler sunar. 10+ yıllık deneyimimizle sektörel ihtiyaçlara özel çözümler üretiyoruz.
               </p>
             </div>
           </div>
@@ -300,7 +300,7 @@ export default function KullanimAlanlariPage() {
                 </h2>
                 <p className="text-slate-700 text-lg leading-relaxed max-w-3xl mx-auto">
                   Metod Mühendislik olarak, elektrik panolarının kullanıldığı
-                  her sektörde 20+ yıllık deneyimimizle hizmet vermekteyiz. Her
+                  her sektörde 10+ yıllık deneyimimizle hizmet vermekteyiz. Her
                   sektörün kendine özgü ihtiyaçlarına özel çözümler üretiyoruz.
                 </p>
               </div>

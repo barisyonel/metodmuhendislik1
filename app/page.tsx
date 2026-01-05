@@ -7,17 +7,18 @@ import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
 import { getProducts, getSliders } from "./lib/data";
+import ClientLogosCarousel from "./components/ClientLogosCarousel";
 
 export const metadata: Metadata = {
   title: "Metod Mühendislik | Enerjinin Güvenli Yönetimi - Elektrik Pano, Marin Pano, Endüstriyel Çözümler",
   description:
-    "Modern dünyanın en temel ihtiyacı olan enerjinin güvenli, verimli ve sürdürülebilir yönetimi. 20+ yıllık deneyimle elektrik pano, marin pano, CNC lazer kesim, büküm, kaynak ve çelik konstrüksiyon hizmetleri. IEC standartları, ISO 9001 sertifikalı, 12 ülkeye ihracat. İstanbul Tuzla.",
+    "Modern dünyanın en temel ihtiyacı olan enerjinin güvenli, verimli ve sürdürülebilir yönetimi. 10+ yıllık deneyimle elektrik pano, marin pano, CNC lazer kesim, büküm, kaynak ve çelik konstrüksiyon hizmetleri. IEC standartları, ISO 9001 sertifikalı, 12 ülkeye ihracat. İstanbul Tuzla.",
   keywords:
     "elektrik pano, marin pano, enerji yönetimi, güvenli enerji dağıtımı, elektrik pano üretimi, sıvaüstü pano, sıvaaltı pano, dahili pano, ADP pano, MCC pano, kompanzasyon pano, otomasyon pano, DDC pano, UPS pano, CNC lazer kesim, CNC büküm, kaynak, metal kaynak, elektrostatik toz boya, çelik konstrüksiyon, endüstriyel üretim, IEC 61439, ISO 9001, İstanbul, Tuzla, İTOSB",
   openGraph: {
     title: "Metod Mühendislik | Enerjinin Güvenli Yönetimi - Elektrik Pano ve Endüstriyel Çözümler",
     description:
-      "Enerjinin olduğu her yerde güveni ve kaliteyi inşa ediyoruz. 20+ yıllık deneyim, IEC standartları, ISO 9001 sertifikalı, 12 ülkeye ihracat. Elektrik pano, marin pano, CNC lazer kesim ve endüstriyel üretim çözümleri.",
+      "Enerjinin olduğu her yerde güveni ve kaliteyi inşa ediyoruz. 10+ yıllık deneyim, IEC standartları, ISO 9001 sertifikalı, 12 ülkeye ihracat. Elektrik pano, marin pano, CNC lazer kesim ve endüstriyel üretim çözümleri.",
     type: "website",
     locale: "tr_TR",
     url: "https://www.metodmuhendislik.com",
@@ -39,7 +40,7 @@ export default async function HomePage() {
     "@type": "Organization",
     name: "Metod Mühendislik",
     description:
-      "Modern dünyanın en temel ihtiyacı olan enerjinin güvenli, verimli ve sürdürülebilir yönetimi. 20+ yıllık deneyimle elektrik pano, marin pano, CNC lazer kesim ve endüstriyel üretim çözümleri sunan ISO 9001 sertifikalı endüstriyel üretim firması",
+      "Modern dünyanın en temel ihtiyacı olan enerjinin güvenli, verimli ve sürdürülebilir yönetimi. 10+ yıllık deneyimle elektrik pano, marin pano, CNC lazer kesim ve endüstriyel üretim çözümleri sunan ISO 9001 sertifikalı endüstriyel üretim firması",
     url: "https://www.metodmuhendislik.com",
     logo: "https://www.metodmuhendislik.com/logo.png",
     address: {
@@ -48,6 +49,12 @@ export default async function HomePage() {
       addressLocality: "TEPEÖREN - AKFİRAT TUZLA",
       addressRegion: "İSTANBUL",
       addressCountry: "TR",
+      postalCode: "34940",
+    },
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: "40.8500",
+      longitude: "29.3500",
     },
     contactPoint: {
       "@type": "ContactPoint",
@@ -55,6 +62,7 @@ export default async function HomePage() {
       telephone: "+90-216-759-56-75",
       email: "info@metodmuhendislik.com",
       availableLanguage: "Turkish",
+      areaServed: "TR",
     },
     telephone: "+90-216-759-56-75",
     email: "info@metodmuhendislik.com",
@@ -62,6 +70,36 @@ export default async function HomePage() {
       "https://www.linkedin.com/company/metodmuhendislik",
       "https://www.facebook.com/metodmuhendislik",
     ],
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: "Endüstriyel Üretim Hizmetleri",
+      itemListElement: [
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Elektrik Pano Üretimi",
+            description: "İstanbul Tuzla'da sıvaüstü, sıvaaltı, dahili ve marin elektrik pano üretimi. IEC 61439 standartlarında, ISO 9001 sertifikalı.",
+            provider: {
+              "@type": "Organization",
+              name: "Metod Mühendislik",
+            },
+            areaServed: [
+              {
+                "@type": "City",
+                name: "İstanbul",
+              },
+              {
+                "@type": "City",
+                name: "Tuzla",
+              },
+            ],
+            serviceType: "Elektrik Pano Üretimi",
+            url: "https://www.metodmuhendislik.com/hizmetler/elektrik-pano-uretime",
+          },
+        },
+      ],
+    },
   };
 
   const services = [
@@ -77,7 +115,7 @@ export default async function HomePage() {
       title: "CNC Lazer Kesim",
       description: "Hassas ve hızlı lazer kesim çözümleri",
       icon: "🔺",
-      image: "/metod.png",
+      image: "/sertfikalar/cnclazer.png",
       link: "/hizmetler/cnc-lazer-kesim",
       color: "from-purple-600 to-purple-800",
     },
@@ -93,7 +131,7 @@ export default async function HomePage() {
       title: "Metal Kaynak",
       description: "TIG, MIG/MAG kaynak hizmetleri",
       icon: "🔥",
-      image: "/kaynak.png",
+      image: "/Çelik Konstrüksiyon.png",
       link: "/hizmetler/kaynak",
       color: "from-orange-600 to-orange-800",
     },
@@ -112,33 +150,6 @@ export default async function HomePage() {
       image: "/Çelik Konstrüksiyon.png",
       link: "/hizmetler/celik-konstruksiyon",
       color: "from-slate-600 to-slate-800",
-    },
-  ];
-
-  const stats = [
-    {
-      number: "20+",
-      label: "Yıllık Deneyim",
-      icon: "⭐",
-      description: "Sıfır hata prensibi ile kalite",
-    },
-    {
-      number: "2000m²",
-      label: "Üretim Alanı",
-      icon: "🏭",
-      description: "Endüstri 4.0 standartları",
-    },
-    {
-      number: "12",
-      label: "Ülkeye İhracat",
-      icon: "🌍",
-      description: "Global çözüm ortağı",
-    },
-    {
-      number: "ISO",
-      label: "9001 Sertifikalı",
-      icon: "✓",
-      description: "IEC standartları uyumlu",
     },
   ];
 
@@ -211,7 +222,7 @@ export default async function HomePage() {
                   Modern dünyanın en temel ihtiyacı olan enerjinin, güvenli, verimli ve sürdürülebilir bir şekilde yönetilmesi, mühendislik sanatının en kritik alanlarından biridir.
                 </p>
                 <p className="text-slate-600 text-base md:text-lg leading-relaxed mb-8 text-center">
-                  Elektrik pano sektöründe 20+ yılı aşkın deneyimimiz, uzman kadromuz ve teknolojiye uyumlu üretim anlayışımızla sektörün saygın ve güvenilir markalarından biri haline geldik. Kaliteden asla ödün vermeyen, dürüst ve ilkeli hizmet anlayışımızla; mevcut konumumuzu korumak ve daha da ileriye taşımak en temel hedeflerimiz arasında yer almaktadır. Bu doğrultuda geleceğe emin adımlarla ilerlemeye devam ediyoruz.
+                  Elektrik pano sektöründe 10+ yılı aşkın deneyimimiz, uzman kadromuz ve teknolojiye uyumlu üretim anlayışımızla sektörün saygın ve güvenilir markalarından biri haline geldik. Kaliteden asla ödün vermeyen, dürüst ve ilkeli hizmet anlayışımızla; mevcut konumumuzu korumak ve daha da ileriye taşımak en temel hedeflerimiz arasında yer almaktadır. Bu doğrultuda geleceğe emin adımlarla ilerlemeye devam ediyoruz.
                 </p>
                 <div className="text-center">
                   <Link
@@ -252,7 +263,7 @@ export default async function HomePage() {
                   {/* Metin Bloğu */}
                   <div>
                     <p className="text-slate-800 text-xl md:text-2xl leading-relaxed font-medium">
-                      Uzun yıllara dayanan sektör tecrübesi, uzman kadrosu ve teknolojiye uyumlu yapısıyla <span className="font-bold text-slate-900">elektrik pano sektöründe saygın bir konuma sahiptir.</span>
+                      Uzun yıllara dayanan sektör tecrübesi, uzman kadrosu ve teknolojiye uyumlu yapısıyla <span className="font-bold text-slate-900">elektrik pano sektöründe saygın bir konuma sahiptir.</span> İstanbul Tuzla&apos;da <Link href="/hizmetler/elektrik-pano-uretime" className="text-blue-600 hover:text-blue-700 font-bold underline">elektrik pano üretimi</Link> konusunda uzmanlaşmış firmamız, sıvaüstü, sıvaaltı, dahili ve marin <strong>elektrik pano</strong> üretiminde lider konumdadır. IEC 61439 standartlarında ve ISO 9001 sertifikalı <strong>elektrik pano</strong> üretim hizmetimiz ile endüstriyel ve ticari yapılarda güvenli enerji dağıtımı sağlıyoruz.
                     </p>
                   </div>
                   
@@ -260,7 +271,7 @@ export default async function HomePage() {
                   <div className="relative rounded-2xl overflow-hidden shadow-2xl">
                     <Image
                       src="/elektrıkpano.png"
-                      alt="Metod Mühendislik Üretim Tesisi - Elektrik Pano Üretimi"
+                      alt="Elektrik Pano Üretimi İstanbul - Endüstriyel Elektrik Panosu Üretim Tesisi - Metod Mühendislik Tuzla"
                       width={800}
                       height={600}
                       className="w-full h-auto object-cover"
@@ -272,10 +283,10 @@ export default async function HomePage() {
 
                 {/* Sağ Taraf - Büyük İstatistikler */}
                 <div className="flex flex-col gap-8 md:gap-12">
-                  {/* 20+ Yıllık Deneyim */}
+                  {/* 10+ Yıllık Deneyim */}
                   <div className="text-center md:text-left">
                     <div className="text-6xl md:text-7xl lg:text-8xl font-black text-slate-900 mb-3 leading-none">
-                      20+
+                      10+
                     </div>
                     <div className="text-lg md:text-xl text-slate-600 font-medium uppercase tracking-wide">
                       Yıllık Deneyim
@@ -479,7 +490,7 @@ export default async function HomePage() {
                 </h2>
                 <p className="text-slate-300 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
                   &quot;Kalite, kontrol edilmez; üretilir.&quot; felsefesiyle hareket ediyoruz.
-                  20+ yıllık deneyimimiz, akademik seviyedeki uzman teknik kadromuz ve
+                  10+ yıllık deneyimimiz, akademik seviyedeki uzman teknik kadromuz ve
                   endüstri 4.0 standartlarına uyumlu güçlü altyapımız ile sektörümüzde lider konumdayız.
                 </p>
               </div>
@@ -539,108 +550,90 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* BLOG ÖNİZLEME BÖLÜMÜ */}
+        {/* REFERANSLAR BÖLÜMÜ - FİLM ŞERİDİ GEÇİŞİ */}
         <section
           className="py-20 md:py-32 bg-gradient-to-br from-slate-50 to-blue-50"
-          aria-label="Blog"
+          aria-label="Referanslar"
         >
           <div className="container mx-auto px-6">
             <div className="max-w-7xl mx-auto">
               <div className="text-center mb-12">
                 <span className="inline-block text-blue-600 font-black text-xs tracking-[0.4em] uppercase mb-4 px-4 py-1.5 bg-blue-100 rounded-full">
-                  Blog
+                  Referanslarımız
                 </span>
-                <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 mb-6">
-                  Haber ve <span className="text-blue-600">Değerlendirmeler</span>
-                </h2>
                 <p className="text-lg md:text-xl text-slate-600 max-w-3xl mx-auto">
-                  Elektrik pano ve endüstriyel üretim sektöründeki en son atılımları, yenilikleri ve güncellemeleri paylaşıyoruz.
+                  10+ yıllık deneyimimizle gerçekleştirdiğimiz başarılı projeler ve memnun müşterilerimiz.
                 </p>
               </div>
 
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12">
-                {[
-                  {
-                    title: "İstanbul'da Elektrik Pano Üretimi ve Montaj Hizmetleri",
-                    description: "İstanbul'un tüm ilçelerinde elektrik pano üretimi, montaj, bakım ve onarım hizmetleri. Sıvaüstü, sıvaaltı, dahili ve marin pano çözümleri.",
-                    category: "İstanbul İlçeleri",
-                    link: "/blog/istanbul",
-                    icon: "🏙️",
-                  },
-                  {
-                    title: "Gebze ve Kocaeli Bölgesi Endüstriyel Üretim Çözümleri",
-                    description: "Gebze, İzmit ve Kocaeli bölgesinde elektrik pano, kaynak hizmetleri ve endüstriyel üretim çözümleri. Hızlı teslimat ve kaliteli hizmet.",
-                    category: "Gebze & Kocaeli",
-                    link: "/blog/gebze-kocaeli",
-                    icon: "🏭",
-                  },
-                  {
-                    title: "Marmara Bölgesi Endüstriyel Üretim ve Hizmetler",
-                    description: "Bursa, Balıkesir, Sakarya ve diğer Marmara illerinde elektrik pano üretimi, kaynak ve endüstriyel üretim hizmetleri.",
-                    category: "Diğer Marmara",
-                    link: "/blog/diger-marmara",
-                    icon: "📍",
-                  },
-                ].map((blog, i) => (
-                  <Link
-                    key={i}
-                    href={blog.link}
-                    className="group bg-white rounded-xl p-6 border-2 border-slate-200 hover:border-blue-400 shadow-lg hover:shadow-xl transition-all duration-500 hover:-translate-y-2"
-                  >
-                    <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">
-                      {blog.icon}
-                    </div>
-                    <div className="mb-3">
-                      <span className="inline-block px-3 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full">
-                        {blog.category}
-                      </span>
-                    </div>
-                    <h3 className="text-xl font-black text-slate-900 mb-3 group-hover:text-blue-600 transition-colors line-clamp-2">
-                      {blog.title}
-                    </h3>
-                    <p className="text-slate-600 text-sm leading-relaxed mb-4 line-clamp-3">
-                      {blog.description}
-                    </p>
-                    <div className="flex items-center text-blue-600 font-semibold text-sm group-hover:gap-2 transition-all">
-                      <span>Devamını Oku</span>
-                      <svg
-                        className="w-4 h-4 transform group-hover:translate-x-1 transition-transform"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M9 5l7 7-7 7"
-                        />
-                      </svg>
-                    </div>
-                  </Link>
-                ))}
+              {/* Firma Logoları Carousel */}
+              <div>
+                <ClientLogosCarousel
+                  logos={[
+                    { name: "Wise Marin", image: "/sertfikalar/wise marin.png" },
+                    { name: "TÜBİTAK", image: "/sertfikalar/tübitak.jpg" },
+                    { name: "Timfog", image: "/sertfikalar/timfog.png" },
+                    { name: "Marsis", image: "/sertfikalar/marsis.png" },
+                    { name: "Goga Marin", image: "/sertfikalar/gogamarin.jpeg" },
+                    { name: "Etili Seramik", image: "/sertfikalar/etili seramik.jpeg" },
+                    { name: "Berrmak", image: "/sertfikalar/berrmak.jpeg" },
+                    { name: "Bladeco", image: "/sertfikalar/bladeco.png" },
+                    { name: "Atıksan", image: "/sertfikalar/atıksan.jpg" },
+                    { name: "Armelsan", image: "/sertfikalar/armelsan.jpeg" },
+                  ]}
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* REFERANS FİRMALARIMIZ BÖLÜMÜ */}
+        <section
+          className="py-20 md:py-32 bg-white"
+          aria-label="Referans Firmalarımız"
+        >
+          <div className="container mx-auto px-6">
+            <div className="max-w-7xl mx-auto">
+              <div className="text-center mb-12">
+                <span className="inline-block text-blue-600 font-black text-xs tracking-[0.4em] uppercase mb-4 px-4 py-1.5 bg-blue-100 rounded-full">
+                  Güvenilir İş Ortaklarımız
+                </span>
+                <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 mb-6">
+                  Referans <span className="text-blue-600">Firmalarımız</span>
+                </h2>
+                <p className="text-lg md:text-xl text-slate-600 max-w-3xl mx-auto">
+                  Sektörün önde gelen firmalarıyla gerçekleştirdiğimiz başarılı işbirlikleri ve memnun müşterilerimiz.
+                </p>
               </div>
 
-              <div className="text-center">
-                <Link
-                  href="/blog"
-                  className="inline-flex items-center gap-3 bg-blue-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/30 hover:scale-105"
-                >
-                  Tüm Blog Yazılarını Görüntüle
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+              {/* Referans Firmalar Grid */}
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                {[
+                  "HTL",
+                  "Bronswerk",
+                  "Koal",
+                  "Markal",
+                  "Hürmarin",
+                  "Teknowel",
+                  "Baykon",
+                  "Gesan",
+                  "Hakan Otomasyon",
+                  "Moduler Makina",
+                  "Seal",
+                  "Etili Seramik",
+                  "Yalçın",
+                  "CMS",
+                  "Yelken Pano",
+                ].map((firma, index) => (
+                  <div
+                    key={index}
+                    className="bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl p-6 border-2 border-slate-200 hover:border-blue-400 hover:shadow-lg transition-all duration-300 text-center group"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </Link>
+                    <div className="text-slate-900 font-bold text-sm md:text-base group-hover:text-blue-600 transition-colors">
+                      {firma}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

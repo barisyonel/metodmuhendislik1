@@ -8,7 +8,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Ürünlerimiz | Metod Mühendislik - Elektrik Pano ve Endüstriyel Çözümler",
   description:
-    "Metod Mühendislik ürünleri: Elektrik panoları, CNC lazer kesim, CNC büküm, kaynak, toz boya ve çelik konstrüksiyon. 20+ yıllık deneyimle üretilen kaliteli ürünler.",
+    "Metod Mühendislik ürünleri: Elektrik panoları, CNC lazer kesim, CNC büküm, kaynak, toz boya ve çelik konstrüksiyon. 10+ yıllık deneyimle üretilen kaliteli ürünler.",
   keywords:
     "elektrik pano, ürünler, CNC lazer kesim, CNC büküm, kaynak, toz boya, çelik konstrüksiyon, endüstriyel ürünler, Metod Mühendislik ürünleri",
 };
@@ -86,7 +86,7 @@ export default async function ProductsPage() {
                 <span className="text-blue-300">Ürünlerimiz</span>
               </h1>
               <p className="text-xl text-blue-100 leading-relaxed">
-                20+ yıllık deneyimimizle ürettiğimiz elektrik pano ve endüstriyel üretim çözümleri. 
+                10+ yıllık deneyimimizle ürettiğimiz elektrik pano ve endüstriyel üretim çözümleri.
                 Elektrik panoları, CNC lazer kesim, büküm, kaynak ve çelik konstrüksiyon ürünleri.
               </p>
             </div>
@@ -161,30 +161,20 @@ export default async function ProductsPage() {
                     className="group relative bg-white rounded-2xl border-2 border-slate-200 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden flex flex-col h-full"
                   >
                     {/* Görsel */}
-                    <div className="relative h-80 overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200">
+                    <div className="relative h-[420px] overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200">
                       {productImages.length > 0 ? (
                         <>
                           <Image
                             src={productImages[0]}
                             alt={product.title}
                             fill
-                            className="object-cover group-hover:scale-110 transition-transform duration-700"
+                            className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-700"
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                           />
-                          {/* Hover'da ikinci görsel (eğer varsa) */}
-                          {productImages.length > 1 && productImages[1] && (
-                            <Image
-                              src={productImages[1]}
-                              alt={`${product.title} - Görsel 2`}
-                              fill
-                              className="absolute inset-0 object-cover opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                            />
-                          )}
                           {/* Görsel sayacı badge */}
                           {productImages.length > 1 && (
-                            <div className="absolute top-3 right-3 bg-black/60 text-white px-3 py-1 rounded-full text-xs font-bold z-10 backdrop-blur-sm">
-                              📸 {productImages.length}
+                            <div className="absolute top-3 right-3 bg-black/70 text-white px-2.5 py-1 rounded-lg text-xs font-semibold z-10 backdrop-blur-sm shadow-md">
+                              {productImages.length} görsel
                             </div>
                           )}
                         </>
@@ -193,8 +183,12 @@ export default async function ProductsPage() {
                           <span className="text-slate-400 text-sm">Görsel yükleniyor...</span>
                         </div>
                       )}
-                      {/* Overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                      {/* Overlay - İncele yazısı */}
+                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center z-20">
+                        <span className="text-white text-xl font-bold px-6 py-3 bg-blue-600 rounded-lg shadow-lg transform group-hover:scale-105 transition-transform">
+                          İncele
+                        </span>
+                      </div>
                       {/* Kategori Badge */}
                       {product.category && (
                         <div className="absolute top-4 left-4 z-10">
@@ -280,7 +274,7 @@ export default async function ProductsPage() {
               </h3>
 
               <ul className="list-disc list-inside space-y-2 text-slate-700 text-lg">
-                <li><strong>20+ yıllık deneyim</strong> ile sektörde güvenilir çözüm ortağıyız</li>
+                <li><strong>10+ yıllık deneyim</strong> ile sektörde güvenilir çözüm ortağıyız</li>
                 <li><strong>IEC standartlarına</strong> tam uyumlu üretim</li>
                 <li><strong>Paslanmaz çelik</strong> ve <strong>marine grade</strong> malzeme kullanımı</li>
                 <li><strong>Özel tasarım</strong> ve <strong>müşteri odaklı</strong> çözümler</li>

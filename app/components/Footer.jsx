@@ -44,7 +44,7 @@ export default function Footer() {
             kaynaklı imalatta kalite ve güvenin adresi.
           </p>
           <p className="text-slate-300 text-xs drop-shadow-sm">
-            20+ yıllık deneyim ile sektörde öncü konumdayız.
+            10+ yıllık deneyim ile sektörde öncü konumdayız.
           </p>
         </div>
         <nav aria-label="Footer Navigasyon">

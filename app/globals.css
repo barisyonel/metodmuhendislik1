@@ -115,6 +115,16 @@
   .shadow-modern-lg {
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
   }
+
+  /* Scrollbar Hide */
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari and Opera */
+  }
 }
 
 /* Keyframe Animations */

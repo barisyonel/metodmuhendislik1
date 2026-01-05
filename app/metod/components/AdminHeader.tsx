@@ -6,13 +6,13 @@ export default function AdminHeader() {
   const router = useRouter();
 
   return (
-    <header className="h-20 bg-white border-b border-slate-200 sticky top-0 z-30">
-      <div className="h-full px-6 flex items-center justify-between">
+    <header className="h-16 bg-white border-b border-slate-200 sticky top-0 z-30">
+      <div className="h-full px-4 md:px-6 flex items-center justify-between">
         {/* Right side - User actions */}
-        <div className="flex items-center gap-4 ml-auto">
+        <div className="flex items-center gap-3 ml-auto">
           <button
             onClick={() => window.open("/", "_blank")}
-            className="hidden md:flex items-center gap-2 px-4 py-2 text-slate-600 hover:bg-slate-50 rounded-lg transition-colors text-sm font-medium"
+            className="hidden md:flex items-center gap-2 px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors text-sm"
           >
             <svg
               className="w-4 h-4"

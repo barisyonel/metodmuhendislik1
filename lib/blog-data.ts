@@ -205,7 +205,7 @@ function generateElectricPanelContent(locationName: string): string {
   return `
     <div class="mb-8">
       <h2 class="text-3xl font-black text-slate-900 mb-4">${locationName}'de Elektrik Pano Üretimi ve Montaj Hizmetleri</h2>
-      <p class="text-slate-700 text-lg leading-relaxed mb-6">${locationName} bölgesinde elektrik pano üretimi ve montaj hizmetleri sunan <strong>Metod Mühendislik</strong>, 20+ yıllık deneyimi ile sektörün öncü firmasıdır. ${locationName}'de endüstriyel tesisler, ticari yapılar ve konut projeleri için güvenilir elektrik pano çözümleri sunuyoruz. Marmara Bölgesi'nin en kaliteli elektrik pano üreticilerinden biri olarak, ${locationName} ve çevresinde hizmet vermekteyiz.</p>
+      <p class="text-slate-700 text-lg leading-relaxed mb-6">${locationName} bölgesinde elektrik pano üretimi ve montaj hizmetleri sunan <strong>Metod Mühendislik</strong>, 10+ yıllık deneyimi ile sektörün öncü firmasıdır. ${locationName}'de endüstriyel tesisler, ticari yapılar ve konut projeleri için güvenilir elektrik pano çözümleri sunuyoruz. Marmara Bölgesi'nin en kaliteli elektrik pano üreticilerinden biri olarak, ${locationName} ve çevresinde hizmet vermekteyiz.</p>
     </div>
     
     <div class="mb-8">
@@ -247,7 +247,7 @@ function generateElectricPanelContent(locationName: string): string {
       <ul class="space-y-3">
         <li class="flex items-start gap-3">
           <span class="text-green-600 font-bold text-xl">✓</span>
-          <span class="text-slate-700"><strong>20+ yıllık sektör deneyimi</strong> - Binlerce başarılı proje</span>
+          <span class="text-slate-700"><strong>10+ yıllık sektör deneyimi</strong> - Binlerce başarılı proje</span>
         </li>
         <li class="flex items-start gap-3">
           <span class="text-green-600 font-bold text-xl">✓</span>
@@ -284,7 +284,7 @@ function generateWeldingContent(locationName: string): string {
   return `
     <div class="mb-8">
       <h2 class="text-3xl font-black text-slate-900 mb-4">${locationName}'de Profesyonel Kaynak Hizmetleri ve Metal İmalat</h2>
-      <p class="text-slate-700 text-lg leading-relaxed mb-6">${locationName} bölgesinde metal kaynak ve imalat hizmetleri sunan <strong>Metod Mühendislik</strong>, endüstriyel üretimde güvenilir çözüm ortağınızdır. ${locationName}'de TIG, MIG/MAG ve elektrot kaynak yöntemleri ile profesyonel hizmet veriyoruz. Marmara Bölgesi'nin en kaliteli kaynak hizmeti sağlayıcılarından biri olarak, ${locationName} ve çevresinde 20+ yıllık deneyimimizle hizmet vermekteyiz.</p>
+      <p class="text-slate-700 text-lg leading-relaxed mb-6">${locationName} bölgesinde metal kaynak ve imalat hizmetleri sunan <strong>Metod Mühendislik</strong>, endüstriyel üretimde güvenilir çözüm ortağınızdır. ${locationName}'de TIG, MIG/MAG ve elektrot kaynak yöntemleri ile profesyonel hizmet veriyoruz. Marmara Bölgesi'nin en kaliteli kaynak hizmeti sağlayıcılarından biri olarak, ${locationName} ve çevresinde 10+ yıllık deneyimimizle hizmet vermekteyiz.</p>
     </div>
     
     <div class="mb-8">

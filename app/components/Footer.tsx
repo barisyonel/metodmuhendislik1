@@ -38,7 +38,6 @@ export default function Footer({ initialServices = [] }: { initialServices?: Ser
   // Admin panelinden güncelleme event'ini dinle
   useEffect(() => {
     const handleServiceUpdate = () => {
-      console.log("🔄 Hizmet güncelleme eventi alındı, sayfa yenileniyor...");
       // Sayfayı yenile (server component tekrar çalışacak)
       window.location.reload();
     };
@@ -100,7 +99,7 @@ export default function Footer({ initialServices = [] }: { initialServices?: Ser
                 </div>
               </Link>
               <p className="text-slate-300 text-xs leading-relaxed mb-4">
-                Endüstriyel üretimde çözüm ortağınız. 20+ yıllık deneyim ile kalite ve güvenin adresi.
+                Endüstriyel üretimde çözüm ortağınız. 10+ yıllık deneyim ile kalite ve güvenin adresi.
               </p>
               
               {/* Sosyal Medya */}
