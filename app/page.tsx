@@ -10,11 +10,11 @@ import { getProducts, getSliders } from "./lib/data";
 import ClientLogosCarousel from "./components/ClientLogosCarousel";
 
 export const metadata: Metadata = {
-  title: "Metod Mühendislik | Enerjinin Güvenli Yönetimi - Elektrik Pano, Marin Pano, Endüstriyel Çözümler",
+  title: "Metod Mühendislik | Elektrik Pano Üretimi",
   description:
-    "Modern dünyanın en temel ihtiyacı olan enerjinin güvenli, verimli ve sürdürülebilir yönetimi. 10+ yıllık deneyimle elektrik pano, marin pano, CNC lazer kesim, büküm, kaynak ve çelik konstrüksiyon hizmetleri. IEC standartları, ISO 9001 sertifikalı, 12 ülkeye ihracat. İstanbul Tuzla.",
+    "Elektrik pano ve marin pano üretimi. 10+ yıl deneyim, ISO 9001 sertifikalı. İstanbul Tuzla.",
   keywords:
-    "elektrik pano, marin pano, enerji yönetimi, güvenli enerji dağıtımı, elektrik pano üretimi, sıvaüstü pano, sıvaaltı pano, dahili pano, ADP pano, MCC pano, kompanzasyon pano, otomasyon pano, DDC pano, UPS pano, CNC lazer kesim, CNC büküm, kaynak, metal kaynak, elektrostatik toz boya, çelik konstrüksiyon, endüstriyel üretim, IEC 61439, ISO 9001, İstanbul, Tuzla, İTOSB",
+    "elektrik pano, marin pano, endüstriyel üretim, ISO 9001, İstanbul",
   openGraph: {
     title: "Metod Mühendislik | Enerjinin Güvenli Yönetimi - Elektrik Pano ve Endüstriyel Çözümler",
     description:
@@ -213,9 +213,9 @@ export default async function HomePage() {
                 <span className="inline-block text-blue-600 font-black text-xs tracking-[0.4em] uppercase mb-4 px-4 py-1.5 bg-blue-100 rounded-full">
                   Hakkımızda
                 </span>
-                <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 mb-6">
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 mb-6">
                   Metod <span className="text-blue-600">Mühendislik</span>
-                </h2>
+                </h1>
               </div>
               <div className="max-w-4xl mx-auto">
                 <p className="text-slate-700 text-lg md:text-xl leading-relaxed mb-6 text-center">
@@ -229,7 +229,7 @@ export default async function HomePage() {
                     href="/kurumsal/hakkimizda"
                     className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-bold text-lg transition-colors group"
                   >
-                    Devamı
+                    Hakkımızda Sayfası
                     <svg
                       className="w-5 h-5 group-hover:translate-x-1 transition-transform"
                       fill="none"
@@ -351,7 +351,18 @@ export default async function HomePage() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-                {services.map((service, i) => (
+                {services.map((service, i) => {
+                  // Her hizmet için farklı link text'i
+                  const linkTexts = [
+                    "Elektrik Pano Hizmetleri",
+                    "CNC Lazer Kesim Hizmetleri",
+                    "CNC Büküm Hizmetleri",
+                    "Kaynak Hizmetleri",
+                    "Toz Boya Hizmetleri",
+                    "Çelik Konstrüksiyon Hizmetleri"
+                  ];
+
+                  return (
                   <Link
                     key={i}
                     href={service.link}
@@ -380,7 +391,7 @@ export default async function HomePage() {
                         {service.description}
                       </p>
                       <div className="flex items-center text-blue-600 font-semibold text-sm group-hover:text-blue-700">
-                        <span className="mr-2">Detaylı Bilgi</span>
+                        <span className="mr-2">{linkTexts[i] || "Hizmet Detayları"}</span>
                         <svg
                           className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"
                           fill="none"
@@ -397,7 +408,8 @@ export default async function HomePage() {
                       </div>
                     </div>
                   </Link>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -448,7 +460,7 @@ export default async function HomePage() {
                   href="/urunler"
                   className="inline-flex items-center gap-3 bg-blue-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/30 hover:scale-105"
                 >
-                  Tüm Ürünleri Görüntüle
+                  Ürün Kataloğu
                   <svg
                     className="w-5 h-5"
                     fill="none"
@@ -530,7 +542,7 @@ export default async function HomePage() {
                   href="/kurumsal/hakkimizda"
                   className="inline-flex items-center justify-center gap-3 bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white px-8 py-4 rounded-xl font-bold hover:bg-white/20 transition-all"
                 >
-                  Hakkımızda
+                  Şirket Hakkında
                   <svg
                     className="w-5 h-5"
                     fill="none"
@@ -618,7 +630,7 @@ export default async function HomePage() {
                   "Baykon",
                   "Gesan",
                   "Hakan Otomasyon",
-                  "Moduler Makina",
+                  "Moduler Makine",
                   "Seal",
                   "Etili Seramik",
                   "Yalçın",

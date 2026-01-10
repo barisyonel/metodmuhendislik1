@@ -8,6 +8,7 @@ import { sanitizeInput, sanitizeHtml, sanitizeUrl } from "@/lib/sanitize";
 import { handleApiError, ValidationError, AuthenticationError } from "@/lib/errors";
 
 // Force dynamic rendering because we use cookies for authentication
+// Static export sırasında undefined olmalı (API route'lar static export'ta çalışmaz)
 export const dynamic = 'force-dynamic';
 
 // Product interface

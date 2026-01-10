@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { query } from "@/lib/db";
 
 // Force dynamic rendering
+// Static export sırasında undefined olmalı (API route'lar static export'ta çalışmaz)
 export const dynamic = 'force-dynamic';
 
 // Detaylı veritabanı debug endpoint'i

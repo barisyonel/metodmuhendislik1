@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import CloudinaryImagePicker from "../../components/CloudinaryImagePicker";
 
 interface Slider {
   id: number;
@@ -24,6 +25,8 @@ export default function SliderManager({ initialSliders = [] }: { initialSliders?
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [imagePreview, setImagePreview] = useState<string>("");
+  const [showCloudinaryPicker, setShowCloudinaryPicker] = useState(false);
+  const [failedImages, setFailedImages] = useState<Set<number>>(new Set()); // Yüklenemeyen görselleri takip et
   const [formData, setFormData] = useState({
     image_url: "",
     sort_order: 0,
@@ -154,6 +157,12 @@ export default function SliderManager({ initialSliders = [] }: { initialSliders?
       setUploading(false);
       e.target.value = "";
     }
+  };
+
+  // Cloudinary'den görsel seçme
+  const handleCloudinarySelect = (imageUrl: string) => {
+    setImagePreview(imageUrl);
+    setFormData((prev) => ({ ...prev, image_url: imageUrl }));
   };
 
   // Form gönder
@@ -696,23 +705,36 @@ export default function SliderManager({ initialSliders = [] }: { initialSliders?
                       </div>
                     </div>
                   )}
-                  <div className="relative">
-                  <input
-                    type="file"
-                      id="slider-image-input"
-                      accept="image/jpeg,image/jpg,image/png,image/webp"
-                    onChange={handleImageUpload}
-                    disabled={uploading}
-                      className="w-full px-4 py-3 border-2 border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-600 bg-white cursor-pointer hover:border-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  />
-                  {uploading && (
-                      <div className="absolute top-3 right-4 flex items-center gap-2 text-sm text-blue-600 bg-white/90 px-2 py-1 rounded">
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                        <span>Cloudinary&apos;ye yükleniyor...</span>
-                      </div>
-                  )}
+                  <div className="space-y-2">
+                    <div className="relative">
+                      <input
+                        type="file"
+                        id="slider-image-input"
+                        accept="image/jpeg,image/jpg,image/png,image/webp"
+                        onChange={handleImageUpload}
+                        disabled={uploading}
+                        className="w-full px-4 py-3 border-2 border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-600 bg-white cursor-pointer hover:border-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      />
+                      {uploading && (
+                        <div className="absolute top-3 right-4 flex items-center gap-2 text-sm text-blue-600 bg-white/90 px-2 py-1 rounded">
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                          <span>Cloudinary&apos;ye yükleniyor...</span>
+                        </div>
+                      )}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setShowCloudinaryPicker(true)}
+                      disabled={uploading}
+                      className="w-full px-4 py-2 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white rounded-lg hover:from-indigo-600 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-medium text-sm flex items-center justify-center gap-2"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      Cloudinary&apos;den Seç
+                    </button>
                     {!imagePreview && !uploading && (
-                      <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-xs text-yellow-800">
+                      <div className="p-2 bg-yellow-50 border border-yellow-200 rounded text-xs text-yellow-800">
                         ⚠️ Lütfen bir görsel seçin. Görsel Cloudinary&apos;ye yüklendikten sonra &quot;Ekle&quot; butonuna basabilirsiniz.
                       </div>
                     )}
@@ -848,7 +870,7 @@ export default function SliderManager({ initialSliders = [] }: { initialSliders?
               >
                 {/* Görsel */}
                   <div className="relative w-full h-64 bg-slate-100 group cursor-pointer">
-                    {slider.image_url && slider.image_url.trim() !== '' ? (
+                    {slider.image_url && slider.image_url.trim() !== '' && !failedImages.has(slider.id) ? (
                       <>
                     <Image
                       src={slider.image_url}
@@ -859,8 +881,7 @@ export default function SliderManager({ initialSliders = [] }: { initialSliders?
                           unoptimized={true}
                           onError={(e) => {
                             console.error("Görsel yüklenemedi:", slider.image_url);
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
+                            setFailedImages(prev => new Set(prev).add(slider.id));
                           }}
                         />
                         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100">
@@ -878,8 +899,17 @@ export default function SliderManager({ initialSliders = [] }: { initialSliders?
                   ) : (
                       <div className="w-full h-full flex items-center justify-center text-slate-400 bg-slate-50">
                         <div className="text-center p-4">
-                          <div className="text-4xl mb-2">🖼️</div>
-                          <p className="text-sm font-bold">Görsel Yok</p>
+                          <div className="text-4xl mb-2">
+                            {failedImages.has(slider.id) ? "❌" : "🖼️"}
+                          </div>
+                          <p className="text-sm font-bold">
+                            {failedImages.has(slider.id) ? "Görsel Yüklenemedi" : "Görsel Yok"}
+                          </p>
+                          {failedImages.has(slider.id) && (
+                            <p className="text-xs text-slate-500 mt-1">
+                              Cloudinary&apos;de bulunamadı
+                            </p>
+                          )}
                         </div>
                     </div>
                   )}
@@ -948,6 +978,15 @@ export default function SliderManager({ initialSliders = [] }: { initialSliders?
               </div>
         </div>
       )}
+
+      {/* Cloudinary Image Picker Modal */}
+      <CloudinaryImagePicker
+        isOpen={showCloudinaryPicker}
+        onClose={() => setShowCloudinaryPicker(false)}
+        onSelect={handleCloudinarySelect}
+        folder="metod-muhendislik/sliders"
+        title="Cloudinary&apos;den Slider Görseli Seç"
+      />
     </div>
   );
 }

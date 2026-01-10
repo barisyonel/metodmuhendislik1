@@ -47,13 +47,6 @@ const navItems: NavItem[] = [
     color: "from-purple-500 to-purple-600",
     description: "Hizmetleri yönet",
   },
-  {
-    title: "Türkçe Düzeltme",
-    icon: "🔤",
-    href: "/metod/fix-encoding",
-    color: "from-red-500 to-red-600",
-    description: "Karakter düzeltme",
-  },
 ];
 
 export default function AdminSidebar() {

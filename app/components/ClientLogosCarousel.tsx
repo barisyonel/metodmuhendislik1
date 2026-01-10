@@ -19,48 +19,70 @@ export default function ClientLogosCarousel({ logos }: ClientLogosCarouselProps)
     const container = scrollContainerRef.current;
     if (!container || logos.length === 0) return;
 
-    let scrollPosition = 0;
-    const scrollSpeed = 0.5; // Piksel başına kaydırma hızı
-    let animationFrameId: number;
+    let animationFrameId: number | null = null;
+    let cleanupFn: (() => void) | null = null;
 
-    const scroll = () => {
-      if (isScrollingRef.current) {
+    // İlk render'dan sonra bir miktar bekle (DOM'un hazır olması için)
+    const initTimeout = setTimeout(() => {
+      let scrollPosition = 0;
+      const scrollSpeed = 0.5; // Piksel başına kaydırma hızı
+
+      const scroll = () => {
+        if (isScrollingRef.current) {
+          animationFrameId = requestAnimationFrame(scroll);
+          return;
+        }
+
+        const scrollWidth = container.scrollWidth;
+        const singleSetWidth = scrollWidth / 3; // 3 kopya var
+
+        // scrollWidth geçerli değilse bekle
+        if (scrollWidth === 0 || isNaN(singleSetWidth)) {
+          animationFrameId = requestAnimationFrame(scroll);
+          return;
+        }
+
+        scrollPosition += scrollSpeed;
+
+        // Eğer bir set tamamen kaydırıldıysa, başa dön
+        if (scrollPosition >= singleSetWidth) {
+          scrollPosition = scrollPosition - singleSetWidth;
+        }
+
+        container.scrollLeft = scrollPosition;
         animationFrameId = requestAnimationFrame(scroll);
-        return;
-      }
-      
-      const scrollWidth = container.scrollWidth;
-      const singleSetWidth = scrollWidth / 3; // 3 kopya var
+      };
 
-      scrollPosition += scrollSpeed;
-
-      // Eğer bir set tamamen kaydırıldıysa, başa dön
-      if (scrollPosition >= singleSetWidth) {
-        scrollPosition = scrollPosition - singleSetWidth;
-      }
-
-      container.scrollLeft = scrollPosition;
+      // Otomatik kaydırma başlat
       animationFrameId = requestAnimationFrame(scroll);
-    };
 
-    // Otomatik kaydırma başlat
-    animationFrameId = requestAnimationFrame(scroll);
+      // Mouse hover'da durdur
+      const handleMouseEnter = () => {
+        isScrollingRef.current = true;
+      };
+      const handleMouseLeave = () => {
+        isScrollingRef.current = false;
+      };
 
-    // Mouse hover'da durdur
-    const handleMouseEnter = () => {
-      isScrollingRef.current = true;
-    };
-    const handleMouseLeave = () => {
-      isScrollingRef.current = false;
-    };
+      container.addEventListener('mouseenter', handleMouseEnter);
+      container.addEventListener('mouseleave', handleMouseLeave);
 
-    container.addEventListener('mouseenter', handleMouseEnter);
-    container.addEventListener('mouseleave', handleMouseLeave);
+      // Cleanup fonksiyonunu sakla
+      cleanupFn = () => {
+        if (animationFrameId !== null) {
+          cancelAnimationFrame(animationFrameId);
+        }
+        container.removeEventListener('mouseenter', handleMouseEnter);
+        container.removeEventListener('mouseleave', handleMouseLeave);
+      };
+    }, 100); // 100ms bekle - DOM'un hazır olması için
 
+    // useEffect cleanup - setTimeout ve animasyonu temizle
     return () => {
-      cancelAnimationFrame(animationFrameId);
-      container.removeEventListener('mouseenter', handleMouseEnter);
-      container.removeEventListener('mouseleave', handleMouseLeave);
+      clearTimeout(initTimeout);
+      if (cleanupFn) {
+        cleanupFn();
+      }
     };
   }, [logos]);
 
@@ -90,10 +112,10 @@ export default function ClientLogosCarousel({ logos }: ClientLogosCarouselProps)
           // Sadece ilk setteki ilk 3 görsel için priority
           const isFirstSet = index < logos.length;
           const isPriority = isFirstSet && index < 3;
-          
-          // Path'teki boşlukları encode et (Next.js genellikle handle eder ama emin olmak için)
-          const imageSrc = logo.image;
-          
+
+          // Path'teki boşlukları encode et - URL encoding kullan
+          const imageSrc = logo.image.replace(/ /g, '%20');
+
           return (
             <div
               key={`${logo.name}-${index}`}

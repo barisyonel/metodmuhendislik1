@@ -3,6 +3,7 @@ import { query, getConnection } from "@/lib/db";
 import { isAuthenticated } from "@/lib/auth";
 
 // Force dynamic rendering
+// Static export sırasında undefined olmalı (API route'lar static export'ta çalışmaz)
 export const dynamic = 'force-dynamic';
 
 // Double-encoded Türkçe karakterleri düzelt

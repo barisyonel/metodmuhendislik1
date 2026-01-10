@@ -17,7 +17,8 @@ export default function Footer({ initialServices = [] }: { initialServices?: Ser
     name: string;
     href: string;
   }>>(() => {
-    // Server component'ten gelen verileri kullan, API route'a gerek yok!
+    // Server component'ten gelen verileri kullan (encoding düzeltmesi server-side'da yapılıyor)
+    // getServices() fonksiyonu zaten fixTurkishEncoding kullanıyor
     if (initialServices && initialServices.length > 0) {
       return initialServices.slice(0, 6).map(s => ({
         name: s.name || "",

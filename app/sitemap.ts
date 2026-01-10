@@ -1,6 +1,10 @@
 import { MetadataRoute } from "next";
 import { query } from "@/lib/db";
 
+// Static export için gerekli
+export const dynamic = 'force-static';
+export const revalidate = 3600; // 1 saat
+
 interface Product {
   id: number;
   slug?: string;

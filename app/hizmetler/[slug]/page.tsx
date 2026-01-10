@@ -274,12 +274,29 @@ const hizmetler: {
   },
 };
 
+export async function generateStaticParams() {
+  return Object.keys(hizmetler).map((slug) => ({ slug }));
+}
+
 export async function generateMetadata({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }> | { slug: string };
 }): Promise<Metadata> {
-  const hizmet = hizmetler[params.slug];
+  // Next.js 16'da params bir Promise olabilir
+  const resolvedParams = params instanceof Promise ? await params : params;
+  
+  // URL decode ve normalize et
+  let normalizedSlug = decodeURIComponent(resolvedParams.slug);
+  const slugMapping: { [key: string]: string } = {
+    'elektrik-pano-üretimi': 'elektrik-pano-uretime',
+    'elektrik-pano-uretimi': 'elektrik-pano-uretime',
+    'cnc-büküm': 'cnc-bukum',
+    'magaza-raf-ve-ürünleri': 'magaza-raf-ve-urunleri',
+    'çelik-konstrüksiyon': 'celik-konstruksiyon',
+  };
+  const finalSlug = slugMapping[normalizedSlug.toLowerCase()] || normalizedSlug.toLowerCase();
+  const hizmet = hizmetler[finalSlug] || hizmetler[normalizedSlug] || hizmetler[resolvedParams.slug];
 
   if (!hizmet) {
     return {
@@ -300,14 +317,45 @@ export async function generateMetadata({
   };
 }
 
-export default function HizmetDetayPage({
+export default async function HizmetDetayPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }> | { slug: string };
 }) {
-  const hizmet = hizmetler[params.slug];
+  // Next.js 16'da params bir Promise olabilir
+  const resolvedParams = params instanceof Promise ? await params : params;
+  
+  // URL decode ve normalize et (Türkçe karakterler için)
+  let normalizedSlug = decodeURIComponent(resolvedParams.slug);
+  
+  // Türkçe karakterleri İngilizce karşılıklarına çevir
+  const slugMapping: { [key: string]: string } = {
+    'elektrik-pano-üretimi': 'elektrik-pano-uretime',
+    'elektrik-pano-uretimi': 'elektrik-pano-uretime',
+    'cnc-büküm': 'cnc-bukum',
+    'cnc-bukum': 'cnc-bukum',
+    'magaza-raf-ve-urunleri': 'magaza-raf-ve-urunleri',
+    'mağaza-raf-ve-ürünleri': 'magaza-raf-ve-urunleri',
+    'celik-konstruksiyon': 'celik-konstruksiyon',
+    'çelik-konstrüksiyon': 'celik-konstruksiyon',
+  };
+  
+  // Eğer mapping varsa kullan, yoksa normalize edilmiş slug'ı dene
+  const finalSlug = slugMapping[normalizedSlug.toLowerCase()] || normalizedSlug.toLowerCase();
+  
+  // Önce mapping'i dene, sonra direkt slug'ı dene
+  let hizmet = hizmetler[finalSlug] || hizmetler[normalizedSlug] || hizmetler[resolvedParams.slug];
 
   if (!hizmet) {
+    // Debug: Development'ta hangi slug'ların denendiğini logla
+    if (process.env.NODE_ENV === 'development') {
+      console.error('❌ Hizmet bulunamadı:', {
+        originalSlug: resolvedParams.slug,
+        normalizedSlug,
+        finalSlug,
+        availableSlugs: Object.keys(hizmetler),
+      });
+    }
     notFound();
   }
 

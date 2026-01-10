@@ -1,5 +1,8 @@
 import { MetadataRoute } from 'next';
 
+// Static export için gerekli
+export const dynamic = 'force-static';
+
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'Metod Mühendislik - Elektrik Pano Üretimi ve Endüstriyel Üretim',

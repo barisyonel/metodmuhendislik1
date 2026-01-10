@@ -329,7 +329,7 @@ export default function Hakkimizda() {
                   "Gesan",
                   "Goga Marin",
                   "Hakan Otomasyon",
-                  "Moduler Makina",
+                  "Moduler Makine",
                   "Seal",
                   "Etili Seramik",
                   "Yalçın",

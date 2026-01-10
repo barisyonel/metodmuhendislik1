@@ -12,6 +12,24 @@ import {
   generateOGImage,
   generateCanonicalURL,
 } from "@/lib/seo-utils";
+import { query } from "@/lib/db";
+
+export async function generateStaticParams() {
+  try {
+    const projects = await query<Array<{ id: number }>>(
+      "SELECT id FROM projects WHERE (is_active = TRUE OR is_active = 1) ORDER BY id DESC LIMIT 100"
+    );
+
+    if (Array.isArray(projects) && projects.length > 0) {
+      return projects.map((project) => ({ id: String(project.id) }));
+    }
+  } catch (error) {
+    // Build sırasında veritabanı bağlantısı yoksa boş array döndür
+    console.warn("Static params oluşturulurken veritabanı hatası (normal olabilir):", error);
+  }
+
+  return [];
+}
 
 export async function generateMetadata({
   params,

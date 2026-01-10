@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 // Force dynamic rendering
+// Static export sırasında undefined olmalı (API route'lar static export'ta çalışmaz)
 export const dynamic = 'force-dynamic';
 
 // Environment variables kontrol endpoint'i (sadece production'da güvenlik için gizli tutun)

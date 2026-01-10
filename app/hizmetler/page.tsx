@@ -2,10 +2,11 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { query } from "@/lib/db";
+import { getServices } from "@/app/lib/data";
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// Static export için: force-dynamic kaldırıldı
+// export const dynamic = 'force-dynamic';
+export const revalidate = 3600; // 1 saat
 
 export const metadata: Metadata = {
   title: "Hizmetlerimiz | CNC Lazer Kesim, Büküm, Kaynak, Elektrik Pano ve Çelik Konstrüksiyon | Metod Mühendislik",
@@ -22,27 +23,7 @@ export const metadata: Metadata = {
   },
 };
 
-interface Service {
-  id: number;
-  name: string;
-  href: string;
-  icon: string;
-  description?: string;
-  sort_order: number;
-  is_active: boolean | number;
-}
-
-async function getServices(): Promise<Service[]> {
-  try {
-    const services = await query<Service[]>(
-      "SELECT * FROM metod_services WHERE is_active = TRUE ORDER BY sort_order ASC, id ASC"
-    );
-    return Array.isArray(services) ? services : [];
-  } catch (error) {
-    console.error("Hizmetler yüklenirken hata:", error);
-    return [];
-  }
-}
+// getServices fonksiyonu artık app/lib/data.ts'den geliyor (icon encoding düzeltmeli)
 
 // Fallback hizmetler (veritabanı bağlantısı yoksa)
 const fallbackServices = [
@@ -112,6 +93,7 @@ const fallbackServices = [
 ];
 
 export default async function HizmetlerPage() {
+  // getServices fonksiyonu icon encoding düzeltmesi yapıyor
   const services = await getServices();
   const displayServices = services.length > 0 ? services : fallbackServices;
 
