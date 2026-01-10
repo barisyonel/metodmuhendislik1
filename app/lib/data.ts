@@ -370,9 +370,10 @@ export async function getServices(): Promise<Service[]> {
   // Vercel build sırasında veritabanına bağlanmayı engelle (build timeout'larını önlemek için)
   // Vercel build ortamında static export yapılırken veritabanı bağlantısı timeout olabilir
   // Bu durumda hemen fallback return et, build'i bloklama
+  // EN ÖNCE KONTROL ET - query() çağrılmadan önce
   if (process.env.VERCEL === "1") {
-    // DB_HOST yoksa, 'SET' ise (placeholder), veya geçersizse hemen return et
     const dbHost = process.env.DB_HOST;
+    // DB_HOST yoksa, 'SET' ise (placeholder), veya geçersizse hemen return et
     if (
       !dbHost ||
       dbHost === "SET" ||
@@ -381,7 +382,9 @@ export async function getServices(): Promise<Service[]> {
       process.env.NEXT_PHASE === "phase-production-build"
     ) {
       console.warn(
-        "⚠️ Vercel build ortamında - veritabanı bağlantısı atlanıyor (fallback kullanılacak)",
+        "⚠️ Vercel build: getServices() - Veritabanı bağlantısı atlanıyor (DB_HOST:",
+        dbHost,
+        ")",
       );
       return [];
     }
