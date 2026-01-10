@@ -13,11 +13,22 @@
   body {
     color: var(--color-text-dark);
     background-color: var(--color-bg-light);
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
     font-size: 16px; /* Erişilebilirlik için minimum 16px */
     line-height: 1.6;
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
+  }
+
+  /* Emoji render'ını iyileştir */
+  [role="img"] {
+    font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji', system-ui, sans-serif;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: normal;
+    line-height: 1;
+    display: inline-block;
+    vertical-align: middle;
   }
 
   /* SEO için Başlık Hiyerarşisi Stilleri */

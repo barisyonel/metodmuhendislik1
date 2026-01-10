@@ -48,7 +48,7 @@ export default function HeroSlider({ initialSliders = [] }: { initialSliders?: S
         link: s.link || "#",
       }));
   });
-  
+
   const [globalVideoUrl] = useState<string | null>(() => {
     // İlk aktif slider'dan video URL'ini al
     const activeSliderWithVideo = initialSliders.find(
@@ -59,34 +59,52 @@ export default function HeroSlider({ initialSliders = [] }: { initialSliders?: S
       }
     );
     const videoUrl = activeSliderWithVideo?.video_url || null;
-    
-    
+
+    // Debug: Development'ta video URL'ini logla
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🎥 Video URL kontrolü:', {
+        activeSliders: initialSliders.filter(s => s.is_active === true || s.is_active === 1).length,
+        foundSlider: activeSliderWithVideo ? {
+          id: activeSliderWithVideo.id,
+          title: activeSliderWithVideo.title,
+          video_url: activeSliderWithVideo.video_url
+        } : null,
+        videoUrl: videoUrl
+      });
+    }
+
     return videoUrl;
   });
 
-  // Client-side hydration kontrolü - useEffect yerine useState initializer kullan
-  const [isMounted] = useState(() => {
-    if (typeof window === 'undefined') return false;
-    return true;
-  });
+  // Client-side hydration kontrolü - useEffect ile mount kontrolü
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    // Component mount olduktan sonra video'yu göster (hydration mismatch'i önlemek için)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    setIsMounted(true);
+
+    // Debug: Video durumunu kontrol et
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🎬 HeroSlider mount edildi:', {
+        isMounted: true,
+        globalVideoUrl: globalVideoUrl,
+        hasVideo: globalVideoUrl && globalVideoUrl.trim() !== ''
+      });
+    }
+
     // Admin panelinden güncelleme event'ini dinle
     const handleSliderUpdate = () => {
       // Sayfayı yenile (server component tekrar çalışacak)
       window.location.reload();
     };
-    
-    if (typeof window !== 'undefined') {
-      window.addEventListener('slider-updated', handleSliderUpdate);
-    }
-    
+
+    window.addEventListener('slider-updated', handleSliderUpdate);
+
     return () => {
-      if (typeof window !== 'undefined') {
-        window.removeEventListener('slider-updated', handleSliderUpdate);
-      }
+      window.removeEventListener('slider-updated', handleSliderUpdate);
     };
-  }, []);
+  }, [globalVideoUrl]);
 
   if (slides.length === 0) {
     return (
@@ -104,7 +122,7 @@ export default function HeroSlider({ initialSliders = [] }: { initialSliders?: S
     <div className="h-screen w-full relative">
       {/* Video - Slider'ın sağ alt köşesinde sabit (absolute pozisyon) */}
       {/* Sadece client-side'da render et (hydration hatasını önlemek için) */}
-      {isMounted && globalVideoUrl && globalVideoUrl.trim() !== '' && (
+      {isMounted && globalVideoUrl && globalVideoUrl.trim() !== '' ? (
         <div className="absolute bottom-6 right-6 z-[100] w-64 md:w-80 lg:w-96 rounded-lg overflow-hidden shadow-2xl border-2 border-white/20 backdrop-blur-sm bg-black/20">
           <video
             src={globalVideoUrl}
@@ -116,16 +134,29 @@ export default function HeroSlider({ initialSliders = [] }: { initialSliders?: S
             className="w-full h-auto"
             suppressHydrationWarning
             onError={(e) => {
-              // Video yükleme hatası - sessizce handle et
+              // Video yükleme hatası - console'da göster
+              const target = e.target as HTMLVideoElement;
+              console.error('❌ Video yükleme hatası:', {
+                videoUrl: globalVideoUrl,
+                error: target.error,
+                networkState: target.networkState,
+                readyState: target.readyState
+              });
             }}
             onLoadedData={() => {
+              // Video başarıyla yüklendi
               if (process.env.NODE_ENV === 'development') {
-                // Video başarıyla yüklendi
+                console.log('✅ Video başarıyla yüklendi:', globalVideoUrl);
               }
             }}
           >
             Tarayıcınız video oynatmayı desteklemiyor.
           </video>
+        </div>
+      ) : process.env.NODE_ENV === 'development' && (
+        // Development'ta video yoksa debug bilgisi göster
+        <div className="absolute bottom-6 right-6 z-[100] bg-yellow-500/80 text-black text-xs p-2 rounded">
+          Video yok: isMounted={String(isMounted)}, videoUrl={globalVideoUrl || 'null'}
         </div>
       )}
 

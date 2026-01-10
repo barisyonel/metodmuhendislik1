@@ -96,13 +96,6 @@ export default async function AdminDashboardPage() {
       link: "/metod/services",
       color: "from-purple-500 to-purple-600",
     },
-    {
-      title: "Türkçe Karakter Düzeltme",
-      description: "Bozuk Türkçe karakterleri düzelt",
-      icon: "🔤",
-      link: "/metod/fix-encoding",
-      color: "from-red-500 to-red-600",
-    },
   ];
 
   return (

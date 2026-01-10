@@ -19,7 +19,7 @@ export default function Header({ initialServices = [] }: { initialServices?: Ser
   const [clickedMenu, setClickedMenu] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mobileSubmenu, setMobileSubmenu] = useState<string | null>(null);
-  const [hizmetler, setHizmetler] = useState<Array<{
+  const [hizmetler] = useState<Array<{
     name: string;
     href: string;
     icon: string;
@@ -27,15 +27,44 @@ export default function Header({ initialServices = [] }: { initialServices?: Ser
   }>>(() => {
     // Server component'ten gelen verileri kullan, API route'a gerek yok!
     if (initialServices && initialServices.length > 0) {
-      return initialServices.map(s => ({
-        name: s.name || "",
-        href: s.href || "",
-        icon: s.icon || "⚡",
-        description: s.description || "",
-      }));
+      const mappedServices = initialServices.map(s => {
+        // Icon field'ını kontrol et ve bozuk encoding'i düzelt
+        let icon = s.icon || "";
+
+        // Bozuk encoding karakterleri kontrol et (âši, ΔΫ"§, BŸŽ, ї, vb.)
+        const brokenChars = ['â', 'ši', 'Δ', 'Ϋ', 'Ÿ', 'Ž', 'ї', 'Ö', '¥'];
+        const hasBrokenEncoding = brokenChars.some(char => icon.includes(char));
+
+        // Eğer bozuk encoding varsa veya emoji karakteri yoksa, hizmet adına göre emoji atayalım
+        if (!icon || icon.trim() === "" || hasBrokenEncoding || !/[⚡🔧🔥🎨📦🏗️🔺📐]/.test(icon)) {
+          const serviceName = (s.name || "").toLowerCase();
+          if (serviceName.includes("elektrik") || serviceName.includes("pano")) icon = "⚡";
+          else if (serviceName.includes("lazer") || serviceName.includes("kesim")) icon = "🔺";
+          else if (serviceName.includes("büküm") || serviceName.includes("bukum")) icon = "📐";
+          else if (serviceName.includes("kaynak")) icon = "🔥";
+          else if (serviceName.includes("boya") || serviceName.includes("toz")) icon = "🎨";
+          else if (serviceName.includes("raf") || serviceName.includes("mağaza") || serviceName.includes("magaza")) icon = "📦";
+          else if (serviceName.includes("konstrüksiyon") || serviceName.includes("konstruksiyon") || serviceName.includes("çelik") || serviceName.includes("celik")) icon = "🏗️";
+          else icon = "⚡"; // Default
+        }
+
+        return {
+          name: s.name || "",
+          href: s.href || "",
+          icon: icon.trim(),
+          description: s.description || "",
+        };
+      });
+
+      // Debug: Development'ta icon'ları kontrol et
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🎨 Hizmet Icon\'ları (düzeltilmiş):', mappedServices.map(s => ({ name: s.name, icon: s.icon })));
+      }
+
+      return mappedServices;
     }
     // Fallback hizmetler
-    return [
+    const fallbackServices = [
       { name: "Elektrik Pano Üretimi", href: "/hizmetler/elektrik-pano-uretime", icon: "⚡", description: "Sıvaüstü, sıvaaltı ve marin pano üretimi" },
       { name: "CNC Lazer Kesim", href: "/hizmetler/cnc-lazer-kesim", icon: "⚡", description: "Hassas lazer kesim çözümleri" },
       { name: "CNC Büküm", href: "/hizmetler/cnc-bukum", icon: "🔧", description: "Profesyonel büküm hizmetleri" },
@@ -44,6 +73,17 @@ export default function Header({ initialServices = [] }: { initialServices?: Ser
       { name: "Mağaza Raf Ve Ürünleri", href: "/hizmetler/magaza-raf-ve-urunleri", icon: "📦", description: "Mağaza raf sistemleri" },
       { name: "Çelik Konstrüksiyon", href: "/hizmetler/celik-konstruksiyon", icon: "🏗️", description: "Endüstriyel çelik yapılar" },
     ];
+
+    // Debug: Development'ta hizmetleri logla
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🔧 Header Hizmetler:', {
+        initialServices: initialServices.length,
+        fallbackUsed: initialServices.length === 0,
+        hizmetlerCount: fallbackServices.length
+      });
+    }
+
+    return fallbackServices;
   });
   const pathname = usePathname();
 
@@ -70,9 +110,9 @@ export default function Header({ initialServices = [] }: { initialServices?: Ser
       // Sayfayı yenile (server component tekrar çalışacak)
       window.location.reload();
     };
-    
+
     window.addEventListener('service-updated', handleServiceUpdate);
-    
+
     return () => {
       window.removeEventListener('service-updated', handleServiceUpdate);
     };
@@ -213,6 +253,10 @@ export default function Header({ initialServices = [] }: { initialServices?: Ser
                   if (clickedMenu === "h") {
                     setClickedMenu(null);
                   }
+                  // Debug: Development'ta dropdown açılmasını logla
+                  if (process.env.NODE_ENV === 'development') {
+                    console.log('📋 Hizmetler dropdown açıldı (hover)');
+                  }
                 }}
                 onMouseLeave={() => {
                   // Sadece tıklanmamışsa kapat
@@ -261,8 +305,8 @@ export default function Header({ initialServices = [] }: { initialServices?: Ser
                 {activeMenu === "h" && (
                   <>
                     {/* Köprü - Button ile dropdown arasındaki boşluğu kapatır */}
-                    <div className="absolute left-0 top-full w-full h-3 z-40"></div>
-                    <div className="absolute left-0 top-full pt-3 w-[650px] z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="absolute left-0 top-full w-full h-3 z-[101]"></div>
+                    <div className="absolute left-0 top-full pt-3 w-[650px] z-[101] animate-fade-in transform transition-all duration-200">
                       <div
                         data-dropdown
                         className="bg-white border border-slate-200 shadow-xl shadow-black/10 rounded-xl overflow-hidden"
@@ -285,7 +329,9 @@ export default function Header({ initialServices = [] }: { initialServices?: Ser
                               }}
                             >
                               <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0 group-hover:bg-blue-100 transition-colors duration-200">
-                                <span className="text-xl">{h.icon}</span>
+                                <span className="text-xl leading-none" role="img" aria-label={h.name}>
+                                  {h.icon || "⚡"}
+                                </span>
                               </div>
                               <div className="flex-1 min-w-0">
                                 <span className="block text-slate-900 font-semibold text-sm group-hover:text-blue-600 transition-colors leading-tight">
@@ -414,11 +460,11 @@ export default function Header({ initialServices = [] }: { initialServices?: Ser
                 {activeMenu === "k" && (
                   <>
                     {/* Köprü - Button ile dropdown arasındaki boşluğu kapatır */}
-                    <div className="absolute left-0 top-full w-full h-3 z-40"></div>
-                    <div className="absolute left-0 top-full pt-3 w-56 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="absolute left-0 top-full w-full h-3 z-[101]"></div>
+                    <div className="absolute left-0 top-full pt-3 w-56 z-[101] animate-fade-in transform transition-all duration-200">
                       <div
                         data-dropdown
-                        className="bg-white border border-slate-200 shadow-xl shadow-black/10 rounded-lg overflow-hidden"
+                        className="bg-white border border-slate-200 shadow-xl shadow-black/10 rounded-lg overflow-hidden transform transition-all duration-200"
                       >
                       {kurumsalItems.map((item) => (
                         <Link
@@ -593,7 +639,9 @@ export default function Header({ initialServices = [] }: { initialServices?: Ser
                           onClick={() => setIsMobileMenuOpen(false)}
                         >
                           <div className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0">
-                            <span className="text-lg">{h.icon}</span>
+                            <span className="text-lg leading-none" role="img" aria-label={h.name}>
+                              {h.icon || "⚡"}
+                            </span>
                           </div>
                           <div className="flex-1">
                             <span className="block font-bold leading-tight">{h.name}</span>

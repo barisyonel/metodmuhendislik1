@@ -13,7 +13,8 @@ export const metadata: Metadata = {
     "elektrik pano, ürünler, CNC lazer kesim, CNC büküm, kaynak, toz boya, çelik konstrüksiyon, endüstriyel ürünler, Metod Mühendislik ürünleri",
 };
 
-export const dynamic = 'force-dynamic';
+// Static export için: force-dynamic kaldırıldı
+// export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 interface Product {

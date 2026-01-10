@@ -5,6 +5,7 @@ import fs from "fs";
 import path from "path";
 
 // Force dynamic rendering because we use cookies for authentication
+// Static export sırasında undefined olmalı (API route'lar static export'ta çalışmaz)
 export const dynamic = 'force-dynamic';
 
 // Cloudinary yapılandırması

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { query } from "@/lib/db";
 
+// Static export sırasında undefined olmalı (API route'lar static export'ta çalışmaz)
 export const dynamic = 'force-dynamic';
 
 export async function GET() {

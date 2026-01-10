@@ -8,6 +8,7 @@ import { handleApiError, ValidationError, AuthenticationError } from "@/lib/erro
 import { SESSION_COOKIE_NAME, SESSION_COOKIE_MAX_AGE } from "@/lib/constants";
 
 // Force dynamic rendering because we use cookies
+// Not: Static export sırasında API route'lar build script tarafından taşınır
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {

@@ -87,29 +87,10 @@ async function getProductBySlug(slug: string): Promise<Product | null> {
   }
 }
 
-export async function generateStaticParams() {
-  try {
-    const products = await query<Product[]>(
-      "SELECT link FROM products WHERE is_active = TRUE OR is_active IS NULL",
-    );
-
-    if (Array.isArray(products) && products.length > 0) {
-      return products
-        .map((p) => {
-          if (p.link) {
-            const match = p.link.match(/\/urunler\/urunler\/(.+)$/);
-            if (match && match[1]) {
-              return { slug: match[1] };
-            }
-          }
-          return null;
-        })
-        .filter((item): item is { slug: string } => item !== null);
-    }
-  } catch (error) {
-    console.error("Static params oluşturulurken hata:", error);
-  }
-
+export function generateStaticParams() {
+  // Static export için: Build sırasında veritabanı bağlantısı olmayabilir
+  // Bu yüzden boş array döndürüyoruz
+  // Not: Static export'ta dinamik sayfalar build sırasında oluşturulmaz
   return [];
 }
 

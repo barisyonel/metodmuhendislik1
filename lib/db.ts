@@ -1,7 +1,3 @@
-// MySQL Bağlantı Hazırlığı
-// Bu dosya MySQL entegrasyonu için hazırlanmıştır
-// mysql2 veya prisma gibi bir kütüphane kullanılabilir
-
 import mysql from 'mysql2/promise';
 import bcrypt from 'bcryptjs';
 

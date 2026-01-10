@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:static": "bash scripts/build-static.sh",
     "start": "next start",
     "lint": "eslint",
     "docker:dev": "docker-compose -f docker-compose.dev.yml up -d",

@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Image from "next/image";
+import CloudinaryImagePicker from "../../components/CloudinaryImagePicker";
 
 interface Project {
   id: number;
@@ -26,6 +27,8 @@ export default function ProjectManager({ initialProjects = [] }: { initialProjec
   const [saving, setSaving] = useState(false);
   const [imagePreview, setImagePreview] = useState<string>("");
   const [imageList, setImageList] = useState<string[]>([]);
+  const [showCloudinaryPicker, setShowCloudinaryPicker] = useState(false);
+  const [cloudinaryPickerType, setCloudinaryPickerType] = useState<"main" | "gallery">("main");
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -186,6 +189,24 @@ export default function ProjectManager({ initialProjects = [] }: { initialProjec
   const handleSetMainImage = (imageUrl: string) => {
     setImagePreview(imageUrl);
     setFormData((prev) => ({ ...prev, image_url: imageUrl }));
+  };
+
+  // Cloudinary'den görsel seçme
+  const handleCloudinarySelect = (imageUrl: string) => {
+    if (cloudinaryPickerType === "main") {
+      // Ana görsel olarak seç
+      setImagePreview(imageUrl);
+      setFormData((prev) => ({ ...prev, image_url: imageUrl }));
+    } else {
+      // Galeri görseli olarak ekle
+      setImageList((prev) => {
+        if (prev.includes(imageUrl)) {
+          alert("Bu görsel zaten galeride mevcut!");
+          return prev;
+        }
+        return [...prev, imageUrl];
+      });
+    }
   };
 
   // Form gönder
@@ -523,21 +544,37 @@ export default function ProjectManager({ initialProjects = [] }: { initialProjec
                       </div>
                     </div>
                   )}
-                  <div className="relative">
-                    <input
-                      type="file"
-                      id="project-image-input"
-                      accept="image/jpeg,image/jpg,image/png,image/webp"
-                      onChange={handleImageUpload}
+                  <div className="space-y-2">
+                    <div className="relative">
+                      <input
+                        type="file"
+                        id="project-image-input"
+                        accept="image/jpeg,image/jpg,image/png,image/webp"
+                        onChange={handleImageUpload}
+                        disabled={uploading}
+                        className="w-full px-4 py-3 border-2 border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-600 bg-white cursor-pointer hover:border-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      />
+                      {uploading && (
+                        <div className="absolute top-3 right-4 flex items-center gap-2 text-sm text-blue-600 bg-white/90 px-2 py-1 rounded">
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                          <span>Cloudinary&apos;ye yükleniyor...</span>
+                        </div>
+                      )}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCloudinaryPickerType("main");
+                        setShowCloudinaryPicker(true);
+                      }}
                       disabled={uploading}
-                      className="w-full px-4 py-3 border-2 border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-600 bg-white cursor-pointer hover:border-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                    />
-                    {uploading && (
-                      <div className="absolute top-3 right-4 flex items-center gap-2 text-sm text-blue-600 bg-white/90 px-2 py-1 rounded">
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                        <span>Cloudinary&apos;ye yükleniyor...</span>
-                      </div>
-                    )}
+                      className="w-full px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-medium text-sm flex items-center justify-center gap-2"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      Cloudinary'den Seç
+                    </button>
                   </div>
                 </div>
               </div>
@@ -588,21 +625,37 @@ export default function ProjectManager({ initialProjects = [] }: { initialProjec
                       ))}
                     </div>
                   )}
-                  <div className="relative">
-                    <input
-                      type="file"
-                      id="project-additional-image-input"
-                      accept="image/jpeg,image/jpg,image/png,image/webp"
-                      onChange={handleAdditionalImageUpload}
+                  <div className="space-y-2">
+                    <div className="relative">
+                      <input
+                        type="file"
+                        id="project-additional-image-input"
+                        accept="image/jpeg,image/jpg,image/png,image/webp"
+                        onChange={handleAdditionalImageUpload}
+                        disabled={uploading}
+                        className="w-full px-4 py-3 border-2 border-purple-400 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-600 bg-white cursor-pointer hover:border-purple-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      />
+                      {uploading && (
+                        <div className="absolute top-3 right-4 flex items-center gap-2 text-sm text-purple-600 bg-white/90 px-2 py-1 rounded">
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-purple-600"></div>
+                          <span>Yükleniyor...</span>
+                        </div>
+                      )}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCloudinaryPickerType("gallery");
+                        setShowCloudinaryPicker(true);
+                      }}
                       disabled={uploading}
-                      className="w-full px-4 py-3 border-2 border-purple-400 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-600 bg-white cursor-pointer hover:border-purple-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                    />
-                    {uploading && (
-                      <div className="absolute top-3 right-4 flex items-center gap-2 text-sm text-purple-600 bg-white/90 px-2 py-1 rounded">
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-purple-600"></div>
-                        <span>Yükleniyor...</span>
-                      </div>
-                    )}
+                      className="w-full px-4 py-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg hover:from-purple-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-medium text-sm flex items-center justify-center gap-2"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      Cloudinary'den Seç
+                    </button>
                   </div>
                   <p className="text-xs text-slate-600">
                     💡 İpucu: Birden fazla görsel ekleyerek proje detay sayfasında görsel galeri oluşturabilirsiniz.
@@ -858,6 +911,15 @@ export default function ProjectManager({ initialProjects = [] }: { initialProjec
           </div>
         </div>
       )}
+
+      {/* Cloudinary Image Picker Modal */}
+      <CloudinaryImagePicker
+        isOpen={showCloudinaryPicker}
+        onClose={() => setShowCloudinaryPicker(false)}
+        onSelect={handleCloudinarySelect}
+        folder="metod-muhendislik/projects"
+        title="Cloudinary'den Görsel Seç"
+      />
     </div>
   );
 }

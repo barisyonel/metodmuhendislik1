@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
 // Force dynamic rendering because we use cookies
+// Static export sırasında undefined olmalı (API route'lar static export'ta çalışmaz)
 export const dynamic = 'force-dynamic';
 
 export async function POST() {
