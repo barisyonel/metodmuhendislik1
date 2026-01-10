@@ -241,6 +241,23 @@ function getIconByServiceName(serviceName: string): string {
 
 // Ürünleri veritabanından direkt çek (Server Component için)
 export async function getProducts(limit?: number): Promise<Product[]> {
+  // Vercel build sırasında veritabanına bağlanmayı engelle (build timeout'larını önlemek için)
+  if (process.env.VERCEL === "1") {
+    const dbHost = process.env.DB_HOST;
+    if (
+      !dbHost ||
+      dbHost === "SET" ||
+      dbHost === "localhost" ||
+      dbHost === "127.0.0.1" ||
+      process.env.NEXT_PHASE === "phase-production-build"
+    ) {
+      console.warn(
+        "⚠️ Vercel build: Ürünler için veritabanı bağlantısı atlanıyor (fallback kullanılacak)",
+      );
+      return [];
+    }
+  }
+
   try {
     const limitClause = limit ? `LIMIT ${limit}` : "";
     const products = await query<Product[]>(
@@ -290,6 +307,23 @@ export async function getProducts(limit?: number): Promise<Product[]> {
 
 // Slider'ları veritabanından direkt çek (Server Component için)
 export async function getSliders(): Promise<Slider[]> {
+  // Vercel build sırasında veritabanına bağlanmayı engelle (build timeout'larını önlemek için)
+  if (process.env.VERCEL === "1") {
+    const dbHost = process.env.DB_HOST;
+    if (
+      !dbHost ||
+      dbHost === "SET" ||
+      dbHost === "localhost" ||
+      dbHost === "127.0.0.1" ||
+      process.env.NEXT_PHASE === "phase-production-build"
+    ) {
+      console.warn(
+        "⚠️ Vercel build: Slider'lar için veritabanı bağlantısı atlanıyor (fallback kullanılacak)",
+      );
+      return [];
+    }
+  }
+
   try {
     const sliders = await query<Slider[]>(
       "SELECT * FROM hero_sliders WHERE (is_active = TRUE OR is_active = 1) ORDER BY sort_order ASC, id ASC",
@@ -535,6 +569,23 @@ interface Project {
 
 // Projeleri veritabanından direkt çek (Server Component için)
 export async function getProjects(limit?: number): Promise<Project[]> {
+  // Vercel build sırasında veritabanına bağlanmayı engelle (build timeout'larını önlemek için)
+  if (process.env.VERCEL === "1") {
+    const dbHost = process.env.DB_HOST;
+    if (
+      !dbHost ||
+      dbHost === "SET" ||
+      dbHost === "localhost" ||
+      dbHost === "127.0.0.1" ||
+      process.env.NEXT_PHASE === "phase-production-build"
+    ) {
+      console.warn(
+        "⚠️ Vercel build: Projeler için veritabanı bağlantısı atlanıyor (fallback kullanılacak)",
+      );
+      return [];
+    }
+  }
+
   try {
     const limitClause = limit ? `LIMIT ${limit}` : "";
     const projects = await query<Project[]>(
