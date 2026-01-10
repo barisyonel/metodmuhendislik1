@@ -40,7 +40,7 @@ function checkRateLimit(request: NextRequest): boolean {
   return true;
 }
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const url = request.nextUrl.clone();
   const hostname = request.headers.get("host") || "";
