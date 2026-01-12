@@ -99,10 +99,11 @@ const nextConfig: NextConfig = {
     }
 
     // Content Security Policy (CSP)
+    // CSS dosyalarının yüklenmesi için style-src'ye 'unsafe-inline' ve domain eklenmiş
     const cspHeader = `
       default-src 'self';
       script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com;
-      style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://www.metodmuhendislik.com;
+      style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://www.metodmuhendislik.com https://metodmuhendislik.com https://*.vercel.app;
       font-src 'self' https://fonts.gstatic.com data:;
       img-src 'self' data: https: blob:;
       media-src 'self' https:;
