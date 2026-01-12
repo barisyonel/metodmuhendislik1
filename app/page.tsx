@@ -45,9 +45,20 @@ export default async function HomePage() {
 
   try {
     sliders = await getSliders();
+    console.log('🏠 Ana sayfa - Slider'lar yüklendi:', {
+      count: sliders.length,
+      sliders: sliders.map(s => ({
+        id: s.id,
+        title: s.title,
+        is_active: s.is_active,
+        image_url: s.image_url,
+        hasImage: !!s.image_url && s.image_url.trim() !== ''
+      }))
+    });
   } catch (error) {
-    console.warn(
+    console.error(
       "⚠️ Ana sayfa: Slider'lar yüklenemedi, boş liste kullanılıyor",
+      error
     );
     sliders = [];
   }
