@@ -371,9 +371,15 @@ export async function getSliders(): Promise<Slider[]> {
   }
 
   try {
+    console.log("🔍 getSliders(): Veritabanı sorgusu başlatılıyor...");
     const sliders = await query<Slider[]>(
       "SELECT * FROM hero_sliders WHERE (is_active = TRUE OR is_active = 1) ORDER BY sort_order ASC, id ASC",
     );
+    console.log("🔍 getSliders(): Sorgu tamamlandı, sonuç:", {
+      isArray: Array.isArray(sliders),
+      length: Array.isArray(sliders) ? sliders.length : 'not array',
+      type: typeof sliders
+    });
     const slidersData = Array.isArray(sliders) ? sliders : [];
 
     if (slidersData.length === 0) {

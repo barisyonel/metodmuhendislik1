@@ -44,6 +44,7 @@ export default async function HomePage() {
   }
 
   try {
+    console.log("🔍 Ana sayfa: getSliders() çağrılıyor...");
     sliders = await getSliders();
     console.log("🏠 Ana sayfa - Slider'lar yüklendi:", {
       count: sliders.length,
@@ -60,6 +61,14 @@ export default async function HomePage() {
       "⚠️ Ana sayfa: Slider'lar yüklenemedi, boş liste kullanılıyor",
       error
     );
+    // Hata detaylarını logla
+    if (error instanceof Error) {
+      console.error("❌ Hata detayları:", {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      });
+    }
     sliders = [];
   }
 
