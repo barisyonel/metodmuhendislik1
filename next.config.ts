@@ -61,10 +61,6 @@ const nextConfig: NextConfig = {
     async headers() {
     const securityHeaders = [
       {
-        key: "Content-Type",
-        value: "text/html; charset=utf-8",
-      },
-      {
         key: "X-DNS-Prefetch-Control",
         value: "on",
       },
@@ -136,7 +132,35 @@ const nextConfig: NextConfig = {
           },
         ],
       },
-      // CSS ve JS dosyaları için özel header'lar (CSP ve diğer header'ları devre dışı bırak)
+      // CSS dosyaları için özel header'lar (doğru Content-Type)
+      {
+        source: "/_next/static/chunks/:path*.css",
+        headers: [
+          {
+            key: "Content-Type",
+            value: "text/css; charset=utf-8",
+          },
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      // JS dosyaları için özel header'lar
+      {
+        source: "/_next/static/chunks/:path*.js",
+        headers: [
+          {
+            key: "Content-Type",
+            value: "application/javascript; charset=utf-8",
+          },
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      // Diğer static dosyalar için header'lar (CSP ve diğer header'ları devre dışı bırak)
       // ÖNEMLİ: Bu kural HTML sayfalarından ÖNCE gelmeli
       {
         source: "/_next/static/:path*",
