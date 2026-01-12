@@ -45,7 +45,7 @@ export default async function HomePage() {
 
   try {
     sliders = await getSliders();
-    console.log('🏠 Ana sayfa - Slider'lar yüklendi:', {
+    console.log("🏠 Ana sayfa - Slider'lar yüklendi:", {
       count: sliders.length,
       sliders: sliders.map(s => ({
         id: s.id,
