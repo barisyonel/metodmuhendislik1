@@ -15,6 +15,9 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.metodmuhendislik.com'),
+  verification: {
+    google: "3IkX0J9uF-ELyZGrDpfY-IopZ90YqcmdPs99355_Ovw",
+  },
   title: {
     default: "Metod Mühendislik | Endüstriyel Üretim ve Mühendislik Çözümleri",
     template: "%s | Metod Mühendislik"
@@ -69,9 +72,6 @@ export const metadata: Metadata = {
       'max-image-preview': 'large',
       'max-snippet': -1,
     },
-  },
-  verification: {
-    // Google Search Console ve diğer doğrulama kodları buraya eklenecek
   },
 };
 
