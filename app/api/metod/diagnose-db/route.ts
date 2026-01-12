@@ -70,14 +70,19 @@ export async function GET() {
   }
 
   // 2. SSL ayarları kontrolü
-  const useSSL = process.env.DB_SSL === 'true' || (process.env.VERCEL === '1' && process.env.NODE_ENV === 'production');
-  if (process.env.VERCEL === '1' && process.env.DB_SSL !== 'true') {
+  const useSSL = process.env.DB_SSL === 'true';
+  if (process.env.VERCEL === '1' && process.env.DB_SSL === 'true') {
     diagnostics.connectionTests.push({
       test: 'SSL Configuration',
-      status: 'warning',
-      message: 'Vercel\'de DB_SSL=false ama kod otomatik SSL açıyor. Bu çelişkiye neden olabilir.',
+      status: 'success',
+      message: 'SSL aktif',
     });
-    diagnostics.recommendations.push('Vercel\'de DB_SSL=true olarak ayarlayın veya kod mantığını düzeltin');
+  } else if (process.env.VERCEL === '1' && process.env.DB_SSL !== 'true') {
+    diagnostics.connectionTests.push({
+      test: 'SSL Configuration',
+      status: 'info',
+      message: 'SSL devre dışı (DB_SSL=false)',
+    });
   }
 
   // 3. Gerçek bağlantı testi
