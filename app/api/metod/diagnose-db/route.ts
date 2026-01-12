@@ -80,7 +80,7 @@ export async function GET() {
   } else if (process.env.VERCEL === '1' && process.env.DB_SSL !== 'true') {
     diagnostics.connectionTests.push({
       test: 'SSL Configuration',
-      status: 'info',
+      status: 'warning',
       message: 'SSL devre dışı (DB_SSL=false)',
     });
   }

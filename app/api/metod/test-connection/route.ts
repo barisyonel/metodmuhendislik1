@@ -8,7 +8,7 @@ export async function GET() {
   try {
     // Basit bir test sorgusu
     const result = await query<Array<{ test: number; current_time: string }>>(
-      "SELECT 1 as test, NOW() as current_time"
+      "SELECT 1 as test, NOW() as `current_time`"
     );
     
     // Ürün sayısını kontrol et

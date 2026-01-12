@@ -254,7 +254,6 @@ function extractMySQLError(error: unknown): {
       sqlState?: string;
       sqlMessage?: string;
     };
-    
     return {
       code: mysqlError.code,
       message: mysqlError.message || mysqlError.sqlMessage || String(error),
@@ -263,7 +262,6 @@ function extractMySQLError(error: unknown): {
       sqlMessage: mysqlError.sqlMessage,
     };
   }
-  
   if (error && typeof error === "object") {
     const objError = error as {
       code?: string;
@@ -272,7 +270,6 @@ function extractMySQLError(error: unknown): {
       sqlState?: string;
       sqlMessage?: string;
     };
-    
     return {
       code: objError.code,
       message: objError.message || objError.sqlMessage || String(error),
@@ -281,7 +278,6 @@ function extractMySQLError(error: unknown): {
       sqlMessage: objError.sqlMessage,
     };
   }
-  
   return {
     message: String(error),
   };
@@ -710,7 +706,7 @@ export async function getAllProducts(): Promise<Product[]> {
 export async function getAllSliders(): Promise<Slider[]> {
   try {
     const sliders = await query<Slider[]>(
-      "SELECT * FROM hero_sliders ORDER BY sort_order ASC, id ASC",
+      "SELECT * FROM hero_sliders ORDER BY sort_order ASC, id ASC"
     );
     const slidersData = Array.isArray(sliders) ? sliders : [];
 
