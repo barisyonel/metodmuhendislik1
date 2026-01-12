@@ -60,7 +60,7 @@ function getPool() {
       connectionLimit: process.env.NODE_ENV === 'production' ? 20 : 10, // Production'da daha fazla connection
       queueLimit: 0,
       charset: 'utf8mb4',
-      connectTimeout: 60000,
+      connectTimeout: 10000, // 10 saniye - daha hızlı timeout
       idleTimeout: 300000, // 5 dakika idle timeout
       enableKeepAlive: true,
       keepAliveInitialDelay: 0,

@@ -239,6 +239,54 @@ function getIconByServiceName(serviceName: string): string {
   return "⚡"; // Default
 }
 
+// MySQL error properties'ini güvenli bir şekilde çıkar
+function extractMySQLError(error: unknown): {
+  code?: string;
+  message?: string;
+  errno?: number;
+  sqlState?: string;
+  sqlMessage?: string;
+} {
+  if (error instanceof Error) {
+    const mysqlError = error as Error & {
+      code?: string;
+      errno?: number;
+      sqlState?: string;
+      sqlMessage?: string;
+    };
+    
+    return {
+      code: mysqlError.code,
+      message: mysqlError.message || mysqlError.sqlMessage || String(error),
+      errno: mysqlError.errno,
+      sqlState: mysqlError.sqlState,
+      sqlMessage: mysqlError.sqlMessage,
+    };
+  }
+  
+  if (error && typeof error === "object") {
+    const objError = error as {
+      code?: string;
+      message?: string;
+      errno?: number;
+      sqlState?: string;
+      sqlMessage?: string;
+    };
+    
+    return {
+      code: objError.code,
+      message: objError.message || objError.sqlMessage || String(error),
+      errno: objError.errno,
+      sqlState: objError.sqlState,
+      sqlMessage: objError.sqlMessage,
+    };
+  }
+  
+  return {
+    message: String(error),
+  };
+}
+
 // Ürünleri veritabanından direkt çek (Server Component için)
 export async function getProducts(limit?: number): Promise<Product[]> {
   // Vercel build sırasında veritabanına bağlanmayı engelle (build timeout'larını önlemek için)
@@ -279,11 +327,13 @@ export async function getProducts(limit?: number): Promise<Product[]> {
       category: fixTurkishEncoding(product.category),
     }));
   } catch (error: unknown) {
-    const err = error as { code?: string; message?: string; errno?: number };
+    const err = extractMySQLError(error);
     console.error("❌ Ürünler yüklenirken hata:", {
       code: err.code,
       message: err.message,
       errno: err.errno,
+      sqlState: err.sqlState,
+      sqlMessage: err.sqlMessage,
     });
 
     // Bağlantı hatası ise detaylı bilgi ver
@@ -339,11 +389,13 @@ export async function getSliders(): Promise<Slider[]> {
 
     return slidersData;
   } catch (error: unknown) {
-    const err = error as { code?: string; message?: string; errno?: number };
+    const err = extractMySQLError(error);
     console.error("❌ Slider'lar yüklenirken hata:", {
       code: err.code,
       message: err.message,
       errno: err.errno,
+      sqlState: err.sqlState,
+      sqlMessage: err.sqlMessage,
     });
 
     // Bağlantı hatası ise detaylı bilgi ver
@@ -511,7 +563,7 @@ export async function getServices(): Promise<Service[]> {
       };
     });
   } catch (error: unknown) {
-    const err = error as { code?: string; message?: string; errno?: number };
+    const err = extractMySQLError(error);
 
     // Vercel build sırasında hata loglama (throttle ile spam'i önle)
     const isVercelBuild = process.env.VERCEL === "1";
@@ -523,6 +575,8 @@ export async function getServices(): Promise<Service[]> {
         code: err.code,
         message: err.message,
         errno: err.errno,
+        sqlState: err.sqlState,
+        sqlMessage: err.sqlMessage,
       });
     } else {
       // Vercel build'de timeout hatalarını sadece bir kez logla
