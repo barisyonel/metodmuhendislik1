@@ -6,14 +6,14 @@ let pool: mysql.Pool | null = null;
 
 function getPool() {
   // Vercel build sırasında veritabanı bağlantısı oluşturma (build timeout'larını önlemek için)
-  if (process.env.VERCEL === '1') {
+  // SADECE build phase'inde kontrol et, runtime'da çalışmalı
+  if (process.env.VERCEL === '1' && process.env.NEXT_PHASE === 'phase-production-build') {
     const dbHost = process.env.DB_HOST;
     if (
       !dbHost ||
       dbHost === 'SET' ||
       dbHost === 'localhost' ||
-      dbHost === '127.0.0.1' ||
-      process.env.NEXT_PHASE === 'phase-production-build'
+      dbHost === '127.0.0.1'
     ) {
       // Vercel build sırasında pool oluşturma, hata fırlat
       throw new Error('Vercel build: Database connection skipped - DB_HOST is not set or invalid');
