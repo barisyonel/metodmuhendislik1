@@ -89,15 +89,15 @@ const CONNECTION_ERROR_LOG_INTERVAL = 60000; // 60 saniyede bir log
 export async function query<T = unknown>(sql: string, params?: unknown[]): Promise<T> {
   // Vercel build sırasında veritabanı sorgusu yapmayı engelle (EN ÖNCE KONTROL ET)
   // Bu kontrol getPool() çağrılmadan önce yapılmalı
-  if (process.env.VERCEL === '1') {
+  // SADECE build phase'inde kontrol et, runtime'da çalışmalı
+  if (process.env.VERCEL === '1' && process.env.NEXT_PHASE === 'phase-production-build') {
     const dbHost = process.env.DB_HOST;
     // DB_HOST 'SET' ise veya geçersizse hemen return et (getPool() çağrılmasın)
     if (
       !dbHost ||
       dbHost === 'SET' ||
       dbHost === 'localhost' ||
-      dbHost === '127.0.0.1' ||
-      process.env.NEXT_PHASE === 'phase-production-build'
+      dbHost === '127.0.0.1'
     ) {
       console.warn('⚠️ Vercel build: Veritabanı sorgusu atlanıyor (DB_HOST:', dbHost, ')');
       // Boş array döndürmek için type cast

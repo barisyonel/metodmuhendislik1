@@ -286,14 +286,14 @@ function extractMySQLError(error: unknown): {
 // Ürünleri veritabanından direkt çek (Server Component için)
 export async function getProducts(limit?: number): Promise<Product[]> {
   // Vercel build sırasında veritabanına bağlanmayı engelle (build timeout'larını önlemek için)
-  if (process.env.VERCEL === "1") {
+  // SADECE build phase'inde kontrol et, runtime'da çalışmalı
+  if (process.env.VERCEL === "1" && process.env.NEXT_PHASE === "phase-production-build") {
     const dbHost = process.env.DB_HOST;
     if (
       !dbHost ||
       dbHost === "SET" ||
       dbHost === "localhost" ||
-      dbHost === "127.0.0.1" ||
-      process.env.NEXT_PHASE === "phase-production-build"
+      dbHost === "127.0.0.1"
     ) {
       console.warn(
         "⚠️ Vercel build: Ürünler için veritabanı bağlantısı atlanıyor (fallback kullanılacak)",
@@ -354,14 +354,14 @@ export async function getProducts(limit?: number): Promise<Product[]> {
 // Slider'ları veritabanından direkt çek (Server Component için)
 export async function getSliders(): Promise<Slider[]> {
   // Vercel build sırasında veritabanına bağlanmayı engelle (build timeout'larını önlemek için)
-  if (process.env.VERCEL === "1") {
+  // SADECE build phase'inde kontrol et, runtime'da çalışmalı
+  if (process.env.VERCEL === "1" && process.env.NEXT_PHASE === "phase-production-build") {
     const dbHost = process.env.DB_HOST;
     if (
       !dbHost ||
       dbHost === "SET" ||
       dbHost === "localhost" ||
-      dbHost === "127.0.0.1" ||
-      process.env.NEXT_PHASE === "phase-production-build"
+      dbHost === "127.0.0.1"
     ) {
       console.warn(
         "⚠️ Vercel build: Slider'lar için veritabanı bağlantısı atlanıyor (fallback kullanılacak)",
@@ -416,18 +416,15 @@ export async function getSliders(): Promise<Slider[]> {
 // Hizmetleri veritabanından direkt çek (Server Component için)
 export async function getServices(): Promise<Service[]> {
   // Vercel build sırasında veritabanına bağlanmayı engelle (build timeout'larını önlemek için)
-  // Vercel build ortamında static export yapılırken veritabanı bağlantısı timeout olabilir
-  // Bu durumda hemen fallback return et, build'i bloklama
-  // EN ÖNCE KONTROL ET - query() çağrılmadan önce
-  if (process.env.VERCEL === "1") {
+  // SADECE build phase'inde kontrol et, runtime'da çalışmalı
+  if (process.env.VERCEL === "1" && process.env.NEXT_PHASE === "phase-production-build") {
     const dbHost = process.env.DB_HOST;
     // DB_HOST yoksa, 'SET' ise (placeholder), veya geçersizse hemen return et
     if (
       !dbHost ||
       dbHost === "SET" ||
       dbHost === "localhost" ||
-      dbHost === "127.0.0.1" ||
-      process.env.NEXT_PHASE === "phase-production-build"
+      dbHost === "127.0.0.1"
     ) {
       console.warn(
         "⚠️ Vercel build: getServices() - Veritabanı bağlantısı atlanıyor (DB_HOST:",
@@ -623,14 +620,14 @@ interface Project {
 // Projeleri veritabanından direkt çek (Server Component için)
 export async function getProjects(limit?: number): Promise<Project[]> {
   // Vercel build sırasında veritabanına bağlanmayı engelle (build timeout'larını önlemek için)
-  if (process.env.VERCEL === "1") {
+  // SADECE build phase'inde kontrol et, runtime'da çalışmalı
+  if (process.env.VERCEL === "1" && process.env.NEXT_PHASE === "phase-production-build") {
     const dbHost = process.env.DB_HOST;
     if (
       !dbHost ||
       dbHost === "SET" ||
       dbHost === "localhost" ||
-      dbHost === "127.0.0.1" ||
-      process.env.NEXT_PHASE === "phase-production-build"
+      dbHost === "127.0.0.1"
     ) {
       console.warn(
         "⚠️ Vercel build: Projeler için veritabanı bağlantısı atlanıyor (fallback kullanılacak)",
