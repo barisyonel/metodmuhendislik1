@@ -3,7 +3,10 @@ import Footer from "../components/Footer";
 import Link from "next/link";
 import type { Metadata } from "next";
 
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.metodmuhendislik.com";
+
 export const metadata: Metadata = {
+  alternates: { canonical: `${baseUrl}/blog` },
   title: "Blog | Elektrik Pano ve Kaynak Hizmetleri - Marmara Bölgesi",
   description:
     "İstanbul, Gebze ve Marmara Bölgesi'ndeki tüm il ve ilçeler için elektrik pano üretimi, kaynak hizmetleri ve endüstriyel üretim çözümleri hakkında güncel bilgiler ve SEO içerikleri.",

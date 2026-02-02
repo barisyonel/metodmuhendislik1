@@ -34,38 +34,19 @@ export default function HeroSlider({ initialSliders = [] }: { initialSliders?: S
     color: string;
     link: string;
   }>>(() => {
-    // Debug: Slider verilerini kontrol et
-    console.log('🎬 HeroSlider - initialSliders:', {
-      count: initialSliders.length,
-      sliders: initialSliders.map(s => ({
-        id: s.id,
-        title: s.title,
-        is_active: s.is_active,
-        image_url: s.image_url,
-        hasImage: !!s.image_url && s.image_url.trim() !== ''
-      }))
-    });
-
     // İlk render'da server'dan gelen verileri kullan
-    const filtered = initialSliders
+    return initialSliders
       .filter((s) => s.is_active === true || s.is_active === 1)
       .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0))
       .map((s) => ({
         id: s.id,
-        img: s.image_url && s.image_url.trim() !== '' ? s.image_url : '/metod.png', // Fallback görsel
+        img: s.image_url,
         title: s.title,
         subtitle: s.subtitle || "",
         description: s.description || "",
         color: s.color || "from-blue-600/50 via-blue-700/50 to-slate-900/60",
         link: s.link || "#",
       }));
-
-    console.log('🎬 HeroSlider - filtered slides:', {
-      count: filtered.length,
-      slides: filtered.map(s => ({ id: s.id, title: s.title, img: s.img }))
-    });
-
-    return filtered;
   });
 
   const [globalVideoUrl] = useState<string | null>(() => {

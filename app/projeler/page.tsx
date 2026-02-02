@@ -4,7 +4,10 @@ import Image from "next/image";
 import type { Metadata } from "next";
 import { query } from "@/lib/db";
 
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.metodmuhendislik.com";
+
 export const metadata: Metadata = {
+  alternates: { canonical: `${baseUrl}/projeler` },
   title: "Projelerimiz | Gemiler için Elektrik Panoları ve Endüstriyel Çözümler",
   description:
     "Metod Mühendislik'in tamamladığı projeler: Marin pano (gemi elektrik panoları), sıvaüstü panolar, sıvaaltı panolar, endüstriyel elektrik panoları. 10+ yıllık deneyimle gerçekleştirdiğimiz başarılı projeler.",

@@ -1,16 +1,15 @@
 # robots.txt for Metod Mühendislik
 # https://www.metodmuhendislik.com
+# Font ve statik varlıklar Google tarafından taranabilir (sayfa render için gerekli)
 
 User-agent: *
 Allow: /
+Allow: /_next/static/
 Disallow: /metod/
 Disallow: /api/
-Disallow: /_next/
 Disallow: /admin/
+Disallow: /_next/
 
 # Sitemap
 Sitemap: https://www.metodmuhendislik.com/sitemap.xml
-
-# Crawl-delay (opsiyonel - gerekirse ayarlanabilir)
-# Crawl-delay: 1
 

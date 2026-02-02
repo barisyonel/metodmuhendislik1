@@ -2,7 +2,10 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import type { Metadata } from "next";
 
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.metodmuhendislik.com";
+
 export const metadata: Metadata = {
+  alternates: { canonical: `${baseUrl}/iletisim` },
   title: "İletişim | Metod Mühendislik - Elektrik Pano Üretimi",
   description:
     "Metod Mühendislik ile iletişime geçin. Elektrik pano, marin pano üretimi ve endüstriyel üretim çözümleri için teklif alın. İstanbul Tuzla.",

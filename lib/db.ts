@@ -5,21 +5,6 @@ import bcrypt from 'bcryptjs';
 let pool: mysql.Pool | null = null;
 
 function getPool() {
-  // Vercel build sırasında veritabanı bağlantısı oluşturma (build timeout'larını önlemek için)
-  // SADECE build phase'inde kontrol et, runtime'da çalışmalı
-  if (process.env.VERCEL === '1' && process.env.NEXT_PHASE === 'phase-production-build') {
-    const dbHost = process.env.DB_HOST;
-    if (
-      !dbHost ||
-      dbHost === 'SET' ||
-      dbHost === 'localhost' ||
-      dbHost === '127.0.0.1'
-    ) {
-      // Vercel build sırasında pool oluşturma, hata fırlat
-      throw new Error('Vercel build: Database connection skipped - DB_HOST is not set or invalid');
-    }
-  }
-
   if (!pool) {
     // Vercel'de localhost kullanılamaz - remote veritabanı gerekli
     const dbHost = process.env.DB_HOST || 'localhost';
@@ -28,12 +13,12 @@ function getPool() {
     const dbPassword = process.env.DB_PASSWORD || 'metod2024!';
     const dbName = process.env.DB_NAME || 'metodmuhendislik_db';
 
-    // Sadece Vercel'de localhost kullanımını engelle (local build'de localhost kullanılabilir)
-    if (process.env.VERCEL === '1' && (dbHost === 'localhost' || dbHost === '127.0.0.1')) {
-      console.error('❌ HATA: Vercel ortamında localhost kullanılamaz!');
+    // Production'da localhost kullanımını engelle
+    if ((process.env.NODE_ENV === 'production' || process.env.VERCEL === '1') &&
+        (dbHost === 'localhost' || dbHost === '127.0.0.1')) {
+      console.error('❌ HATA: Vercel/Production ortamında localhost kullanılamaz!');
       console.error('Lütfen remote bir MySQL veritabanı kullanın (PlanetScale, Railway, AWS RDS, vb.)');
       console.error('DB_HOST environment variable\'ını remote host adresi ile güncelleyin.');
-      throw new Error('Database connection: localhost is not allowed in Vercel');
     }
 
     // Development ortamında bağlantı bilgilerini logla (güvenlik için sadece development)
@@ -60,7 +45,7 @@ function getPool() {
       connectionLimit: process.env.NODE_ENV === 'production' ? 20 : 10, // Production'da daha fazla connection
       queueLimit: 0,
       charset: 'utf8mb4',
-      connectTimeout: 10000, // 10 saniye - daha hızlı timeout
+      connectTimeout: 60000,
       idleTimeout: 300000, // 5 dakika idle timeout
       enableKeepAlive: true,
       keepAliveInitialDelay: 0,
@@ -87,24 +72,6 @@ let lastConnectionErrorLog = 0;
 const CONNECTION_ERROR_LOG_INTERVAL = 60000; // 60 saniyede bir log
 
 export async function query<T = unknown>(sql: string, params?: unknown[]): Promise<T> {
-  // Vercel build sırasında veritabanı sorgusu yapmayı engelle (EN ÖNCE KONTROL ET)
-  // Bu kontrol getPool() çağrılmadan önce yapılmalı
-  // SADECE build phase'inde kontrol et, runtime'da çalışmalı
-  if (process.env.VERCEL === '1' && process.env.NEXT_PHASE === 'phase-production-build') {
-    const dbHost = process.env.DB_HOST;
-    // DB_HOST 'SET' ise veya geçersizse hemen return et (getPool() çağrılmasın)
-    if (
-      !dbHost ||
-      dbHost === 'SET' ||
-      dbHost === 'localhost' ||
-      dbHost === '127.0.0.1'
-    ) {
-      console.warn('⚠️ Vercel build: Veritabanı sorgusu atlanıyor (DB_HOST:', dbHost, ')');
-      // Boş array döndürmek için type cast
-      return [] as unknown as T;
-    }
-  }
-
   try {
     const pool = getPool();
     // Her sorgudan önce charset'i ayarla - Türkçe karakter desteği için kritik
@@ -119,11 +86,6 @@ export async function query<T = unknown>(sql: string, params?: unknown[]): Promi
     // We need to cast rows to T
     return rows;
   } catch (error: unknown) {
-    // Vercel build hatası ise sessizce geç (zaten kontrol edildi)
-    if (error instanceof Error && error.message.includes('Vercel build')) {
-      console.warn('⚠️ Vercel build: Veritabanı bağlantısı atlanıyor');
-      return [] as unknown as T;
-    }
     // MySQL hatalarını daha iyi yakalama ve loglama
     let errorCode = 'UNKNOWN';
     let errorMessage = 'Unknown database error';

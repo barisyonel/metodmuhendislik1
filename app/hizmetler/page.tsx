@@ -8,7 +8,10 @@ import { getServices } from "@/app/lib/data";
 // export const dynamic = 'force-dynamic';
 export const revalidate = 3600; // 1 saat
 
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.metodmuhendislik.com";
+
 export const metadata: Metadata = {
+  alternates: { canonical: `${baseUrl}/hizmetler` },
   title:
     "Hizmetlerimiz | CNC Lazer Kesim, Büküm, Kaynak, Elektrik Pano ve Çelik Konstrüksiyon | Metod Mühendislik",
   description:

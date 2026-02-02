@@ -100,6 +100,7 @@ export function generateCanonicalURL(
   path: string,
   baseUrl: string = "https://www.metodmuhendislik.com",
 ): string {
-  const cleanPath = path.startsWith("/") ? path : `/${path}`;
+  let cleanPath = path.startsWith("/") ? path : `/${path}`;
+  cleanPath = cleanPath.replace(/\/+$/, "") || "/"; // Trailing slash kaldır, tutarlılık için
   return `${baseUrl}${cleanPath}`;
 }

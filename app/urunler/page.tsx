@@ -5,7 +5,10 @@ import Footer from "@/app/components/Footer";
 import { query } from "@/lib/db";
 import type { Metadata } from "next";
 
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.metodmuhendislik.com";
+
 export const metadata: Metadata = {
+  alternates: { canonical: `${baseUrl}/urunler` },
   title: "Ürünlerimiz | Metod Mühendislik - Elektrik Pano ve Endüstriyel Çözümler",
   description:
     "Metod Mühendislik ürünleri: Elektrik panoları, CNC lazer kesim, CNC büküm, kaynak, toz boya ve çelik konstrüksiyon. 10+ yıllık deneyimle üretilen kaliteli ürünler.",

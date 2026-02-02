@@ -3,7 +3,10 @@ import Footer from "@/app/components/Footer";
 import Link from "next/link";
 import type { Metadata } from "next";
 
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.metodmuhendislik.com";
+
 export const metadata: Metadata = {
+  alternates: { canonical: `${baseUrl}/kurumsal/hakkimizda` },
   title: "Hakkımızda | Metod Mühendislik - Elektrik Pano Üretimi ve Endüstriyel Çözümler",
   description:
     "Metod Mühendislik, 10+ yıllık deneyimiyle İstanbul Tuzla&apos;daki modern tesisimizde elektrik pano üretimi, marin pano, CNC lazer kesim ve endüstriyel üretim hizmetleri sunmaktadır. ISO 9001 kalite sertifikası ile güvenilir çözüm ortağınız.",

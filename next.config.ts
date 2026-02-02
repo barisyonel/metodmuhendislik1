@@ -61,6 +61,10 @@ const nextConfig: NextConfig = {
     async headers() {
     const securityHeaders = [
       {
+        key: "Content-Type",
+        value: "text/html; charset=utf-8",
+      },
+      {
         key: "X-DNS-Prefetch-Control",
         value: "on",
       },
@@ -95,11 +99,10 @@ const nextConfig: NextConfig = {
     }
 
     // Content Security Policy (CSP)
-    // CSS dosyalarının yüklenmesi için style-src'ye 'unsafe-inline' ve domain eklenmiş
     const cspHeader = `
       default-src 'self';
       script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com;
-      style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://www.metodmuhendislik.com https://metodmuhendislik.com https://*.vercel.app;
+      style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
       font-src 'self' https://fonts.gstatic.com data:;
       img-src 'self' data: https: blob:;
       media-src 'self' https:;
@@ -132,35 +135,7 @@ const nextConfig: NextConfig = {
           },
         ],
       },
-      // CSS dosyaları için özel header'lar (doğru Content-Type)
-      {
-        source: "/_next/static/chunks/:path*.css",
-        headers: [
-          {
-            key: "Content-Type",
-            value: "text/css; charset=utf-8",
-          },
-          {
-            key: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
-          },
-        ],
-      },
-      // JS dosyaları için özel header'lar
-      {
-        source: "/_next/static/chunks/:path*.js",
-        headers: [
-          {
-            key: "Content-Type",
-            value: "application/javascript; charset=utf-8",
-          },
-          {
-            key: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
-          },
-        ],
-      },
-      // Diğer static dosyalar için header'lar (CSP ve diğer header'ları devre dışı bırak)
+      // CSS ve JS dosyaları için özel header'lar (CSP ve diğer header'ları devre dışı bırak)
       // ÖNEMLİ: Bu kural HTML sayfalarından ÖNCE gelmeli
       {
         source: "/_next/static/:path*",
@@ -168,10 +143,6 @@ const nextConfig: NextConfig = {
           {
             key: "X-Content-Type-Options",
             value: "nosniff",
-          },
-          {
-            key: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
           },
         ],
       },
@@ -194,6 +165,14 @@ const nextConfig: NextConfig = {
   ...(!isStaticExport && {
     async redirects() {
     return [
+      // SEO: Duplicate/alternatif URL'leri canonical'a yönlendir
+      { source: "/index", destination: "/", permanent: true },
+      { source: "/index.html", destination: "/", permanent: true },
+      { source: "/hizmetlerimiz", destination: "/hizmetler", permanent: true },
+      { source: "/hizmetlerimiz/", destination: "/hizmetler", permanent: true },
+      { source: "/hizmet-icerik/kaynak-28", destination: "/hizmetler/kaynak", permanent: true },
+      { source: "/hizmet-icerik/kaynak-28/", destination: "/hizmetler/kaynak", permanent: true },
+      { source: "/hizmet-icerik/:path*", destination: "/hizmetler/:path*", permanent: true },
       // Non-www'den www'ye yönlendirme (production'da)
       ...(process.env.NODE_ENV === "production"
         ? [

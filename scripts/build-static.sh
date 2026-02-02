@@ -87,12 +87,18 @@ RewriteRule ^(.*)$ https://www.metodmuhendislik.com/$1 [R=301,L]
 RewriteCond %{HTTPS} off
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 
+# SEO: Duplicate/alternatif URL'leri canonical'a yönlendir
+RewriteRule ^index\.html?$ / [R=301,L]
+RewriteRule ^hizmetlerimiz/?$ /hizmetler [R=301,L]
+RewriteRule ^hizmet-icerik/kaynak-28/?$ /hizmetler/kaynak [R=301,L]
+RewriteRule ^hizmet-icerik/(.*)$ /hizmetler/$1 [R=301,L]
+
 # _next klasörü ve statik dosyalar için özel kural - bunları index.html'e yönlendirme
 RewriteCond %{REQUEST_URI} ^/_next/ [OR]
 RewriteCond %{REQUEST_URI} \.(css|js|jpg|jpeg|png|gif|ico|svg|woff|woff2|ttf|eot|webp|pdf)$ [NC]
 RewriteRule . - [L]
 
-# Trailing slash ekle (eğer yoksa)
+# Trailing slash ekle (static export klasör yapısı için gerekli)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_URI} !(.*)/$
 RewriteRule ^(.*)$ $1/ [L,R=301]

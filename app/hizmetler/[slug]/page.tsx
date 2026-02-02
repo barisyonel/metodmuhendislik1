@@ -304,13 +304,18 @@ export async function generateMetadata({
     };
   }
 
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.metodmuhendislik.com";
+  const canonicalUrl = `${baseUrl}/hizmetler/${finalSlug}`;
+
   return {
     title: `${hizmet.title} | Metod Mühendislik`,
     description: hizmet.metaDescription,
     keywords: hizmet.keywords,
+    alternates: { canonical: canonicalUrl },
     openGraph: {
       title: `${hizmet.title} | Metod Mühendislik`,
       description: hizmet.metaDescription,
+      url: canonicalUrl,
       type: "website",
       locale: "tr_TR",
     },
